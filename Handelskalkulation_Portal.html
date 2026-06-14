@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handelskalkulation – Übungsportal</title>
+<style>
+:root{--blue:#1a3a5c;--blue2:#2980b9;--green:#27ae60;--red:#c0392b;--orange:#e67e22;--yellow:#f1c40f;--light:#ecf0f1;--white:#fff;--border:#bdc3c7;--dark:#2c3e50;--hover:#eaf4fb;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:var(--dark);font-size:14px;}
+/* NAV */
+.nav{background:var(--blue);color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.nav h1{font-size:1rem;font-weight:700;letter-spacing:.5px;}
+.nav-links{display:flex;gap:6px;}
+.nbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;padding:5px 13px;border-radius:20px;cursor:pointer;font-size:.82rem;transition:.2s;}
+.nbtn:hover{background:rgba(255,255,255,.28);}
+.nbtn.active{background:rgba(255,255,255,.32);font-weight:700;}
+/* SCREENS */
+.screen{display:none;}
+.screen.active{display:block;}
+/* BUTTONS */
+.btn{background:var(--blue2);color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;transition:.2s;display:inline-block;}
+.btn:hover{background:var(--blue);transform:translateY(-1px);}
+.btn-g{background:var(--green);}
+.btn-g:hover{background:#219a52;}
+.btn-o{background:var(--orange);}
+.btn-o:hover{background:#d35400;}
+.btn-sm{padding:6px 14px;font-size:.85rem;}
+.btn-outline{background:transparent;color:var(--blue2);border:2px solid var(--blue2);}
+.btn-outline:hover{background:var(--blue2);color:white;}
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--blue) 0%,var(--blue2) 100%);color:white;padding:50px 20px;text-align:center;}
+.hero h2{font-size:1.8rem;margin-bottom:10px;}
+.hero p{font-size:1rem;opacity:.9;max-width:600px;margin:0 auto 24px;}
+/* CARD */
+.card{background:white;border-radius:12px;padding:22px;box-shadow:0 4px 16px rgba(0,0,0,.09);margin:18px auto;max-width:860px;}
+.card h3{color:var(--blue);margin-bottom:14px;font-size:1.05rem;border-bottom:2px solid var(--light);padding-bottom:8px;}
+/* FORMS */
+input,select,textarea{width:100%;padding:9px 13px;border:2px solid var(--border);border-radius:7px;font-size:.95rem;font-family:inherit;transition:.2s;background:white;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue2);}
+input.ok{border-color:var(--green);background:#eafaf1;}
+input.err{border-color:var(--red);background:#fdedec;}
+label{display:block;font-weight:600;margin-bottom:5px;color:var(--dark);}
+/* INBOX */
+.inbox-wrap{max-width:860px;margin:20px auto;padding:0 16px;}
+.inbox-item{background:white;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;padding:15px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:.2s;}
+.inbox-item:hover{border-color:var(--blue2);box-shadow:0 2px 10px rgba(41,128,185,.12);}
+.inbox-item.done{background:#eafaf1;border-color:#a9dfbf;}
+.inbox-item.done:hover{border-color:#27ae60;box-shadow:0 2px 10px rgba(39,174,96,.15);}
+.inbox-item.locked{background:#f8f9fa;border-color:#e0e0e0;cursor:not-allowed;opacity:.55;}
+.inbox-item.locked:hover{border-color:#e0e0e0;box-shadow:none;}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--blue2);flex-shrink:0;}
+.done .dot{background:var(--green);}
+.locked .dot{background:#bdc3c7;}
+.inbox-meta{flex:1;}
+.inbox-from{font-weight:700;font-size:.93rem;}
+.inbox-sub{color:#666;font-size:.86rem;margin-top:1px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.73rem;font-weight:700;}
+.bV{background:#d5f5e3;color:#1e8449;}
+.bR{background:#d6eaf8;color:#1a5276;}
+.bD{background:#fdebd0;color:#784212;}
+.bN{background:#ede7f6;color:#4a148c;}
+/* TASK STEPS */
+.task-wrap{max-width:1080px;margin:0 auto;padding:16px;}
+.steps{display:flex;gap:0;margin-bottom:18px;border-radius:9px;overflow:hidden;border:1px solid var(--border);}
+.step{flex:1;padding:11px;text-align:center;background:white;cursor:pointer;font-weight:600;font-size:.87rem;border-right:1px solid var(--border);transition:.2s;color:#888;}
+.step:last-child{border-right:none;}
+.step.active{background:var(--blue2);color:white;}
+.step.done2{background:#eafaf1;color:var(--green);}
+.step-c{display:none;padding:4px 0;}
+.step-c.active{display:block;}
+/* EMAIL DISPLAY */
+.email-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.email-hdr{background:var(--blue);color:white;padding:14px 18px;}
+.email-hdr-grid{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:.86rem;}
+.email-lbl{opacity:.7;}
+.email-body{padding:18px;white-space:pre-wrap;line-height:1.75;font-size:.93rem;font-family:inherit;}
+/* KALK TABLE */
+.kalk-wrap{background:white;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.kalk-wrap table{width:100%;border-collapse:collapse;}
+.kalk-wrap th{background:var(--blue);color:white;padding:10px 14px;text-align:left;font-size:.9rem;}
+.kalk-wrap td{padding:6px 10px;border-bottom:1px solid #eee;vertical-align:middle;}
+.kalk-wrap tr:last-child td{border-bottom:none;}
+.kalk-wrap .kop{width:28px;text-align:center;font-size:1.1rem;font-weight:bold;color:var(--blue);}
+.kalk-wrap .klbl{font-weight:500;font-size:.9rem;min-width:200px;}
+.kalk-wrap .klbl.bold{font-weight:700;}
+.krow-hi{background:#e8f0f7 !important;}
+.krow-hi td{font-weight:700;}
+.krow-given td{background:#fff8e1 !important;}
+.kalk-wrap input[type=number]{width:110px;padding:5px 8px;border:2px solid #ccc;border-radius:6px;font-size:.9rem;text-align:right;}
+.kalk-wrap input.ok{border-color:var(--green);background:#eafaf1;}
+.kalk-wrap input.err{border-color:var(--red);background:#fdedec;}
+.kfb{width:26px;text-align:center;font-size:1.1rem;}
+/* EMAIL COMPOSER */
+.composer{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.composer-hdr{background:#f5f5f5;padding:10px 15px;border-bottom:1px solid var(--border);font-weight:600;font-size:.9rem;color:var(--dark);}
+.composer textarea{width:100%;min-height:190px;padding:14px;border:none;resize:vertical;font-family:inherit;font-size:.93rem;line-height:1.75;}
+.composer textarea:focus{outline:none;}
+.email-fb-area{padding:12px 15px;border-top:1px solid var(--border);background:#f9f9f9;}
+.efb-item{display:flex;align-items:center;gap:7px;font-size:.88rem;margin-bottom:3px;}
+/* SCHEMA QUIZ */
+.quiz-wrap{max-width:780px;margin:0 auto;padding:16px;}
+.schema-quiz table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.schema-quiz th{background:var(--blue);color:white;padding:10px 14px;text-align:left;}
+.schema-quiz td{padding:7px 12px;border-bottom:1px solid #eee;}
+.schema-quiz tr:last-child td{border-bottom:none;}
+.schema-quiz .qop{width:28px;text-align:center;font-weight:bold;font-size:1.1rem;color:var(--blue);}
+.schema-quiz select{padding:5px 8px;border:2px solid #ccc;border-radius:6px;font-size:.88rem;width:auto;min-width:200px;}
+.schema-quiz select.ok{border-color:var(--green);background:#eafaf1;}
+.schema-quiz select.err{border-color:var(--red);background:#fdedec;}
+/* WISSEN QUIZ */
+.wq-wrap{max-width:780px;margin:0 auto;padding:16px;}
+.wq-item{background:white;border-radius:10px;padding:18px;margin-bottom:14px;border:1px solid var(--border);}
+.wq-item h4{margin-bottom:12px;font-size:.97rem;line-height:1.5;}
+.wq-opts{display:flex;flex-direction:column;gap:8px;}
+.wq-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:.2s;font-size:.9rem;}
+.wq-opt:hover{border-color:var(--blue2);background:var(--hover);}
+.wq-opt.sel{border-color:var(--blue2);background:#eaf4fb;}
+.wq-opt.correct{border-color:var(--green);background:#eafaf1;}
+.wq-opt.wrong{border-color:var(--red);background:#fdedec;}
+.wq-opt input{display:none;}
+/* INFO BOX */
+.info{background:#e8f4f8;border-left:4px solid var(--blue2);padding:11px 15px;border-radius:0 8px 8px 0;margin-bottom:14px;font-size:.9rem;}
+.info.ok{background:#eafaf1;border-color:var(--green);}
+.info.err{background:#fdedec;border-color:var(--red);}
+.info.warn{background:#fef9e7;border-color:var(--orange);}
+/* PRINT */
+@media print{
+  .nav,.steps,.btn,.no-print{display:none !important;}
+  .screen{display:block !important;}
+  .print-page{page-break-after:always;}
+  .print-page:last-child{page-break-after:auto;}
+  body{background:white;}
+}
+.progress{height:5px;background:var(--light);border-radius:3px;margin:0 0 16px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--blue2);transition:width .3s;border-radius:3px;}
+/* TOOLTIP */
+.tooltip-wrap{position:relative;display:inline-block;}
+.tooltip-txt{visibility:hidden;background:#333;color:white;text-align:center;padding:5px 10px;border-radius:6px;position:absolute;z-index:10;bottom:125%;left:50%;transform:translateX(-50%);font-size:.8rem;white-space:nowrap;pointer-events:none;}
+.tooltip-wrap:hover .tooltip-txt{visibility:visible;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <h1>📊 Handelskalkulation – Übungsportal</h1>
+  <div class="nav-links">
+    <button class="nbtn" onclick="gotoInbox()" id="nav-inbox">📬 Posteingang</button>
+    <button class="nbtn" onclick="showScreen('wissen')" id="nav-wissen">🧠 Fachwissen</button>
+    <button class="nbtn active" onclick="showScreen('start')" id="nav-start">🏠 Start</button>
+  </div>
+</nav>
+
+<!-- SCREEN: START -->
+<div class="screen active" id="screen-start">
+  <div class="hero">
+    <h2>📬 Handelskalkulation – Lernportal</h2>
+    <p>Bearbeite handlungsorientierte Aufgaben: E-Mail lesen, Kalkulation durchführen, Antwort verfassen.</p>
+  </div>
+  <div class="card">
+    <h3>🚀 So funktioniert das Portal</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+      <div style="border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:1.4rem;margin-bottom:6px;">1️⃣</div>
+        <strong>Schema-Quiz (Pflicht)</strong><br>
+        <span style="font-size:.88rem;color:#666;">Zeige, dass du das Kalkulationsschema kennst – dann schaltet sich der Posteingang frei.</span>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:1.4rem;margin-bottom:6px;">2️⃣</div>
+        <strong>E-Mail lesen & markieren</strong><br>
+        <span style="font-size:.88rem;color:#666;">Lies die Geschäfts-E-Mail und notiere alle wichtigen Informationen für die Kalkulation.</span>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:1.4rem;margin-bottom:6px;">3️⃣</div>
+        <strong>Kalkulation durchführen</strong><br>
+        <span style="font-size:.88rem;color:#666;">Fülle das Rechenschema aus – du erhältst sofort grünes oder rotes Feedback pro Rechenschritt.</span>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:1.4rem;margin-bottom:6px;">4️⃣</div>
+        <strong>Antwort-E-Mail schreiben</strong><br>
+        <span style="font-size:.88rem;color:#666;">Verfasse eine professionelle Geschäfts-E-Mail mit Anrede, Bezug, Ergebnis und Verabschiedung.</span>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn" onclick="showScreen('quiz')">Jetzt starten → Schema-Quiz</button>
+    </div>
+  </div>
+</div>
+<div style="max-width:860px;margin:-4px auto 0;padding:0 16px 20px;text-align:right;">
+  <details>
+    <summary style="font-size:.77rem;color:#ccc;cursor:pointer;list-style:none;user-select:none;">Lehreranmeldung</summary>
+    <div style="margin-top:7px;display:flex;gap:8px;align-items:center;justify-content:flex-end;">
+      <input type="password" id="teacher-code" placeholder="Lehrercode"
+             style="width:130px;padding:6px 10px;font-size:.9rem;"
+             onkeyup="if(event.key==='Enter')teacherLogin()">
+      <button class="btn btn-sm" onclick="teacherLogin()">Einloggen</button>
+    </div>
+    <div id="teacher-msg" style="font-size:.8rem;color:var(--red);margin-top:4px;text-align:right;"></div>
+  </details>
+</div>
+
+<!-- SCREEN: SCHEMA QUIZ -->
+<div class="screen" id="screen-quiz">
+  <div style="background:var(--blue);color:white;padding:24px 20px;text-align:center;">
+    <h2 style="font-size:1.3rem;margin-bottom:6px;">🧩 Pflicht-Einstieg: Das Kalkulationsschema</h2>
+    <p style="opacity:.9;font-size:.92rem;">Ordne die korrekten Bezeichnungen dem Schema zu, bevor du die Aufgaben bearbeitest.</p>
+  </div>
+  <div class="quiz-wrap">
+    <div class="info"><strong>💡 Aufgabe:</strong> Wähle für jede Lücke (—?—) den richtigen Begriff aus der Dropdown-Liste. Klicke danach auf „Auswertung".</div>
+    <div class="schema-quiz">
+      <table id="schema-quiz-table">
+        <thead><tr><th width="28">Op.</th><th>Bezeichnung</th><th width="220">% / €</th><th width="30">✓</th></tr></thead>
+        <tbody id="quiz-body"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;">
+      <button class="btn btn-outline" onclick="resetQuiz()">Zurücksetzen</button>
+      <button class="btn btn-g" onclick="checkSchemaQuiz()">Auswertung anzeigen ✓</button>
+    </div>
+    <div id="quiz-result" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- SCREEN: INBOX -->
+<div class="screen" id="screen-inbox">
+  <div style="background:var(--blue);color:white;padding:20px;text-align:center;">
+    <h2 style="font-size:1.2rem;margin-bottom:4px;">📬 Posteingang – Deine Aufgaben</h2>
+    <p style="opacity:.9;font-size:.88rem;">13 Geschäfts-E-Mails warten auf deine Bearbeitung.</p>
+  </div>
+  <div class="inbox-wrap">
+    <div class="progress" style="margin-top:16px;"><div class="progress-fill" id="inbox-progress" style="width:0%"></div></div>
+    <div id="inbox-list"></div>
+  </div>
+</div>
+
+<!-- SCREEN: TASK -->
+<div class="screen" id="screen-task">
+  <div class="task-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <button class="btn btn-outline btn-sm no-print" onclick="showScreen('inbox')">← Posteingang</button>
+      <span id="task-title" style="font-weight:700;color:var(--blue);font-size:1rem;"></span>
+      <button class="btn btn-o btn-sm no-print" onclick="exportPDF()">📄 Als PDF exportieren</button>
+    </div>
+    <div class="steps no-print" id="task-steps">
+      <div class="step active" id="step-tab-1" onclick="gotoStep(1)">📧 1. E-Mail lesen</div>
+      <div class="step" id="step-tab-2" onclick="gotoStep(2)">🧮 2. Kalkulation</div>
+      <div class="step" id="step-tab-3" onclick="gotoStep(3)">✉️ 3. Antwort-E-Mail</div>
+    </div>
+
+    <!-- STEP 1: EMAIL LESEN -->
+    <div class="step-c active" id="step-content-1">
+      <div id="task-email-display"></div>
+      <div class="card" style="margin:0;">
+        <h3>📝 Wichtige Informationen herausschreiben</h3>
+        <p style="font-size:.88rem;color:#666;margin-bottom:10px;">Lies die E-Mail aufmerksam und notiere alle Zahlen und Konditionen, die du für die Kalkulation brauchst.</p>
+        <textarea id="notes-field" rows="5" placeholder="Deine Notizen..."></textarea>
+        <div style="margin-top:12px;text-align:right;">
+          <button class="btn btn-g btn-sm" onclick="gotoStep(2)">Weiter zur Kalkulation →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: KALKULATION -->
+    <div class="step-c" id="step-content-2">
+      <div id="kalk-notes-display" style="background:#fffde7;border:1px solid #f9a825;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:none;">
+        <strong style="font-size:.84rem;color:#6d4c41;">📝 Deine Notizen (aus Schritt 1):</strong>
+        <div id="kalk-notes-text" style="font-size:.9rem;white-space:pre-wrap;margin-top:5px;color:#333;line-height:1.65;"></div>
+      </div>
+      <div id="task-kalk-display"></div>
+      <div style="margin-top:14px;display:flex;gap:10px;justify-content:space-between;align-items:center;" class="no-print">
+        <button class="btn btn-outline btn-sm" onclick="gotoStep(1)">← E-Mail nochmal lesen</button>
+        <button class="btn btn-g btn-sm" onclick="showSolution()">Lösung anzeigen 👁</button>
+        <button class="btn btn-sm" onclick="gotoStep(3)">Weiter zur E-Mail →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: ANTWORT EMAIL -->
+    <div class="step-c" id="step-content-3">
+      <div class="info warn"><strong>✍️ Aufgabe:</strong> Verfasse eine professionelle Geschäfts-E-Mail als Antwort. Achte auf alle 4 Bausteine: <strong>Anrede · Bezug · Ergebnis · Verabschiedung</strong></div>
+      <div class="composer">
+        <div class="composer-hdr">An: <span id="reply-to"></span> &nbsp;|&nbsp; Betreff: AW: <span id="reply-subj"></span></div>
+        <textarea id="reply-field" placeholder="Schreibe hier deine Antwort-E-Mail..."></textarea>
+        <div class="email-fb-area">
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:8px;color:var(--dark);">Feedback auf deine E-Mail:</div>
+          <div class="efb-item"><span id="fb-anrede">⬜</span> <strong>Anrede</strong> (z.B. „Sehr geehrte Damen und Herren," / „Sehr geehrte/r …,")</div>
+          <div class="efb-item"><span id="fb-bezug">⬜</span> <strong>Bezug auf die E-Mail</strong> (z.B. „bezüglich Ihrer Anfrage" / „Ihre Anfrage vom …")</div>
+          <div class="efb-item"><span id="fb-ergebnis">⬜</span> <strong>Ergebnis / Kernaussage</strong> (enthält eine konkrete Zahl oder Aussage)</div>
+          <div class="efb-item"><span id="fb-gruss">⬜</span> <strong>Verabschiedung</strong> (z.B. „Mit freundlichen Grüßen" / „MfG")</div>
+          <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="checkEmail()">E-Mail prüfen ✓</button>
+          <button class="btn btn-g btn-sm" style="margin-top:10px;margin-left:8px;" onclick="showSampleEmail()">Musterlösung anzeigen</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;text-align:center;" class="no-print">
+        <button class="btn btn-o" onclick="exportPDF()">📄 Aufgabe als PDF exportieren</button>
+      </div>
+      <div id="sample-email-box" style="display:none;margin-top:16px;" class="card">
+        <h3>📋 Musterlösung Antwort-E-Mail</h3>
+        <div id="sample-email-content" class="email-body" style="background:#f9f9f9;border-radius:8px;padding:16px;border:1px solid var(--border);white-space:pre-wrap;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: WISSEN -->
+<div class="screen" id="screen-wissen">
+  <div style="background:var(--blue);color:white;padding:20px;text-align:center;">
+    <h2 style="font-size:1.2rem;margin-bottom:4px;">🧠 Fachwissen – Vor- und Nachteile der Kalkulationsarten</h2>
+    <p style="opacity:.9;font-size:.88rem;">Teste dein Wissen über die drei Kalkulationsverfahren.</p>
+  </div>
+  <div class="wq-wrap">
+    <div id="wissen-quiz"></div>
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;">
+      <button class="btn btn-outline" onclick="resetWissen()">Wiederholen</button>
+      <button class="btn btn-g" onclick="checkWissen()">Auswertung ✓</button>
+    </div>
+    <div id="wissen-result" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- PRINT OVERLAY -->
+<div id="print-overlay" style="display:none;">
+  <div class="print-page" id="print-page1">
+    <div style="border:2px solid #1a3a5c;border-radius:8px;overflow:hidden;margin-bottom:20px;">
+      <div style="background:#1a3a5c;color:white;padding:12px 16px;font-weight:bold;">Eingangs-E-Mail</div>
+      <div id="print-email" style="padding:16px;white-space:pre-wrap;font-family:Arial,sans-serif;font-size:10pt;line-height:1.7;"></div>
+    </div>
+    <div style="border:2px solid #1a3a5c;border-radius:8px;overflow:hidden;">
+      <div style="background:#1a3a5c;color:white;padding:12px 16px;font-weight:bold;">Deine Antwort-E-Mail</div>
+      <div id="print-reply" style="padding:16px;white-space:pre-wrap;font-family:Arial,sans-serif;font-size:10pt;line-height:1.7;"></div>
+    </div>
+    <div style="margin-top:10px;font-size:9pt;color:#888;text-align:right;" id="print-meta"></div>
+  </div>
+  <div class="print-page" id="print-page2">
+    <div style="font-weight:bold;font-size:13pt;color:#1a3a5c;border-bottom:2px solid #1a3a5c;padding-bottom:6px;margin-bottom:14px;" id="print-kalk-title">Kalkulation</div>
+    <div id="print-kalk-table" style="font-family:Arial,sans-serif;font-size:10pt;"></div>
+    <div style="margin-top:16px;border:1px solid #ddd;border-radius:6px;padding:12px;" id="print-solution">
+      <strong>Musterlösung:</strong><br><span id="print-solution-text"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== CALCULATIONS =====================
+function r2(x){return Math.round(x*100)/100;}
+function fmt(n){return n.toFixed(2).replace('.',',');}
+function near(a,b){return Math.abs(a-b)<=0.03;}
+
+// Task definitions & solutions
+const TASKS=[
+{id:1,type:'fwd_full',
+ from:'Thomas Berger <einkauf@kueche-und-mehr.de>',
+ name:'Küche & Mehr GmbH',fromShort:'Küche & Mehr GmbH',
+ subject:'Anfrage: Kalkulation Kaffeevollautomaten',date:'Montag, 14. Juni 2026',
+ notGiven:['lep','bk'],
+ badge:'bV',badgeText:'Vorwärts',
+ body:`Sehr geehrte Damen und Herren,
+
+wir planen, unser Sortiment im Bereich Haushaltsgeräte zu erweitern und möchten Sie als Lieferanten für Kaffeevollautomaten anfragen.
+
+Unser Lieferant CoffeeWorld AG bietet den Kaffeevollautomaten „BrewMaster Pro" zum Listeneinkaufspreis von 400,00 € pro Stück an. Ab einer Abnahme von 50 Stück gewährt der Lieferant einen Lieferantenrabatt von 10 % sowie ein Lieferskonto von 2 %. Die Transportkosten betragen 15,00 € pro Stück.
+
+Unser Unternehmen kalkuliert mit einem Handlungskostensatz von 20 % auf den Bezugspreis sowie einem Gewinnzuschlag von 15 % auf die Selbstkosten. Unserem Kunden gewähren wir 3 % Skonto sowie einen Kundenrabatt von 10 %.
+
+Bitte berechnen Sie den Listenverkaufspreis (netto) pro Stück für eine Abnahme von 50 Stück und teilen Sie uns diesen mit.
+
+Mit freundlichen Grüßen
+Thomas Berger, Einkaufsleiter`,
+ params:{lep:400,rabR:10,skoR:2,bk:15,hkR:20,gR:15,ksR:3,krR:10},
+ sol:{},
+ schema:['lep','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','lvp'],
+ sampleEmail:`Sehr geehrter Herr Berger,
+
+vielen Dank für Ihre Anfrage bezüglich des Kaffeevollautomaten „BrewMaster Pro".
+
+Gerne teilen wir Ihnen das Ergebnis unserer Kalkulation mit: Der Listenverkaufspreis (netto) beträgt 581,40 € pro Stück.
+
+Für Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+},
+{id:2,type:'fwd_sk',
+ from:'Sandra Huber <vertrieb@bergwind-sport.de>',
+ name:'Bergwind Sport GmbH',fromShort:'Bergwind Sport GmbH',
+ subject:'Angebotsanfrage: Skihelme „AlpinePro X1"',date:'Dienstag, 15. Juni 2026',
+ badge:'bV',badgeText:'Vorwärts',
+ body:`Sehr geehrte Damen und Herren,
+
+unsere Vertriebsabteilung benötigt für einen Großkunden ein Angebot über 25 Skihelme des Modells „AlpinePro X1".
+
+Unsere Selbstkosten pro Helm betragen 98,00 €. Wir kalkulieren mit einem Gewinnzuschlag von 20 % auf die Selbstkosten. Dem Kunden gewähren wir 2 % Kundenskonto sowie einen Kundenrabatt von 15 %.
+
+Bitte ermitteln Sie den Listenverkaufspreis (netto) pro Stück und geben Sie diesen in Ihrer Antwort an.
+
+Mit freundlichem Gruß
+Sandra Huber, Vertriebsleiterin`,
+ params:{sk:98,gR:20,ksR:2,krR:15},
+ sol:{},
+ schema:['lep','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','lvp'],
+ hidePercent:true,
+ givenFields:['sk'],
+ disableable:['lep','rabatt','zep','skonto','bep','bk','bp','hk'],
+ sampleEmail:`Sehr geehrte Frau Huber,
+
+vielen Dank für Ihre Anfrage zum Skihelm „AlpinePro X1".
+
+Nach erfolgter Kalkulation teilen wir Ihnen mit: Der Listenverkaufspreis (netto) beträgt 141,18 € pro Stück.
+
+Wir freuen uns auf eine erfolgreiche Zusammenarbeit.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+},
+{id:3,type:'bwd_full',
+ from:'Michael Wagner <einkauf@techworld-ag.de>',
+ name:'TechWorld AG',fromShort:'TechWorld AG',
+ subject:'Anfrage: Maximaler Listeneinkaufspreis – Bluetooth-Lautsprecher „SoundMax 500“',date:'Mittwoch, 16. Juni 2026',
+ badge:'bR',badgeText:'Rückwärts',
+ body:`Sehr geehrte Damen und Herren,
+
+wir interessieren uns für den Bluetooth-Lautsprecher „SoundMax 500“ aus dem Katalog unseres Lieferanten und möchten diesen für 250,00 € netto verkaufen.
+
+Wir möchten, dass unser Unternehmen dabei einen Gewinnzuschlag von 25 % auf die Selbstkosten erzielt. Folgende Konditionen sind dabei zu berücksichtigen:
+• Kundenrabatt: 10 %
+• Kundenskonto: 2 %
+• Handlungskostensatz: 20 % auf den Bezugspreis
+• Bezugskosten: 7,00 € pro Stück
+• Lieferskonto: 2 %
+• Lieferantenrabatt: 8 %
+
+Bitte berechnen Sie unseren maximalen Listeneinkaufspreis pro Stück.
+
+Mit freundlichen Grüßen
+Michael Wagner, Einkauf`,
+ params:{lvp:250,krR:10,ksR:2,gR:25,hkR:20,bk:7,skoR:2,rabR:8},
+ sol:{},
+ schema:['lvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep'],
+ sampleEmail:`Sehr geehrter Herr Wagner,
+
+vielen Dank für Ihre Anfrage zum Bluetooth-Lautsprecher „SoundMax 500“.
+
+Nach vollständiger Rückwärtskalkulation können wir Ihnen mitteilen: Bei einem geplanten Verkaufspreis von 250,00 € netto und den genannten Konditionen darf unser maximaler Listeneinkaufspreis höchstens 155,28 € pro Stück betragen.
+
+Für Rückfragen stehen wir Ihnen gerne zur Verfügung.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+},
+{id:4,type:'bwd_full',
+ from:'Julia Fischer <geschaeftsfuehrung@sportactive.de>',
+ name:'SportActive GmbH',fromShort:'SportActive GmbH',
+ subject:'Marktpreis-Analyse: Trekkingschuhe „TrailMaster Pro"',date:'Donnerstag, 17. Juni 2026',
+ badge:'bR',badgeText:'Rückwärts',
+ body:`Sehr geehrte Damen und Herren,
+
+unsere Marktanalyse zeigt: Die Konkurrenz bietet die Trekkingschuhe „TrailMaster Pro" zum Listenverkaufspreis von 550,00 € an. Um wettbewerbsfähig zu bleiben, müssen wir diesen Preis ebenfalls anbieten.
+
+Unsere Kalkulationsgrundlagen:
+• Kundenrabatt: 10 %
+• Kundenskonto: 2 %
+• Gewinnzuschlag: 20 %
+• Handlungskosten: 25 % (auf Bezugspreis)
+• Bezugskosten: 10,00 € pro Paar
+• Lieferskonto: 2 %
+• Lieferantenrabatt: 10 %
+
+Berechnen Sie bitte: Zu welchem Listeneinkaufspreis dürfen wir die Schuhe höchstens einkaufen?
+
+Mit freundlichen Grüßen
+Julia Fischer, Geschäftsführerin`,
+ params:{lvp:550,krR:10,ksR:2,gR:20,hkR:25,bk:10,skoR:2,rabR:10},
+ sol:{},
+ schema:['lvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep'],
+ sampleEmail:`Sehr geehrte Frau Fischer,
+
+vielen Dank für Ihre Anfrage. Wir haben die Rückwärtskalkulation auf Basis Ihrer Angaben durchgeführt.
+
+Ergebnis: Bei einem Listenverkaufspreis von 550,00 € und den genannten Kalkulationsgrundlagen darf der Listeneinkaufspreis für die Trekkingschuhe „TrailMaster Pro" höchstens 355,33 € pro Paar betragen.
+
+Damit können Sie alle gewünschten Konditionen einhalten und den Gewinnzuschlag von 20 % sicherstellen.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+},
+{id:5,type:'diff_check',
+ from:'Kai Müller <vertrieb@officeplus.de>',
+ name:'OfficePlus Handelsgesellschaft mbH',fromShort:'OfficePlus GmbH',
+ subject:'Können wir zu diesen Konditionen liefern? – Schreibtischstühle',date:'Freitag, 18. Juni 2026',
+ badge:'bD',badgeText:'Differenz',
+ body:`Sehr geehrte Damen und Herren,
+
+ein Großkunde hat uns eine Anfrage für Schreibtischstühle „ErgoComfort X" unterbreitet. Der Listenverkaufspreis für die gewünschte Menge beträgt insgesamt 5.500,00 €.
+
+Der Kunde fordert folgende Konditionen:
+• Kundenrabatt: 20 %
+• Kundenskonto: 2 %
+
+Unsere Selbstkosten für die gesamte Lieferung belaufen sich auf 3.700,00 €. Wir streben einen Mindestgewinn von 15 % auf die Selbstkosten an.
+
+Bitte prüfen Sie: Können wir zu diesen Bedingungen verkaufen? Begründen Sie Ihre Antwort mit dem tatsächlichen Gewinn in Euro und in Prozent.
+
+Mit freundlichen Grüßen
+Kai Müller, Vertriebsmanager`,
+ params:{lvp:5500,krR:20,ksR:2,sk:3700,minGR:15},
+ sol:{},
+ schema:['lvp','kr','zvp','ks','bvp','sk_given','gewinn','gewinnR','fazit'],
+ sampleEmail:`Sehr geehrter Herr Müller,
+
+vielen Dank für Ihre Anfrage bezüglich der Schreibtischstühle „ErgoComfort X".
+
+Nach unserer Differenzkalkulation können wir Ihnen mitteilen: Ja, wir können zu diesen Konditionen liefern. Der tatsächliche Gewinn beträgt 612,00 € und entspricht einer Gewinnrate von 16,54 % auf die Selbstkosten. Da 16,54 % über dem geforderten Mindestgewinn von 15 % liegt, ist die Lieferung wirtschaftlich sinnvoll.
+
+Wir freuen uns auf Ihren Auftrag.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+},
+{id:6,type:'diff_skonto',
+ from:'Anna Kowalski <kundenbetreuung@moebel-max.de>',
+ name:'Möbel MAX GmbH',fromShort:'Möbel MAX GmbH',
+ subject:'Wie viel Skonto können wir gewähren? – Büroregale „OfficeLine Pro"',date:'Samstag, 19. Juni 2026',
+ badge:'bD',badgeText:'Differenz',
+ body:`Sehr geehrte Damen und Herren,
+
+ein langjähriger Geschäftskunde möchte Büroregale „OfficeLine Pro" erwerben. Der Listenverkaufspreis für die gewünschte Menge beträgt insgesamt 8.400,00 €. Wir gewähren dem Kunden einen Kundenrabatt von 25 %.
+
+Unsere Selbstkosten für diese Lieferung betragen 4.800,00 €. Wir möchten dabei einen Gewinn von mindestens 18 % auf die Selbstkosten erzielen.
+
+Bitte berechnen Sie: Wie viel Prozent Kundenskonto können wir diesem Kunden maximal gewähren?
+
+Mit freundlichen Grüßen
+Anna Kowalski, Kundenbetreuung`,
+ params:{lvp:8400,krR:25,sk:4800,gR:18},
+ sol:{},
+ schema:['lvp','kr','zvp','sk_given','minGewinn','minBvp','maxKs','maxKsR'],
+ sampleEmail:`Sehr geehrte Frau Kowalski,
+
+vielen Dank für Ihre Anfrage bezüglich der Büroregale „OfficeLine Pro".
+
+Auf Basis unserer Differenzkalkulation können wir Ihnen mitteilen: Wir können diesem Kunden maximal 10,10 % Kundenskonto (= 636,00 €) gewähren, ohne unseren Mindestgewinn von 18 % zu unterschreiten.
+
+Wir empfehlen, das Skontoangebot auf diesen Maximalwert zu begrenzen.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+,{
+id:7,type:'fwd_brutto',
+ from:'Markus Schäfer <buchhaltung@computec-gmbh.de>',
+ name:'Computec GmbH',fromShort:'Computec GmbH',
+ subject:'Anfrage: Verkaufspreisermittlung – Computer „ProDesk 500“',date:'Sonntag, 20. Juni 2026',
+ badge:'bN',badgeText:'Brutto-VKP',
+ body:`Sehr geehrte Damen und Herren,
+
+unsere Buchhaltung benötigt für die bevorstehende Verkaufsplanung eine vollständige Preiskalkulation für folgende Einkaufssituation:
+
+Wir beziehen 4 Stück des Computers „ProDesk 500“. Der Listeneinkaufspreis (brutto, inkl. 19 % USt) beträgt 1.190,00 € pro Stück. Unser Lieferant gewährt uns einen Lieferantenrabatt von 5 % sowie 2 % Lieferskonto. Die Frachtkosten für die gesamte Lieferung (4 Stück) betragen 36,00 €.
+
+Wir kalkulieren mit folgenden Konditionen:
+• Handlungskostensatz: 50 % auf den Bezugspreis
+• Gewinnzuschlag: 10 % auf die Selbstkosten
+• Kundenskonto: 2 %
+• Sonderrabatt (Kundenrabatt): 10 %
+• Umsatzsteuersatz: 19 %
+
+Hinweis: Die Frachtkosten sind auf die Anzahl der Stück umzurechnen.
+
+Bitte berechnen Sie den Bruttoverkaufspreis pro Stück und teilen Sie uns das Ergebnis mit.
+
+Mit freundlichen Grüßen
+Markus Schäfer, Buchhaltungsleiter`,
+ params:{lep_brutto:1190,ustR_ein:19,rabR:5,skoR:2,bk:9,hkR:50,gR:10,ksR:2,krR:10,ustR_vk:19},
+ notGiven:['bk'],
+ sol:{},
+ schema:['lep_brutto','ust_ein','lep_netto','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','nvp','ust_vk','brutto_vkp'],
+ sampleEmail:`Sehr geehrter Herr Schäfer,
+
+vielen Dank für Ihre Anfrage zum Computer „ProDesk 500“.
+
+Nach vollständiger Kalkulation teilen wir Ihnen mit: Der Bruttoverkaufspreis beträgt 2.092,62 € pro Stück.
+
+Für Rückfragen stehen wir Ihnen gerne zur Verfügung.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+,{
+id:8,type:'bwd_brutto',
+ from:'Lena Hartmann <buchhaltung@computec-gmbh.de>',
+ name:'Computec GmbH',fromShort:'Computec GmbH',
+ subject:'Anfrage: Maximaler Einkaufspreis – Computer "ProDesk 500"',date:'Montag, 14. Juni 2026',
+ badge:'bN',badgeText:'Brutto-Rückwärts',
+ body:`Sehr geehrte Damen und Herren,
+
+wir planen den Einkauf des Computers "ProDesk 500" und möchten wissen, wie viel wir höchstens dafür bezahlen dürfen.
+
+Der Bruttoverkaufspreis beträgt 1.190,00 € (inkl. 19 % USt). Folgende Konditionen sind einzuhalten:
+• Kundenrabatt: 5 %
+• Kundenskonto: 2 %
+• Gewinnzuschlag: 25 % auf die Selbstkosten
+• Handlungskostensatz: 50 % auf den Bezugspreis
+• Lieferantenskonto: 2 %
+• Lieferantenrabatt: 20 %
+• Umsatzsteuersatz: 19 %
+
+Die Bezugskosten werden separat kalkuliert und sind nicht Bestandteil dieser Aufgabe.
+
+Bitte berechnen Sie unseren maximalen Listeneinkaufspreis (brutto) pro Stück.
+
+Mit freundlichen Grüßen
+Lena Hartmann, Buchhaltung`,
+ params:{brutto_vkp:1190,ustR_vk:19,krR:5,ksR:2,gR:25,hkR:50,bk:6.53,skoR:2,rabR:20,ustR_ein:19},
+ givenFields:['brutto_vkp'],
+ sol:{},
+ schema:['brutto_vkp','ust_vk','nvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep_netto','ust_ein','lep_brutto'],
+ sampleEmail:`Sehr geehrte Frau Hartmann,
+
+vielen Dank für Ihre Anfrage zum Computer "ProDesk 500".
+
+Nach unserer vollständigen Rückwärtskalkulation (brutto) teilen wir Ihnen mit: Der maximale Listeneinkaufspreis (brutto, inkl. 19 % USt) beträgt 743,75 € pro Stück.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+,{
+id:9,type:'diff_gewinn',
+ from:'Klaus Trübner <einkauf@trubner-moebel.de>',
+ name:'Möbelhaus Trübner & Sohn',fromShort:'Trübner & Sohn',
+ subject:'Gewinnermittlung: Wohnzimmerschrank "Elegant Line"',date:'Dienstag, 15. Juni 2026',
+ badge:'bN',badgeText:'Differenz',
+ body:`Sehr geehrte Damen und Herren,
+
+wir haben den Wohnzimmerschrank "Elegant Line" zu folgenden Konditionen ein- und verkauft:
+
+Einkaufsseite:
+• Listeneinkaufspreis brutto (inkl. 19 % USt): 1.190,00 €
+• Lieferantenrabatt: 50 %
+• Lieferskonto: 2 %
+• Bezugskosten: 10,00 €
+
+Verkaufsseite:
+• Listenverkaufspreis brutto (inkl. 19 % USt): 1.190,00 €
+• Kundenrabatt: 5 %
+• Kundenskonto: 2 %
+• Handlungskostensatz: 50 %
+
+Bitte berechnen Sie: Welchen Gewinn (in € und in %) haben wir bei diesem Geschäft erzielt?
+
+Mit freundlichen Grüßen
+Klaus Trübner, Einkauf`,
+ params:{lep_brutto_d:1190,ustR_ein:19,rabR:50,skoR:2,bk:10,hkR:50,
+         lvp_brutto_d:1190,ustR_vk:19,krR:5,ksR:2},
+ sol:{},
+ schema:['lep_brutto_diff','ust_ein_diff','lep_netto_diff','rabatt_diff','zep_diff','skonto_diff','bep_diff','bk_diff','bp_diff','hk_diff','sk_diff',
+         'lvp_brutto_diff','ust_vk_diff','nvp_diff','kr_diff','zvp_diff','ks_diff','bvp_diff',
+         'gewinn_diff','gewinnR_diff'],
+ sampleEmail:`Sehr geehrter Herr Trübner,
+
+vielen Dank für Ihre Anfrage zur Gewinnermittlung des Wohnzimmerschranks "Elegant Line".
+
+Unsere Differenzkalkulation ergibt: Der Gewinn beträgt 181,00 €, was einer Gewinnrate von 24,13 % auf die Selbstkosten entspricht.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+,{
+id:10,type:'diff_gewinn',
+ from:'Petra Schneider <verwaltung@moebelmeister.de>',
+ name:'Möbelmeister GmbH',fromShort:'Möbelmeister GmbH',
+ subject:'Differenzkalkulation: Schreibtisch "OfficePro 200"',date:'Mittwoch, 16. Juni 2026',
+ badge:'bN',badgeText:'Differenz',
+ body:`Sehr geehrte Damen und Herren,
+
+für den Schreibtisch "OfficePro 200" liegen folgende Einkaufs- und Verkaufsdaten vor:
+
+Einkaufsseite:
+• Listeneinkaufspreis brutto (inkl. 19 % USt): 1.017,00 €
+• Lieferantenrabatt: 4 %
+• Lieferskonto: 3 %
+• Bezugskosten: 30,51 €
+
+Verkaufsseite:
+• Listenverkaufspreis brutto (inkl. 19 % USt): 1.324,00 €
+• Kundenrabatt: 19,5 %
+• Kundenskonto: 2 %
+• Handlungskostensatz: 10 % (auf Bezugspreis)
+
+Bitte ermitteln Sie Gewinn bzw. Verlust in € und in %.
+
+Mit freundlichen Grüßen
+Petra Schneider, Verwaltung`,
+ params:{lep_brutto_d:1017,ustR_ein:19,rabR:4,skoR:3,bk:30.51,hkR:10,
+         lvp_brutto_d:1324,ustR_vk:19,krR:19.5,ksR:2},
+ sol:{},
+ schema:['lep_brutto_diff','ust_ein_diff','lep_netto_diff','rabatt_diff','zep_diff','skonto_diff','bep_diff','bk_diff','bp_diff','hk_diff','sk_diff',
+         'lvp_brutto_diff','ust_vk_diff','nvp_diff','kr_diff','zvp_diff','ks_diff','bvp_diff',
+         'gewinn_diff','gewinnR_diff'],
+ sampleEmail:`Sehr geehrte Frau Schneider,
+
+vielen Dank für Ihre Anfrage zur Differenzkalkulation des Schreibtischs "OfficePro 200".
+
+Das Ergebnis: Es entsteht ein Verlust von 31,23 €, was einer Verlustrate von −3,44 % auf die Selbstkosten entspricht.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+,{
+id:11,type:'diff_gewinn',
+ from:'Felix Brauer <vertrieb@hitec-ag.de>',
+ name:'HiTec AG',fromShort:'HiTec AG',
+ subject:'Gewinnermittlung: Tablet "SmartTab 10"',date:'Donnerstag, 17. Juni 2026',
+ badge:'bN',badgeText:'Differenz',
+ body:`Sehr geehrte Damen und Herren,
+
+wir möchten den Gewinn bei folgendem Geschäft mit dem Tablet "SmartTab 10" ermitteln:
+
+Einkaufsseite:
+• Listeneinkaufspreis brutto (inkl. 19 % USt): 110,00 €
+• Lieferantenrabatt: 6 %
+• Lieferskonto: 1,5 %
+• Bezugskosten: 6,60 €
+
+Verkaufsseite:
+• Listenverkaufspreis brutto (inkl. 19 % USt): 140,00 €
+• Kundenrabatt: 1,5 %
+• Kundenskonto: 1,5 %
+• Handlungskostensatz: 20 % (auf Bezugspreis)
+
+Bitte berechnen Sie Gewinn bzw. Verlust in € und in %.
+
+Mit freundlichen Grüßen
+Felix Brauer, Vertrieb`,
+ params:{lep_brutto_d:110,ustR_ein:19,rabR:6,skoR:1.5,bk:6.60,hkR:20,
+         lvp_brutto_d:140,ustR_vk:19,krR:1.5,ksR:1.5},
+ sol:{},
+ schema:['lep_brutto_diff','ust_ein_diff','lep_netto_diff','rabatt_diff','zep_diff','skonto_diff','bep_diff','bk_diff','bp_diff','hk_diff','sk_diff',
+         'lvp_brutto_diff','ust_vk_diff','nvp_diff','kr_diff','zvp_diff','ks_diff','bvp_diff',
+         'gewinn_diff','gewinnR_diff'],
+ sampleEmail:`Sehr geehrter Herr Brauer,
+
+vielen Dank für Ihre Anfrage zur Gewinnermittlung des Tablets "SmartTab 10".
+
+Das Ergebnis: Der Gewinn beträgt 3,52 €, was einer Gewinnrate von 3,18 % auf die Selbstkosten entspricht.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+,{
+id:12,type:'bwd_brutto',
+ from:'Heinrich Müller <einkauf@muellerselektronik.de>',
+ name:'Müllers Elektronikhandel',fromShort:'Müllers Elektronikhandel',
+ subject:'Maximaler Einkaufspreis: Bluetooth-Lautsprecher "SoundPro"',date:'Freitag, 18. Juni 2026',
+ badge:'bN',badgeText:'Brutto-Rückwärts',
+ body:`Sehr geehrte Damen und Herren,
+
+wir möchten den Bluetooth-Lautsprecher "SoundPro" zum Bruttoverkaufspreis von 250,00 € (inkl. 19 % USt) anbieten.
+
+Unsere Kalkulationsgrundlagen:
+• Kundenrabatt: 1,5 %
+• Kundenskonto: 3 %
+• Gewinnzuschlag: 5 % auf die Selbstkosten
+• Handlungskostensatz: 60 % auf den Bezugspreis
+• Bezugskosten: 8,00 €
+• Lieferskonto: 3 %
+• Lieferantenrabatt: 12 %
+• Umsatzsteuersatz: 19 %
+
+Bitte berechnen Sie den maximalen Listeneinkaufspreis (brutto) pro Stück.
+
+Mit freundlichen Grüßen
+Heinrich Müller, Einkauf`,
+ params:{brutto_vkp:250,ustR_vk:19,krR:1.5,ksR:3,gR:5,hkR:60,bk:8,skoR:3,rabR:12,ustR_ein:19},
+ givenFields:['brutto_vkp'],
+ sol:{},
+ schema:['brutto_vkp','ust_vk','nvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep_netto','ust_ein','lep_brutto'],
+ sampleEmail:`Sehr geehrter Herr Müller,
+
+vielen Dank für Ihre Anfrage zum Bluetooth-Lautsprecher "SoundPro".
+
+Nach vollständiger Rückwärtskalkulation (brutto) ergibt sich: Der maximale Listeneinkaufspreis (brutto, inkl. 19 % USt) beträgt 155,41 € pro Stück.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+,{
+id:13,type:'fwd_brutto',
+ from:'Stefan Richter <einkauf@moebelmeister.de>',
+ name:'Möbelmeister GmbH',fromShort:'Möbelmeister GmbH',
+ subject:'Bruttoverkaufspreis ermitteln: Regal "HomeStyle 4"',date:'Samstag, 19. Juni 2026',
+ badge:'bN',badgeText:'Brutto-Vorwärts',
+ body:`Sehr geehrte Damen und Herren,
+
+wir beziehen 4 Stück des Regals "HomeStyle 4" und benötigen den Bruttoverkaufspreis.
+
+Einkaufskonditionen pro Stück:
+• Listeneinkaufspreis brutto (inkl. 19 % USt): 477,00 €
+• Lieferantenrabatt: 19 %
+• Lieferskonto: 1 %
+• Bezugskosten gesamt (4 Stück): 114,48 € → also 28,62 € pro Stück
+
+Verkaufskonditionen:
+• Handlungskostensatz: 65 %
+• Gewinnzuschlag: 11 %
+• Kundenskonto: 2,5 %
+• Kundenrabatt: 18,5 %
+• Umsatzsteuersatz: 19 %
+
+Bitte berechnen Sie den Bruttoverkaufspreis (inkl. USt) pro Stück.
+
+Mit freundlichen Grüßen
+Stefan Richter, Einkauf`,
+ params:{lep_brutto:477,ustR_ein:19,rabR:19,skoR:1,bk:28.62,hkR:65,gR:11,ksR:2.5,krR:18.5,ustR_vk:19},
+ notGiven:[],
+ sol:{},
+ schema:['lep_brutto','ust_ein','lep_netto','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','nvp','ust_vk','brutto_vkp'],
+ sampleEmail:`Sehr geehrter Herr Richter,
+
+vielen Dank für Ihre Anfrage zum Regal "HomeStyle 4".
+
+Nach vollständiger Vorwärtskalkulation ergibt sich: Der Bruttoverkaufspreis (inkl. 19 % USt) beträgt 960,10 € pro Stück.
+
+Mit freundlichen Grüßen
+[Ihr Name]`
+}
+
+];
+
+// Precompute solutions
+function computeSols(){
+  // Task 1: fwd_full LEP→LVP
+  const t1=TASKS[0],p=t1.params;
+  const rabatt=r2(p.lep*p.rabR/100); const zep=r2(p.lep-rabatt);
+  const skonto=r2(zep*p.skoR/100); const bep=r2(zep-skonto);
+  const bp=r2(bep+p.bk);
+  const hk=r2(bp*p.hkR/100); const sk=r2(bp+hk);
+  const gewinn=r2(sk*p.gR/100); const bvp=r2(sk+gewinn);
+  const zvp=r2(bvp/(1-p.ksR/100)); const ks=r2(zvp*p.ksR/100);
+  const lvp=r2(zvp/(1-p.krR/100)); const kr=r2(lvp*p.krR/100);
+  t1.sol={lep:p.lep,rabatt,zep,skonto,bep,bk:p.bk,bp,hk,sk,gewinn,bvp,ks,zvp,kr,lvp};
+
+  // Task 2: fwd_sk SK→LVP
+  const t2=TASKS[1],p2=t2.params;
+  const g2=r2(p2.sk*p2.gR/100); const bvp2=r2(p2.sk+g2);
+  const zvp2=r2(bvp2/(1-p2.ksR/100)); const ks2=r2(zvp2*p2.ksR/100);
+  const lvp2=r2(zvp2/(1-p2.krR/100)); const kr2=r2(lvp2*p2.krR/100);
+  t2.sol={sk:p2.sk,gewinn:g2,bvp:bvp2,ks:ks2,zvp:zvp2,kr:kr2,lvp:lvp2};
+
+  // Task 3: bwd_full LVP→LEP
+  const t3=TASKS[2],p3=t3.params;
+  const kr3=r2(p3.lvp*p3.krR/100); const zvp3=r2(p3.lvp-kr3);
+  const ks3=r2(zvp3*p3.ksR/100); const bvp3=r2(zvp3-ks3);
+  const sk3=r2(bvp3/(1+p3.gR/100)); const g3=r2(bvp3-sk3);
+  const bp3=r2(sk3/(1+p3.hkR/100)); const hk3=r2(sk3-bp3);
+  const bep3=r2(bp3-p3.bk);
+  const zep3=r2(bep3/(1-p3.skoR/100)); const skonto3=r2(zep3-bep3);
+  const lep3=r2(zep3/(1-p3.rabR/100)); const rabatt3=r2(lep3-zep3);
+  t3.sol={lvp:p3.lvp,kr:kr3,zvp:zvp3,ks:ks3,bvp:bvp3,sk:sk3,gewinn:g3,bp:bp3,hk:hk3,bep:bep3,bk:p3.bk,skonto:skonto3,zep:zep3,rabatt:rabatt3,lep:lep3};
+
+  // Task 4: bwd_full LVP→LEP
+  const t4=TASKS[3],p4=t4.params;
+  const kr4=r2(p4.lvp*p4.krR/100); const zvp4=r2(p4.lvp-kr4);
+  const ks4=r2(zvp4*p4.ksR/100); const bvp4=r2(zvp4-ks4);
+  const sk4=r2(bvp4/(1+p4.gR/100)); const g4=r2(bvp4-sk4);
+  const bp4=r2(sk4/(1+p4.hkR/100)); const hk4=r2(sk4-bp4);
+  const bep4=r2(bp4-p4.bk);
+  const zep4=r2(bep4/(1-p4.skoR/100)); const skonto4=r2(zep4-bep4);
+  const lep4=r2(zep4/(1-p4.rabR/100)); const rabatt4=r2(lep4-zep4);
+  t4.sol={lvp:p4.lvp,kr:kr4,zvp:zvp4,ks:ks4,bvp:bvp4,sk:sk4,gewinn:g4,bp:bp4,hk:hk4,bep:bep4,bk:p4.bk,skonto:skonto4,zep:zep4,rabatt:rabatt4,lep:lep4};
+
+  // Task 5: diff_check
+  const t5=TASKS[4],p5=t5.params;
+  const kr5=r2(p5.lvp*p5.krR/100); const zvp5=r2(p5.lvp-kr5);
+  const ks5=r2(zvp5*p5.ksR/100); const bvp5=r2(zvp5-ks5);
+  const g5=r2(bvp5-p5.sk);
+  const gR5=r2(g5/p5.sk*100);
+  t5.sol={lvp:p5.lvp,kr:kr5,zvp:zvp5,ks:ks5,bvp:bvp5,sk:p5.sk,sk_given:p5.sk,gewinn:g5,gewinnR:gR5,machbar:gR5>=p5.minGR};
+
+  // Task 6: diff_skonto
+  const t6=TASKS[5],p6=t6.params;
+  const kr6=r2(p6.lvp*p6.krR/100); const zvp6=r2(p6.lvp-kr6);
+  const minG6=r2(p6.sk*p6.gR/100);
+  const minBvp6=r2(p6.sk+minG6);
+  const maxKs6=r2(zvp6-minBvp6);
+  const maxKsR6=r2(maxKs6/zvp6*100);
+  t6.sol={lvp:p6.lvp,kr:kr6,zvp:zvp6,sk:p6.sk,sk_given:p6.sk,minGewinn:minG6,minBvp:minBvp6,maxKs:maxKs6,maxKsR:maxKsR6};
+
+  // Task 7: fwd_brutto LEP brutto→Brutto-VKP
+  const t7=TASKS[6],p7=t7.params;
+  const lepNetto7=r2(p7.lep_brutto/(1+p7.ustR_ein/100));
+  const ustEin7=r2(p7.lep_brutto-lepNetto7);
+  const rabatt7b=r2(lepNetto7*p7.rabR/100); const zep7=r2(lepNetto7-rabatt7b);
+  const skonto7b=r2(zep7*p7.skoR/100); const bep7=r2(zep7-skonto7b);
+  const bp7=r2(bep7+p7.bk);
+  const hk7=r2(bp7*p7.hkR/100); const sk7=r2(bp7+hk7);
+  const gewinn7=r2(sk7*p7.gR/100); const bvp7=r2(sk7+gewinn7);
+  const zvp7=r2(bvp7/(1-p7.ksR/100)); const ks7=r2(zvp7-bvp7);
+  const nvp7=r2(zvp7/(1-p7.krR/100)); const kr7=r2(nvp7-zvp7);
+  const ustVk7=r2(nvp7*p7.ustR_vk/100);
+  const bruttoVkp7=r2(nvp7+ustVk7);
+  t7.sol={lep_brutto:p7.lep_brutto,ust_ein:ustEin7,lep_netto:lepNetto7,
+          rabatt:rabatt7b,zep:zep7,skonto:skonto7b,bep:bep7,bk:p7.bk,bp:bp7,
+          hk:hk7,sk:sk7,gewinn:gewinn7,bvp:bvp7,ks:ks7,zvp:zvp7,
+          kr:kr7,nvp:nvp7,ust_vk:ustVk7,brutto_vkp:bruttoVkp7};
+  // Task 8: bwd_brutto  Brutto-VKP → LEP brutto
+  const t8=TASKS[7],p8=t8.params;
+  // bwd brutto: start from brutto_vkp, strip USt to get nvp, then standard bwd
+  const nvp8=r2(p8.brutto_vkp/(1+p8.ustR_vk/100));
+  const ustVk8=r2(p8.brutto_vkp-nvp8);
+  const zvp8=r2(nvp8*(1-p8.krR/100));
+  const kr8=r2(nvp8-zvp8);
+  const bvp8=r2(zvp8*(1-p8.ksR/100));
+  const ks8=r2(zvp8-bvp8);
+  const sk8=r2(bvp8/(1+p8.gR/100));
+  const g8=r2(bvp8-sk8);
+  const bp8=r2(sk8/(1+p8.hkR/100));
+  const hk8=r2(sk8-bp8);
+  const bep8=r2(bp8-p8.bk);
+  const zep8=r2(bep8/(1-p8.skoR/100));
+  const skonto8=r2(zep8-bep8);
+  const lepNetto8=r2(zep8/(1-p8.rabR/100));
+  const rabatt8=r2(lepNetto8-zep8);
+  const lepBrutto8=r2(lepNetto8*(1+p8.ustR_ein/100));
+  const ustEin8=r2(lepBrutto8-lepNetto8);
+  t8.sol={brutto_vkp:p8.brutto_vkp,ust_vk:ustVk8,nvp:nvp8,kr:kr8,zvp:zvp8,ks:ks8,
+          bvp:bvp8,sk:sk8,gewinn:g8,bp:bp8,hk:hk8,bep:bep8,bk:p8.bk,
+          skonto:skonto8,zep:zep8,rabatt:rabatt8,lep_netto:lepNetto8,ust_ein:ustEin8,lep_brutto:lepBrutto8};
+
+  // Task 9: diff_gewinn Trübner (LEP brutto=1190, LVP brutto=1190)
+  const t9=TASKS[8],p9=t9.params;
+  // Einkaufsseite
+  const lepNetto9=r2(p9.lep_brutto_d/(1+p9.ustR_ein/100));
+  const ustEin9=r2(p9.lep_brutto_d-lepNetto9);
+  const rabatt9=r2(lepNetto9*p9.rabR/100);
+  const zep9=r2(lepNetto9-rabatt9);
+  const skonto9=r2(zep9*p9.skoR/100);
+  const bep9=r2(zep9-skonto9);
+  const bp9=r2(bep9+p9.bk);
+  const hk9=r2(bp9*p9.hkR/100);
+  const sk9=r2(bp9+hk9);
+  // Verkaufsseite
+  const nvp9=r2(p9.lvp_brutto_d/(1+p9.ustR_vk/100));
+  const ustVk9=r2(p9.lvp_brutto_d-nvp9);
+  const kr9=r2(nvp9*p9.krR/100);
+  const zvp9=r2(nvp9-kr9);
+  const ks9=r2(zvp9*p9.ksR/100);
+  const bvp9=r2(zvp9-ks9);
+  // Ergebnis
+  const gewinn9=r2(bvp9-sk9);
+  const gewinnR9=r2(gewinn9/sk9*100);
+  t9.sol={lep_brutto_diff:p9.lep_brutto_d,ust_ein_diff:ustEin9,lep_netto_diff:lepNetto9,
+          rabatt_diff:rabatt9,zep_diff:zep9,skonto_diff:skonto9,bep_diff:bep9,bk_diff:p9.bk,bp_diff:bp9,
+          hk_diff:hk9,sk_diff:sk9,
+          lvp_brutto_diff:p9.lvp_brutto_d,ust_vk_diff:ustVk9,nvp_diff:nvp9,kr_diff:kr9,
+          zvp_diff:zvp9,ks_diff:ks9,bvp_diff:bvp9,
+          gewinn_diff:gewinn9,gewinnR_diff:gewinnR9};
+
+  // Task 10: diff_gewinn Möbelmeister
+  const t10=TASKS[9],p10=t10.params;
+  const lepNetto10=r2(p10.lep_brutto_d/(1+p10.ustR_ein/100));
+  const ustEin10=r2(p10.lep_brutto_d-lepNetto10);
+  const rabatt10=r2(lepNetto10*p10.rabR/100);
+  const zep10=r2(lepNetto10-rabatt10);
+  const skonto10=r2(zep10*p10.skoR/100);
+  const bep10=r2(zep10-skonto10);
+  const bp10=r2(bep10+p10.bk);
+  const hk10=r2(bp10*p10.hkR/100);
+  const sk10=r2(bp10+hk10);
+  const nvp10=r2(p10.lvp_brutto_d/(1+p10.ustR_vk/100));
+  const ustVk10=r2(p10.lvp_brutto_d-nvp10);
+  const kr10=r2(nvp10*p10.krR/100);
+  const zvp10=r2(nvp10-kr10);
+  const ks10=r2(zvp10*p10.ksR/100);
+  const bvp10=r2(zvp10-ks10);
+  const gewinn10=r2(bvp10-sk10);
+  const gewinnR10=r2(gewinn10/sk10*100);
+  t10.sol={lep_brutto_diff:p10.lep_brutto_d,ust_ein_diff:ustEin10,lep_netto_diff:lepNetto10,
+           rabatt_diff:rabatt10,zep_diff:zep10,skonto_diff:skonto10,bep_diff:bep10,bk_diff:p10.bk,bp_diff:bp10,
+           hk_diff:hk10,sk_diff:sk10,
+           lvp_brutto_diff:p10.lvp_brutto_d,ust_vk_diff:ustVk10,nvp_diff:nvp10,kr_diff:kr10,
+           zvp_diff:zvp10,ks_diff:ks10,bvp_diff:bvp10,
+           gewinn_diff:gewinn10,gewinnR_diff:gewinnR10};
+
+  // Task 11: diff_gewinn HiTec
+  const t11=TASKS[10],p11=t11.params;
+  const lepNetto11=r2(p11.lep_brutto_d/(1+p11.ustR_ein/100));
+  const ustEin11=r2(p11.lep_brutto_d-lepNetto11);
+  const rabatt11=r2(lepNetto11*p11.rabR/100);
+  const zep11=r2(lepNetto11-rabatt11);
+  const skonto11=r2(zep11*p11.skoR/100);
+  const bep11=r2(zep11-skonto11);
+  const bp11=r2(bep11+p11.bk);
+  const hk11=r2(bp11*p11.hkR/100);
+  const sk11=r2(bp11+hk11);
+  const nvp11=r2(p11.lvp_brutto_d/(1+p11.ustR_vk/100));
+  const ustVk11=r2(p11.lvp_brutto_d-nvp11);
+  const kr11=r2(nvp11*p11.krR/100);
+  const zvp11=r2(nvp11-kr11);
+  const ks11=r2(zvp11*p11.ksR/100);
+  const bvp11=r2(zvp11-ks11);
+  const gewinn11=r2(bvp11-sk11);
+  const gewinnR11=r2(gewinn11/sk11*100);
+  t11.sol={lep_brutto_diff:p11.lep_brutto_d,ust_ein_diff:ustEin11,lep_netto_diff:lepNetto11,
+           rabatt_diff:rabatt11,zep_diff:zep11,skonto_diff:skonto11,bep_diff:bep11,bk_diff:p11.bk,bp_diff:bp11,
+           hk_diff:hk11,sk_diff:sk11,
+           lvp_brutto_diff:p11.lvp_brutto_d,ust_vk_diff:ustVk11,nvp_diff:nvp11,kr_diff:kr11,
+           zvp_diff:zvp11,ks_diff:ks11,bvp_diff:bvp11,
+           gewinn_diff:gewinn11,gewinnR_diff:gewinnR11};
+
+  // Task 12: bwd_brutto Müllers Elektronikhandel
+  const t12=TASKS[11],p12=t12.params;
+  const nvp12=r2(p12.brutto_vkp/(1+p12.ustR_vk/100));
+  const ustVk12=r2(p12.brutto_vkp-nvp12);
+  const zvp12=r2(nvp12*(1-p12.krR/100));
+  const kr12=r2(nvp12-zvp12);
+  const bvp12=r2(zvp12*(1-p12.ksR/100));
+  const ks12=r2(zvp12-bvp12);
+  const sk12=r2(bvp12/(1+p12.gR/100));
+  const g12=r2(bvp12-sk12);
+  const bp12=r2(sk12/(1+p12.hkR/100));
+  const hk12=r2(sk12-bp12);
+  const bep12=r2(bp12-p12.bk);
+  const zep12=r2(bep12/(1-p12.skoR/100));
+  const skonto12=r2(zep12-bep12);
+  const lepNetto12=r2(zep12/(1-p12.rabR/100));
+  const rabatt12=r2(lepNetto12-zep12);
+  const lepBrutto12=r2(lepNetto12*(1+p12.ustR_ein/100));
+  const ustEin12=r2(lepBrutto12-lepNetto12);
+  t12.sol={brutto_vkp:p12.brutto_vkp,ust_vk:ustVk12,nvp:nvp12,kr:kr12,zvp:zvp12,ks:ks12,
+           bvp:bvp12,sk:sk12,gewinn:g12,bp:bp12,hk:hk12,bep:bep12,bk:p12.bk,
+           skonto:skonto12,zep:zep12,rabatt:rabatt12,lep_netto:lepNetto12,ust_ein:ustEin12,lep_brutto:lepBrutto12};
+
+  // Task 13: fwd_brutto Möbelmeister Vorwärts
+  const t13=TASKS[12],p13=t13.params;
+  const lepNetto13=r2(p13.lep_brutto/(1+p13.ustR_ein/100));
+  const ustEin13=r2(p13.lep_brutto-lepNetto13);
+  const rabatt13=r2(lepNetto13*p13.rabR/100);
+  const zep13=r2(lepNetto13-rabatt13);
+  const skonto13=r2(zep13*p13.skoR/100);
+  const bep13=r2(zep13-skonto13);
+  const bp13=r2(bep13+p13.bk);
+  const hk13=r2(bp13*p13.hkR/100);
+  const sk13=r2(bp13+hk13);
+  const gewinn13=r2(sk13*p13.gR/100);
+  const bvp13=r2(sk13+gewinn13);
+  const zvp13=r2(bvp13/(1-p13.ksR/100));
+  const ks13=r2(zvp13-bvp13);
+  const nvp13=r2(zvp13/(1-p13.krR/100));
+  const kr13=r2(nvp13-zvp13);
+  const ustVk13=r2(nvp13*p13.ustR_vk/100);
+  const bruttoVkp13=r2(nvp13+ustVk13);
+  t13.sol={lep_brutto:p13.lep_brutto,ust_ein:ustEin13,lep_netto:lepNetto13,
+           rabatt:rabatt13,zep:zep13,skonto:skonto13,bep:bep13,bk:p13.bk,bp:bp13,
+           hk:hk13,sk:sk13,gewinn:gewinn13,bvp:bvp13,ks:ks13,zvp:zvp13,
+           kr:kr13,nvp:nvp13,ust_vk:ustVk13,brutto_vkp:bruttoVkp13};
+
+}
+computeSols();
+
+// ===================== STATE =====================
+let currentTaskId=null;
+let currentStep=1;
+let taskDone={};
+let quizPassed=false;
+
+// ===================== NAV =====================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  const nb=document.getElementById('nav-'+id);
+  if(nb)nb.classList.add('active');
+}
+
+function gotoInbox(){
+  if(!quizPassed){
+    showScreen('quiz');
+    return;
+  }
+  buildInbox();
+  showScreen('inbox');
+}
+
+// ===================== SCHEMA QUIZ =====================
+const SCHEMA_ROWS=[
+  {op:'',fixed:'Listeneinkaufspreis',hint:'Ausgangspreis des Herstellers'},
+  {op:'−',answer:'Lieferantenrabatt',hint:'Vom Hundert (vH) vom LEP'},
+  {op:'=',fixed:'Zieleinkaufspreis',hint:''},
+  {op:'−',answer:'Lieferskonto',hint:'Vom Hundert (vH) vom ZEP'},
+  {op:'=',fixed:'Bareinkaufspreis',hint:''},
+  {op:'+',answer:'Bezugskosten',hint:'Transport, Fracht (absolut)'},
+  {op:'=',fixed:'Bezugspreis',hint:'Einstandspreis'},
+  {op:'+',answer:'Handlungskosten',hint:'% vom Bezugspreis (vH)'},
+  {op:'=',fixed:'Selbstkosten',hint:''},
+  {op:'+',answer:'Gewinn',hint:'% von Selbstkosten (vH)'},
+  {op:'=',fixed:'Barverkaufspreis',hint:''},
+  {op:'+',answer:'Kundenskonto',hint:'Im Hundert (iH) → ZVP'},
+  {op:'=',fixed:'Zielverkaufspreis',hint:''},
+  {op:'+',answer:'Kundenrabatt',hint:'Im Hundert (iH) → LVP'},
+  {op:'=',fixed:'Listenverkaufspreis (netto)',hint:''},
+];
+const SCHEMA_OPTIONS=['Bezugskosten','Einkaufsbonus','Gewinn','Handlungskosten','Kundenrabatt','Kundenskonto','Liefererrabatt','Lieferantenrabatt','Lieferskonto','Marge','Transportkosten','Umsatzsteuer'];
+
+function buildSchemaQuiz(){
+  const tbody=document.getElementById('quiz-body');
+  tbody.innerHTML='';
+  SCHEMA_ROWS.forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    if(!row.answer)tr.style.background='#e8f0f7';
+    let cell='';
+    if(row.fixed){
+      cell=`<td style="font-weight:700;color:var(--blue);">${row.fixed}</td>`;
+    } else {
+      const opts=SCHEMA_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join('');
+      cell=`<td><select id="qsel-${i}" onchange="autoCheckQuizRow(${i})">
+        <option value="">— auswählen —</option>${opts}</select>
+        <span style="font-size:.78rem;color:#888;margin-left:6px;">${row.hint}</span></td>`;
+    }
+    tr.innerHTML=`<td class="qop">${row.op||''}</td>${cell}<td style="font-size:.8rem;color:#666;">${row.fixed?'✅ (Angabe)':''}</td><td id="qfb-${i}"></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function autoCheckQuizRow(i){}
+
+function checkSchemaQuiz(){
+  let correct=0,total=0;
+  SCHEMA_ROWS.forEach((row,i)=>{
+    if(!row.answer)return;
+    total++;
+    const sel=document.getElementById('qsel-'+i);
+    const fb=document.getElementById('qfb-'+i);
+    if(!sel)return;
+    if(sel.value===row.answer){
+      sel.className='ok';fb.textContent='✅';correct++;
+    } else {
+      sel.className='err';fb.textContent='❌';
+      if(sel.value==='')sel.className='';
+    }
+  });
+  const res=document.getElementById('quiz-result');
+  if(correct===total){
+    res.innerHTML=`<div class="info ok"><strong>🎉 Sehr gut!</strong> Alle ${total} Begriffe korrekt zugeordnet! Du kannst jetzt den Posteingang öffnen.</div>
+    <div style="text-align:center;margin-top:10px;"><button class="btn btn-g" onclick="quizPassed=true;gotoInbox()">Zum Posteingang →</button></div>`;
+    quizPassed=true;
+  } else {
+    res.innerHTML=`<div class="info err"><strong>${correct} von ${total}</strong> richtig. Überprüfe die rot markierten Felder nochmals.</div>`;
+  }
+}
+
+function resetQuiz(){
+  SCHEMA_ROWS.forEach((row,i)=>{
+    if(!row.answer)return;
+    const sel=document.getElementById('qsel-'+i);
+    if(sel){sel.value='';sel.className='';}
+    const fb=document.getElementById('qfb-'+i);
+    if(fb)fb.textContent='';
+  });
+  document.getElementById('quiz-result').innerHTML='';
+}
+
+// ===================== INBOX =====================
+function buildInbox(){
+  const list=document.getElementById('inbox-list');
+  const done=Object.keys(taskDone).filter(k=>taskDone[k]).length;
+  document.getElementById('inbox-progress').style.width=(done/13*100)+'%';
+  list.innerHTML='';
+  // First 6 must all be done before 7-13 unlock
+  const first6done=[1,2,3,4,5,6].every(id=>taskDone[id]);
+  TASKS.forEach(t=>{
+    const d=taskDone[t.id];
+    const isAdvanced=t.id>=7;
+    const locked=isAdvanced&&!first6done;
+    const div=document.createElement('div');
+    div.className='inbox-item'+(d?' done':locked?' locked':'');
+    if(!locked) div.onclick=()=>loadTask(t.id);
+    // Badge only for tasks 1-6
+    const badgeHtml=(!isAdvanced)?`<span class="badge ${t.badge}">${t.badgeText}</span>`:'';
+    const statusHtml=locked
+      ? `<span style="font-size:.8rem;color:#bbb;min-width:80px;text-align:right;">🔒 gesperrt</span>`
+      : `<span style="font-size:.8rem;color:#999;min-width:80px;text-align:right;">${d?'✅ Erledigt':t.date.split(',')[1]?.trim()||''}</span>`;
+    div.innerHTML=`<div class="dot"></div>
+    <div class="inbox-meta">
+      <div class="inbox-from">${t.fromShort}</div>
+      <div class="inbox-sub">${t.subject}</div>
+    </div>
+    ${badgeHtml}
+    ${statusHtml}`;
+    list.appendChild(div);
+  });
+}
+
+// ===================== TASK LOADING =====================
+function loadTask(id){
+  currentTaskId=id;
+  currentStep=1;
+  const t=TASKS.find(x=>x.id===id);
+  document.getElementById('task-title').textContent=`Aufgabe ${id}: ${t.subject}`;
+  document.getElementById('reply-to').textContent=t.from;
+  document.getElementById('reply-subj').textContent=t.subject;
+  document.getElementById('reply-field').value='';
+  document.getElementById('notes-field').value='';
+  document.getElementById('sample-email-box').style.display='none';
+  renderEmailDisplay(t);
+  renderKalkForm(t);
+  gotoStep(1);
+  showScreen('task');
+}
+
+function renderEmailDisplay(t){
+  const el=document.getElementById('task-email-display');
+  el.innerHTML=`<div class="email-card">
+    <div class="email-hdr">
+      <div class="email-hdr-grid">
+        <span class="email-lbl">Von:</span><span>${t.from}</span>
+        <span class="email-lbl">Betreff:</span><span>${t.subject}</span>
+        <span class="email-lbl">Datum:</span><span>${t.date}</span>
+      </div>
+    </div>
+    <div class="email-body">${escHtml(t.body)}</div>
+  </div>`;
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// Schema row definitions per field key
+const FIELD_DEFS={
+  lep:    {op:'',  label:'Listeneinkaufspreis',         hi:true, given:true},
+  rabatt: {op:'−', label:'Lieferantenrabatt',            pct:true,pctKey:'rabR'},
+  zep:    {op:'=', label:'Zieleinkaufspreis',            hi:true},
+  skonto: {op:'−', label:'Lieferskonto',                 pct:true,pctKey:'skoR'},
+  bep:    {op:'=', label:'Bareinkaufspreis',             hi:true},
+  bk:     {op:'+', label:'Bezugskosten',                 given:true},
+  bp:     {op:'=', label:'Bezugspreis',                  hi:true},
+  hk:     {op:'+', label:'Handlungskosten',              pct:true,pctKey:'hkR'},
+  sk:     {op:'=', label:'Selbstkosten',                 hi:true},
+  gewinn: {op:'+', label:'Gewinn',                       pct:true,pctKey:'gR'},
+  bvp:    {op:'=', label:'Barverkaufspreis',             hi:true},
+  ks:     {op:'+', label:'Kundenskonto (im Hundert)',    pct:true,pctKey:'ksR'},
+  zvp:    {op:'=', label:'Zielverkaufspreis',            hi:true},
+  kr:     {op:'+', label:'Kundenrabatt (im Hundert)',    pct:true,pctKey:'krR'},
+  lvp:    {op:'=', label:'Listenverkaufspreis (netto)',  hi:true},
+  // backward extras
+  sk_given:{op:'−',label:'Selbstkosten (gegeben)',       given:true,hi:true},
+  gewinnR: {op:'', label:'Tatsächliche Gewinnrate',      special:'pct_out'},
+  fazit:   {op:'', label:'Fazit: Kann geliefert werden?',special:'text_out'},
+  minGewinn:{op:'+',label:'Mindestgewinn (auf SK)',       pct:true,pctKey:'gR'},
+  minBvp:  {op:'=', label:'Mindest-Barverkaufspreis',    hi:true},
+  maxKs:   {op:'', label:'Max. Kundenskonto (€)',        hi:true},
+  maxKsR:  {op:'', label:'Max. Kundenskonto (%)',        special:'pct_out'},
+  // Brutto-Kalkulation fields
+  lep_brutto:{op:'',  label:'Listeneinkaufspreis (LEP) brutto',     hi:true, given:true},
+  ust_ein:   {op:'-', label:'- Umsatzsteuer (Im Hundert)',           pct:true, pctKey:'ustR_ein'},
+  lep_netto: {op:'=', label:'Listeneinkaufspreis (LEP) netto',       hi:true},
+  nvp:       {op:'=', label:'Nettoverkaufspreis (NVP)',               hi:true},
+  ust_vk:    {op:'+', label:'+ Umsatzsteuer',                         pct:true, pctKey:'ustR_vk'},
+  brutto_vkp:{op:'=', label:'Bruttoverkaufspreis (Brutto-VKP)',       hi:true},
+  // Differenzkalkulation Gewinn/Verlust fields
+  lep_brutto_diff:{op:'',  label:'Listeneinkaufspreis (LEP) brutto', hi:true, given:true},
+  ust_ein_diff:   {op:'-', label:'- Umsatzsteuer (Im Hundert)',       pct:true, pctKey:'ustR_ein'},
+  lep_netto_diff: {op:'=', label:'Listeneinkaufspreis (LEP) netto',   hi:true},
+  rabatt_diff:    {op:'−', label:'Lieferantenrabatt',                   pct:true, pctKey:'rabR'},
+  zep_diff:       {op:'=', label:'Zieleinkaufspreis',                  hi:true},
+  skonto_diff:    {op:'−', label:'Lieferskonto',                        pct:true, pctKey:'skoR'},
+  bep_diff:       {op:'=', label:'Bareinkaufspreis',                   hi:true},
+  bk_diff:        {op:'+', label:'Bezugskosten',                       given:true},
+  bp_diff:        {op:'=', label:'Bezugspreis (= Einkaufsseite)',       hi:true},
+  hk_diff:        {op:'+', label:'Handlungskosten',                    pct:true, pctKey:'hkR'},
+  sk_diff:        {op:'=', label:'Selbstkosten (SK)',                   hi:true},
+  // Verkaufsseite
+  lvp_brutto_diff:{op:'',  label:'Listenverkaufspreis (LVP) brutto',   hi:true, given:true},
+  ust_vk_diff:    {op:'-', label:'- Umsatzsteuer (Im Hundert)',         pct:true, pctKey:'ustR_vk'},
+  nvp_diff:       {op:'=', label:'Nettoverkaufspreis (NVP)',             hi:true},
+  kr_diff:        {op:'−', label:'Kundenrabatt (Im Hundert)',            pct:true, pctKey:'krR'},
+  zvp_diff:       {op:'=', label:'Zielverkaufspreis (ZVP)',              hi:true},
+  ks_diff:        {op:'−', label:'Kundenskonto (Im Hundert)',             pct:true, pctKey:'ksR'},
+  bvp_diff:       {op:'=', label:'Barverkaufspreis (BVP)',               hi:true},
+  // Ergebnis
+  gewinn_diff:    {op:'',  label:'Gewinn / Verlust (€)',                special:'gewinn_diff_out'},
+  gewinnR_diff:   {op:'',  label:'Gewinn- / Verlustrate (%)',           special:'pct_out'},
+};
+
+function renderKalkForm(t){
+  const el=document.getElementById('task-kalk-display');
+  const sol=t.sol;
+  const p=t.params;
+  const notGiven=t.notGiven||[];
+  const hidePercent=t.hidePercent||false;
+  const givenFields=t.givenFields||[];
+  const disableable=t.disableable||[];
+  let rows='';
+  let topHint='';
+  t.schema.forEach(key=>{
+    const def=FIELD_DEFS[key];
+    if(!def)return;
+    const solVal=sol[key];
+    const isGivenByDef=def.given||(key==='bk')||(key==='sk_given')||givenFields.includes(key);
+    const isGiven=isGivenByDef&&!notGiven.includes(key);
+    const isHi=def.hi;
+    const isDisableable=disableable.includes(key);
+    let trClass='';
+    if(isHi)trClass='krow-hi';
+    if(isGiven&&!isHi)trClass='krow-given';
+    if(isGiven&&isHi)trClass='krow-hi';
+
+    let pctCell='';
+    if(!hidePercent&&def.pct&&def.pctKey&&p[def.pctKey]!==undefined){
+      pctCell=`<td style="width:70px;text-align:center;font-size:.88rem;color:#555;">${p[def.pctKey]} %</td>`;
+    } else {
+      pctCell='<td></td>';
+    }
+
+    let eurCell='';
+    if(def.special==='gewinn_diff_out'){
+      eurCell=`<td><input type="number" step="0.01" id="kf-${key}" placeholder="" onchange="chk('${key}',${t.id})"></td>
+               <td style="width:30px;text-align:center;"><span id="kfb-${key}"></span></td>`;
+    } else if(def.special==='pct_out'){
+      eurCell=`<td><input type="number" step="0.01" id="kf-${key}" placeholder="" onchange="chk('${key}',${t.id})" style="width:110px;"></td>
+               <td style="width:30px;text-align:center;font-size:.9rem;"> % <span id="kfb-${key}"></span></td>`;
+    } else if(def.special==='text_out'){
+      eurCell=`<td colspan="2"><select id="kf-${key}" onchange="chkText('${key}',${t.id})" style="width:220px;">
+        <option value="">— auswählen —</option>
+        <option value="ja">Ja, wir können liefern ✅</option>
+        <option value="nein">Nein, wir können nicht liefern ❌</option>
+      </select> <span id="kfb-${key}"></span></td>`;
+    } else if(isGiven&&solVal!==undefined){
+      eurCell=`<td><span style="font-weight:700;font-size:.95rem;">${fmt(solVal)} €</span></td><td></td>`;
+    } else if(isGiven){
+      eurCell=`<td><span style="font-weight:700;font-size:.95rem;color:#aaa;">—</span></td><td></td>`;
+    } else {
+      eurCell=`<td><input type="number" step="0.01" id="kf-${key}" placeholder="" onchange="chk('${key}',${t.id})"></td>
+               <td style="width:30px;text-align:center;"><span id="kfb-${key}"></span></td>`;
+    }
+
+    let disableToggle='';
+    if(isDisableable){
+      disableToggle=` <label style="display:inline-flex;align-items:center;gap:3px;font-size:.74rem;color:#aaa;cursor:pointer;margin-left:8px;white-space:nowrap;font-weight:400;">
+        <input type="checkbox" id="dis-${key}" onchange="toggleRow(this,'krow-${key}')" style="width:auto;padding:0;border:none;accent-color:#e67e22;"> ⊘ deaktiv.</label>`;
+    }
+
+    rows+=`<tr class="${trClass}" id="krow-${key}">
+      <td class="kop">${def.op}</td>
+      <td class="klbl${isHi?' bold':''}">${def.label}${disableToggle}</td>
+      ${pctCell}
+      ${eurCell}
+    </tr>`;
+  });
+
+  const pctHeader=hidePercent?'<th width="70" style="opacity:.3">%</th>':'<th width="70">%</th>';
+  el.innerHTML=topHint+`<div class="kalk-wrap">
+    <table>
+      <thead><tr><th width="28">Op.</th><th>Position</th>${pctHeader}<th width="120">in EUR</th><th width="32">✓</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
+  <div id="kalk-hint" style="margin-top:10px;"></div>`;
+}
+
+function toggleRow(cb,rowId){
+  const row=document.getElementById(rowId);
+  if(!row)return;
+  if(cb.checked){
+    row.style.opacity='0.3';
+    row.style.textDecoration='line-through';
+    row.querySelectorAll('input[type=number]').forEach(i=>{i.disabled=true;i.style.background='#eee';i.value='';i.className='';});
+    const fb=row.querySelector('[id^="kfb-"]');if(fb)fb.textContent='';
+  } else {
+    row.style.opacity='1';
+    row.style.textDecoration='';
+    row.querySelectorAll('input[type=number]').forEach(i=>{i.disabled=false;i.style.background='';});
+  }
+}
+
+function chk(key,taskId){
+  const t=TASKS.find(x=>x.id===taskId);
+  const inp=document.getElementById('kf-'+key);
+  const fb=document.getElementById('kfb-'+key);
+  if(!inp||!fb)return;
+  const val=parseFloat(inp.value.replace(',','.'));
+  const sol=t.sol[key];
+  if(isNaN(val)){inp.className='';fb.textContent='';return;}
+  if(near(val,sol)){inp.className='ok';fb.textContent='✅';}
+  else{inp.className='err';fb.textContent='❌';}
+}
+
+function chkText(key,taskId){
+  const t=TASKS.find(x=>x.id===taskId);
+  const sel=document.getElementById('kf-'+key);
+  const fb=document.getElementById('kfb-'+key);
+  if(!sel||!fb)return;
+  const machbar=t.sol.machbar;
+  if((sel.value==='ja'&&machbar)||(sel.value==='nein'&&!machbar)){
+    sel.style.borderColor='var(--green)';fb.textContent='✅';
+  } else if(sel.value!==''){
+    sel.style.borderColor='var(--red)';fb.textContent='❌';
+  }
+}
+
+function showSolution(){
+  const t=TASKS.find(x=>x.id===currentTaskId);
+  const sol=t.sol;
+  t.schema.forEach(key=>{
+    const inp=document.getElementById('kf-'+key);
+    const fb=document.getElementById('kfb-'+key);
+    if(!inp)return;
+    const def=FIELD_DEFS[key];
+    if(def&&def.given)return;
+    if(def&&def.special==='text_out'){
+      const sel=document.getElementById('kf-'+key);
+      if(sel){sel.value=sol.machbar?'ja':'nein';sel.style.borderColor='var(--green)';}
+      if(fb)fb.textContent='✅';
+      return;
+    }
+    if(sol[key]!==undefined){
+      inp.value=sol[key].toFixed(2);
+      inp.className='ok';
+      if(fb)fb.textContent='✅';
+    }
+  });
+  document.getElementById('kalk-hint').innerHTML=`<div class="info ok">✅ Musterlösung eingetragen. Vergleiche die Werte mit deiner eigenen Rechnung.</div>`;
+}
+
+function gotoStep(n){
+  currentStep=n;
+  for(let i=1;i<=3;i++){
+    document.getElementById('step-tab-'+i).classList.remove('active','done2');
+    document.getElementById('step-content-'+i).classList.remove('active');
+  }
+  document.getElementById('step-tab-'+n).classList.add('active');
+  document.getElementById('step-content-'+n).classList.add('active');
+  if(n===2){
+    const notesVal=document.getElementById('notes-field').value.trim();
+    const nd=document.getElementById('kalk-notes-display');
+    const nt=document.getElementById('kalk-notes-text');
+    if(notesVal){nd.style.display='block';nt.textContent=notesVal;}
+    else{nd.style.display='none';}
+  }
+  if(n===3) document.getElementById('sample-email-content').textContent=TASKS.find(x=>x.id===currentTaskId)?.sampleEmail||'';
+}
+
+// ===================== EMAIL FEEDBACK =====================
+function checkEmail(){
+  const text=document.getElementById('reply-field').value.toLowerCase();
+  const checks={
+    'fb-anrede':/(sehr geehrte|guten tag|liebe[rs]?|hallo)/i.test(text),
+    'fb-bezug':/(anfrage|bezüglich|betreff|ihre .{0,30}vom|auf ihre|dank für)/i.test(text),
+    'fb-ergebnis':/\d[\d.,]*\s*€|\d[\d.,]+\s*%|ergebnis|beträgt|ermittelt|lautet/i.test(text),
+    'fb-gruss':/(freundlich|grüß|mfg|hochachtung|herzlich|verbleiben)/i.test(text)
+  };
+  // Rechtschreibung: always show reminder
+  const fbRs = document.getElementById('fb-rechtschreibung');
+  if(fbRs) fbRs.textContent = '✏️ Lass deine Rechtschreibung vom Partner prüfen!';
+  Object.entries(checks).forEach(([id,ok])=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=ok?'✅':'❌';
+  });
+  const allOk=Object.values(checks).every(Boolean);
+  if(allOk){
+    taskDone[currentTaskId]=true;
+    const hint=document.createElement('div');
+    hint.className='info ok';hint.style.marginTop='10px';
+    hint.innerHTML='<strong>🎉 Prima!</strong> Deine E-Mail enthält alle vier Bausteine.';
+    const area=document.querySelector('.email-fb-area');
+    const existing=area.querySelector('.info');
+    if(!existing)area.appendChild(hint);
+  }
+}
+
+function showSampleEmail(){
+  const t=TASKS.find(x=>x.id===currentTaskId);
+  document.getElementById('sample-email-content').textContent=t.sampleEmail;
+  document.getElementById('sample-email-box').style.display='block';
+}
+
+// ===================== PDF EXPORT =====================
+function exportPDF(){
+  const t=TASKS.find(x=>x.id===currentTaskId);
+  if(!t)return;
+  // Build print pages
+  document.getElementById('print-email').textContent=`Von: ${t.from}\nBetreff: ${t.subject}\nDatum: ${t.date}\n\n${t.body}`;
+  document.getElementById('print-reply').textContent=document.getElementById('reply-field').value||'(noch keine Antwort verfasst)';
+  document.getElementById('print-meta').textContent=`Aufgabe ${t.id}: ${t.subject} | Datum: ${new Date().toLocaleDateString('de-DE')}`;
+  // Build kalk table for print
+  const sol=t.sol;
+  const p=t.params;
+  let tbl='<table style="width:100%;border-collapse:collapse;font-family:Arial;font-size:10pt;">';
+  tbl+='<tr style="background:#1a3a5c;color:white;"><th style="padding:6px 10px;text-align:left;">Op.</th><th style="padding:6px 10px;text-align:left;">Position</th><th style="padding:6px 10px;text-align:right;">%</th><th style="padding:6px 10px;text-align:right;">Schüler</th><th style="padding:6px 10px;text-align:right;">Lösung</th></tr>';
+  t.schema.forEach(key=>{
+    const def=FIELD_DEFS[key];
+    if(!def)return;
+    const pctVal=def.pctKey?p[def.pctKey]:'';
+    const solVal=sol[key];
+    const inp=document.getElementById('kf-'+key);
+    const studentVal=inp?inp.value:'—';
+    const bg=def.hi?'#e8f0f7':(def.given?'#fff8e1':'white');
+    const fw=def.hi?'bold':'normal';
+    tbl+=`<tr style="background:${bg};">
+      <td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:center;">${def.op}</td>
+      <td style="padding:4px 8px;border-bottom:1px solid #eee;font-weight:${fw};">${def.label}</td>
+      <td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:right;">${pctVal?pctVal+' %':''}</td>
+      <td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:right;">${studentVal?studentVal+' €':''}</td>
+      <td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:right;color:#1a6e30;font-weight:bold;">${solVal!==undefined?fmt(solVal)+' €':''}</td>
+    </tr>`;
+  });
+  tbl+='</table>';
+  document.getElementById('print-kalk-table').innerHTML=tbl;
+  document.getElementById('print-kalk-title').textContent=`Kalkulation – Aufgabe ${t.id}: ${t.subject}`;
+  document.getElementById('print-solution-text').textContent=t.sampleEmail;
+  // Print
+  const overlay=document.getElementById('print-overlay');
+  overlay.style.display='block';
+  setTimeout(()=>{window.print();overlay.style.display='none';},100);
+}
+
+// ===================== WISSEN QUIZ =====================
+const WISSEN_Q=[
+  {q:'Wann verwendet man die <strong>Vorwärtskalkulation</strong>?',
+   opts:['Der Einkaufspreis ist bekannt und man möchte den Verkaufspreis ermitteln.','Der Marktpreis ist bekannt und man sucht den maximalen Einkaufspreis.','Man prüft, ob ein vorgegebener Gewinn bei einem bestimmten Preis erreichbar ist.','Man berechnet den Skontosatz rückwärts aus dem Barverkaufspreis.'],
+   correct:0,
+   ex:'Die Vorwärtskalkulation startet beim Listeneinkaufspreis (vom Lieferanten) und berechnet Schritt für Schritt den Listenverkaufspreis. Vorteil: einfach anwendbar, wenn alle Einkaufskonditionen bekannt sind. Nachteil: Marktpreis wird nicht berücksichtigt – das Ergebnis könnte über dem Konkurrenzpreis liegen.'},
+  {q:'Was ist der Hauptvorteil der <strong>Rückwärtskalkulation</strong>?',
+   opts:['Sie berücksichtigt den aktuellen Markt- bzw. Konkurrenzpreis.','Sie ist einfacher zu berechnen als die Vorwärtskalkulation.','Sie liefert immer den günstigsten Einkaufspreis.','Sie zeigt, ob der Gewinnzuschlag ausreichend ist.'],
+   correct:0,
+   ex:'Die Rückwärtskalkulation startet beim bekannten Marktpreis (Konkurrenzpreis) und rechnet zurück zum maximal zulässigen Einkaufspreis. So weiß das Unternehmen, was es höchstens für ein Produkt bezahlen darf, um wettbewerbsfähig zu bleiben.'},
+  {q:'Wann wird die <strong>Differenzkalkulation</strong> eingesetzt?',
+   opts:['Wenn sowohl Einkaufs- als auch Verkaufskonditionen bekannt sind und man prüfen möchte, ob ein ausreichender Gewinn erzielbar ist.','Wenn weder Einkaufs- noch Verkaufspreis bekannt sind.','Wenn man nur den Gewinnzuschlag ohne Einkaufspreis berechnen möchte.','Wenn der Lieferant den Preis vorgibt und man keine Wahl hat.'],
+   correct:0,
+   ex:'Die Differenzkalkulation vergleicht den tatsächlich erzielbaren Barverkaufspreis (aus LVP − Rabatt − Skonto) mit den Selbstkosten + Mindestgewinn. Sie beantwortet die Frage: Können wir zu diesen Konditionen profitabel liefern?'},
+  {q:'Wie berechnet man den <strong>Kundenskonto-Aufschlag</strong> in der Vorwärtskalkulation?',
+   opts:['Im-Hundert-Rechnung: ZVP = BVP ÷ (1 − Skontorat)','Vom-Hundert-Rechnung: KS = BVP × Skontorat','Auf-Hundert-Rechnung: ZVP = BVP × (1 + Skontorat)','Direkte Addition: ZVP = BVP + Festbetrag'],
+   correct:0,
+   ex:'Da der Kundenskonto IM Zielverkaufspreis steckt (der Kunde zahlt ZVP, aber bekommt Skonto abgezogen und zahlt dann BVP), muss man „im Hundert" rechnen: ZVP = BVP ÷ (1 − s%). Dann: KS = ZVP × s%. Ebenso beim Kundenrabatt: LVP = ZVP ÷ (1 − r%).'},
+  {q:'Wie werden <strong>Handlungskosten</strong> bei der Rückwärtskalkulation zurückgerechnet?',
+   opts:['Auf-Hundert-Rechnung: BP = SK ÷ (1 + HK-Satz)','Vom-Hundert-Rechnung: BP = SK − HK-Betrag','Im-Hundert-Rechnung: BP = SK ÷ (1 − HK-Satz)','Direkte Subtraktion: BP = SK − Festbetrag'],
+   correct:0,
+   ex:'Handlungskosten wurden in der Vorwärtskalkulation AUF den Bezugspreis aufgeschlagen (SK = BP + HK = BP × 1,2 bei 20%). In der Rückwärtskalkulation müssen wir daher auf Hundert rückrechnen: BP = SK ÷ (1 + HK%). Analog beim Gewinn: SK = BVP ÷ (1 + G%).'},
+  {q:'Ein Artikel hat einen Listenverkaufspreis von 1.000 €. Kundenrabatt 20 %, Kundenskonto 2 %. Was ist der Barverkaufspreis?',
+   opts:['784,00 €','800,00 €','780,00 €','764,00 €'],
+   correct:0,
+   ex:'LVP = 1.000 €. Kundenrabatt 20% (vH): 1.000 × 0,20 = 200 € → ZVP = 800 €. Kundenskonto 2% (vH) von ZVP: 800 × 0,02 = 16 € → BVP = 800 − 16 = 784 €.'},
+  {q:'Welcher <strong>Nachteil</strong> hat die Rückwärtskalkulation?',
+   opts:['Sie vernachlässigt die eigenen Kosten – ein ermittelter Einkaufspreis muss nicht zwingend vom Lieferanten akzeptiert werden.','Sie ist zu komplex für die Praxis.','Sie funktioniert nur bei Großunternehmen.','Sie kann nicht für Dienstleistungen verwendet werden.'],
+   correct:0,
+   ex:'Die Rückwärtskalkulation zeigt den maximal zulässigen Einkaufspreis. Ob der Lieferant bereit ist, zu diesem Preis zu verkaufen, ist eine separate Verhandlungsfrage. Außerdem werden individuelle Kostensituationen nicht immer vollständig abgebildet.'},
+];
+
+function buildWissen(){
+  const el=document.getElementById('wissen-quiz');
+  el.innerHTML='';
+  WISSEN_Q.forEach((q,i)=>{
+    const div=document.createElement('div');
+    div.className='wq-item';
+    div.innerHTML=`<h4>Frage ${i+1}: ${q.q}</h4><div class="wq-opts" id="wopts-${i}"></div><div id="wex-${i}" style="display:none;margin-top:10px;" class="info"></div>`;
+    el.appendChild(div);
+    const opts=document.getElementById('wopts-'+i);
+    q.opts.forEach((opt,j)=>{
+      const d=document.createElement('div');
+      d.className='wq-opt';
+      d.id=`wopt-${i}-${j}`;
+      d.innerHTML=`<input type="radio" name="wq${i}" value="${j}"> ${opt}`;
+      d.onclick=()=>{
+        document.querySelectorAll(`[id^="wopt-${i}-"]`).forEach(x=>x.classList.remove('sel'));
+        d.classList.add('sel');
+        d.querySelector('input').checked=true;
+      };
+      opts.appendChild(d);
+    });
+  });
+}
+
+function checkWissen(){
+  let correct=0;
+  WISSEN_Q.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name="wq${i}"]:checked`);
+    const ans=sel?parseInt(sel.value):-1;
+    q.opts.forEach((_,j)=>{
+      const d=document.getElementById(`wopt-${i}-${j}`);
+      if(!d)return;
+      d.classList.remove('correct','wrong','sel');
+      if(j===q.correct)d.classList.add('correct');
+      else if(j===ans&&ans!==q.correct)d.classList.add('wrong');
+    });
+    if(ans===q.correct)correct++;
+    const ex=document.getElementById('wex-'+i);
+    ex.style.display='block';
+    ex.innerHTML=`<strong>Erklärung:</strong> ${q.ex}`;
+    ex.className='info '+(ans===q.correct?'ok':'err');
+  });
+  document.getElementById('wissen-result').innerHTML=`<div class="info ${correct>=5?'ok':'warn'}">
+    <strong>${correct} von ${WISSEN_Q.length} Fragen</strong> richtig. ${correct>=5?'🎉 Sehr gut!':'Lies die Erklärungen durch und versuche es nochmals.'}
+  </div>`;
+}
+
+function resetWissen(){
+  buildWissen();
+  document.getElementById('wissen-result').innerHTML='';
+}
+
+// ===================== INIT =====================
+function teacherLogin(){
+  const code=document.getElementById('teacher-code').value.trim();
+  const msg=document.getElementById('teacher-msg');
+  if(code==='69969'){quizPassed=true;buildInbox();showScreen('inbox');}
+  else{msg.textContent='Code nicht korrekt.';document.getElementById('teacher-code').style.borderColor='var(--red)';}
+}
+window.onload=function(){
+  buildSchemaQuiz();
+  buildWissen();
+};
+</script>
+</body>
+</html>
