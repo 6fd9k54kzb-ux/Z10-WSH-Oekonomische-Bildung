@@ -20,7 +20,7 @@ Hier findest du die Lernportale, Editoren und Übungsseiten für den Unterricht.
 
 | Bereich | Thema | Zugang |
 |---|---|---|
-| A | Kaufvertragsstörungen | Link noch einfügen |
+| A | Kaufvertragsstörungen | [Übungen öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Oekonomische-Bildung/Kaufvertragssto%CC%88rungen%20U%CC%88bungen.html) |
 | B | Verkaufspreiskalkulation | [Übungen öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Oekonomische-Bildung/Handelskalkulation_Portal.html) |
 
 ---
