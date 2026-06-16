@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Übungsportal Kaufvertragsstörungen · E-Mail-Postfach (komplett)</title>
+<style>
+  :root{
+    --bg:#eef1f6;--panel:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e2e8f0;
+    --brand:#1d4ed8;--brand2:#0e7490;
+    --lv:#1d4ed8;--sm:#7c3aed;--zv:#15803d;
+    --ok:#15803d;--okbg:#dcfce7;--warn:#b45309;--warnbg:#fef3c7;--err:#b91c1c;--errbg:#fee2e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.5;font-size:15px}
+  /* Topbar */
+  .topbar{background:linear-gradient(135deg,#1d4ed8,#0e7490);color:#fff;padding:10px 16px;display:flex;
+          align-items:center;gap:12px;flex-wrap:wrap}
+  .topbar .logo{font-weight:800;font-size:1.05rem}
+  .topbar .sub{font-size:.8rem;opacity:.9}
+  .topbar .spacer{flex:1}
+  .topbar a.reflink,.topbar button.tbtn{font-size:.8rem;text-decoration:none;color:#fff;background:rgba(255,255,255,.16);
+          border:1px solid rgba(255,255,255,.3);padding:6px 11px;border-radius:8px;cursor:pointer;font-weight:600}
+  .topbar a.reflink:hover,.topbar button.tbtn:hover{background:rgba(255,255,255,.28)}
+  .teacher-on{background:#facc15 !important;color:#1f2937 !important;border-color:#eab308 !important}
+  .teacherbanner{display:none;background:#fef9c3;border-bottom:1px solid #fde68a;color:#854d0e;
+                 font-size:.82rem;padding:6px 16px;text-align:center}
+  body.teacher .teacherbanner{display:block}
+  /* Layout */
+  .app{display:flex;height:calc(100vh - 52px);overflow:hidden}
+  body.teacher .app{height:calc(100vh - 52px - 27px)}
+  .inbox{width:330px;flex:0 0 330px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto}
+  .inbox-head{padding:11px 14px;border-bottom:1px solid var(--line);font-weight:700;font-size:.9rem;
+              display:flex;align-items:center;gap:8px;position:sticky;top:0;background:#fff;z-index:2}
+  .badge-count{background:var(--brand);color:#fff;font-size:.72rem;border-radius:999px;padding:1px 8px}
+  .mail{padding:11px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;display:flex;gap:10px}
+  .mail:hover{background:#f8fafc}
+  .mail.active{background:#eff6ff;border-left:3px solid var(--brand)}
+  .mail .dot{width:9px;height:9px;border-radius:50%;background:var(--brand);margin-top:6px;flex:0 0 9px}
+  .mail.read .dot{background:transparent;border:1px solid #cbd5e1}
+  .mail .mc{flex:1;min-width:0}
+  .mail .mfrom{font-weight:700;font-size:.86rem;display:flex;justify-content:space-between;gap:6px}
+  .mail .mfrom .date{font-weight:400;color:var(--muted);font-size:.74rem;white-space:nowrap}
+  .mail .msub{font-size:.82rem;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mail .mprev{font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tag{display:inline-block;font-size:.66rem;font-weight:800;padding:1px 7px;border-radius:999px;margin-top:3px}
+  .t-lv{background:#dbeafe;color:#1e3a8a}.t-sm{background:#ede9fe;color:#6b21a8}.t-zv{background:#dcfce7;color:#166534}
+  .t-done{background:var(--okbg);color:var(--ok)}
+  /* Reading pane */
+  .reader{flex:1;overflow-y:auto;padding:18px 22px 60px}
+  .placeholder{color:var(--muted);text-align:center;margin-top:90px}
+  .placeholder .big{font-size:2.4rem}
+  .steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .stepchip{font-size:.74rem;font-weight:700;padding:5px 10px;border-radius:999px;background:#e2e8f0;color:#64748b;
+            display:flex;align-items:center;gap:5px}
+  .stepchip.active{background:var(--brand);color:#fff}
+  .stepchip.done{background:var(--okbg);color:var(--ok)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 14px;
+        box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .card h3{margin:0 0 8px;font-size:1.02rem;display:flex;align-items:center;gap:8px}
+  .emailhead{font-size:.84rem;color:var(--muted);border-bottom:1px dashed var(--line);padding-bottom:8px;margin-bottom:10px}
+  .emailhead b{color:#334155}
+  .emailbody p{margin:7px 0}
+  .aufgabe{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 13px;margin-top:10px;font-size:.92rem}
+  .lock{filter:blur(5px);user-select:none;pointer-events:none;opacity:.5}
+  .quiz q,.quiz .qq{display:block;font-weight:600;margin:12px 0 5px}
+  .opt{display:block;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 11px;margin:5px 0;cursor:pointer;font-size:.9rem}
+  .opt:hover{background:#f1f5f9}
+  .opt input{margin-right:8px}
+  .opt.right{background:var(--okbg);border-color:#86efac}
+  .opt.wrong{background:var(--errbg);border-color:#fca5a5}
+  button.action{background:var(--brand);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:.9rem}
+  button.action:hover{background:#1e40af}
+  button.ghost{background:#fff;color:var(--brand);border:1px solid #bfdbfe;border-radius:9px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:.88rem}
+  button.ghost:hover{background:#eff6ff}
+  .feedback{margin-top:10px;padding:10px 13px;border-radius:9px;font-size:.9rem;display:none}
+  .feedback.show{display:block}
+  .feedback.good{background:var(--okbg);border:1px solid #86efac;color:#14532d}
+  .feedback.bad{background:var(--errbg);border:1px solid #fca5a5;color:#7f1d1d}
+  /* law picker */
+  .lawgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}
+  @media(max-width:900px){.lawgrid{grid-template-columns:1fr}}
+  .lawopt{display:flex;gap:9px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;font-size:.86rem}
+  .lawopt:hover{background:#f1f5f9}
+  .lawopt input{margin-top:3px}
+  .lawopt .lt{font-weight:800;color:var(--brand);white-space:nowrap}
+  .lawopt .ln{color:#475569;font-size:.8rem}
+  .lawopt.req-ok{background:var(--okbg);border-color:#86efac}
+  .lawopt.req-miss{background:#fff;border-color:var(--err);box-shadow:0 0 0 2px #fecaca inset}
+  .lawopt.bonus{background:#ecfeff;border-color:#67e8f9}
+  .lawopt.wrongpick{background:var(--errbg);border-color:#fca5a5}
+  /* compose */
+  .composehead{font-size:.84rem;color:var(--muted);margin-bottom:6px}
+  textarea.answer{width:100%;min-height:230px;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:.92rem;font-family:inherit;line-height:1.5;resize:vertical}
+  .baustein-hint{font-size:.82rem;color:var(--muted);margin:6px 0}
+  .checklist{margin-top:12px}
+  .checkitem{display:flex;gap:9px;align-items:flex-start;padding:6px 9px;border-radius:8px;font-size:.88rem;margin:3px 0;background:#f8fafc;border:1px solid var(--line)}
+  .checkitem .ci{flex:0 0 20px;font-weight:800;color:#cbd5e1}
+  .checkitem.hit{background:var(--okbg);border-color:#86efac}
+  .checkitem.hit .ci{color:var(--ok)}
+  .scorebar{height:9px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin:8px 0}
+  .scorebar > i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#15803d);width:0;transition:width .3s}
+  .scoretxt{font-size:.85rem;font-weight:700;color:#334155}
+  .muster{white-space:pre-wrap;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:13px 15px;font-size:.9rem;display:none}
+  .muster.show{display:block}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .smallnote{font-size:.78rem;color:var(--muted);margin-top:6px}
+  .done-banner{background:var(--okbg);border:1px solid #86efac;color:#14532d;border-radius:10px;padding:12px 14px;font-weight:700;margin-bottom:14px;display:none}
+  .done-banner.show{display:block}
+  @media(max-width:760px){
+    .app{flex-direction:column;height:auto}
+    .inbox{width:100%;flex:none;max-height:38vh}
+    .reader{height:auto}
+  }
+
+  /* Integrierte Referenz-Ansichten */
+  .topbar button.reflink{font-size:.8rem;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);padding:6px 11px;border-radius:8px;cursor:pointer;font-weight:600}
+  .topbar button.reflink:hover{background:rgba(255,255,255,.28)}
+  .inlink{color:var(--brand);cursor:pointer;text-decoration:underline;font-weight:600}
+  .overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;flex-direction:column;z-index:200}
+  .overlay.show{display:flex}
+  .overlay-bar{background:#0f172a;color:#fff;padding:9px 16px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+  .overlay-bar button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:700}
+  #refFrame{flex:1;width:100%;border:0;background:#fff}
+
+  /* ===================== iPad / Touch-Optimierung ===================== */
+  html{-webkit-text-size-adjust:100%}
+  @supports(height:100dvh){
+    .app{height:calc(100dvh - 52px)}
+    body.teacher .app{height:calc(100dvh - 52px - 27px)}
+  }
+  .reader,.inbox{-webkit-overflow-scrolling:touch}
+  button,.mail,.opt,.lawopt,.inlink,.stepchip,a.reflink{touch-action:manipulation}
+  button,.opt,.lawopt,.mail{-webkit-tap-highlight-color:rgba(29,78,216,.12)}
+  .topbar{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+
+  /* Tablet Hochformat (z. B. iPad 768–1024): Posteingang oben, breite Lesefläche darunter */
+  @media (max-width:1024px) and (min-width:761px){
+    .app{flex-direction:column;height:auto}
+    .inbox{width:100%;flex:none;max-height:34vh}
+    .reader{height:auto;padding:18px 20px 70px}
+  }
+
+  /* Touch-Geräte: größere Tippflächen & Schrift */
+  @media (pointer:coarse){
+    body{font-size:16px}
+    .reader{padding:18px 22px 80px}
+    button.action,button.ghost{min-height:46px;padding:12px 18px;font-size:1rem}
+    .topbar button.reflink,.topbar button.tbtn{min-height:42px;padding:10px 14px;font-size:.9rem}
+    .topbar .logo{font-size:1.1rem}
+    .mail{padding:15px 16px;gap:12px}
+    .mail .mfrom{font-size:.96rem}.mail .msub{font-size:.9rem}.mail .mprev{font-size:.82rem}
+    .mail .dot{width:11px;height:11px;flex:0 0 11px}
+    .inbox-head{font-size:1rem;padding:14px 16px}
+    .stepchip{font-size:.82rem;padding:8px 13px}
+    .card{padding:18px 18px}
+    .card h3{font-size:1.08rem}
+    .opt{padding:14px 15px;font-size:1rem;margin:7px 0}
+    .opt input[type=radio]{width:22px;height:22px;margin-right:11px;vertical-align:middle}
+    .lawopt{padding:14px 13px;font-size:.96rem}
+    .lawopt input[type=checkbox]{width:21px;height:21px;margin-top:2px}
+    .lawgrid{gap:10px}
+    textarea.answer{font-size:16px;min-height:300px;padding:14px;line-height:1.55}
+    .checkitem{font-size:.95rem;padding:9px 12px}
+    .checkitem .ci{flex:0 0 22px}
+    .muster{font-size:.95rem;padding:15px 16px}
+    .aufgabe{font-size:.96rem;padding:13px 15px}
+    .overlay-bar{padding:12px 16px}
+    .overlay-bar button{min-height:42px;padding:9px 15px}
+  }
+
+  .fieldlbl{display:block;font-size:.8rem;font-weight:700;color:#475569;margin:10px 0 4px}
+  .subjectfield{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px 12px;font-size:1rem;font-family:inherit}
+  .subjfb{display:flex;flex-wrap:wrap;gap:8px;margin:7px 0 2px}
+  .crit{font-size:.82rem;font-weight:700;color:#64748b;background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+  .crit.ok{background:var(--okbg);border-color:#86efac;color:var(--ok)}
+  .bausteinpanel{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 14px;margin:12px 0}
+  .bptitle{font-weight:700;font-size:.9rem;margin-bottom:6px;color:#1e3a8a}
+  #bausteinList{margin:0;padding-left:20px}
+  #bausteinList li{margin:6px 0;font-size:.92rem}
+  #bausteinList .bp{font-weight:800;color:var(--brand);white-space:nowrap}
+
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .subjectwrap{position:relative}
+  .subjectwrap .subjectfield{padding-right:46px}
+  .tipbtn{position:absolute;right:6px;top:6px;width:34px;height:34px;border:1px solid #fde68a;background:#fef9c3;border-radius:8px;cursor:pointer;font-size:1.05rem;line-height:1}
+  .tipbox{display:none;position:absolute;right:0;top:48px;z-index:6;background:#0f172a;color:#fff;border-radius:10px;padding:11px 14px;font-size:.86rem;line-height:1.5;max-width:360px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+  .tipbox.show{display:block}
+  .crit{display:none}
+  .crit.ok{display:inline-block}
+  .locknote{font-size:.85rem;color:var(--warn);background:var(--warnbg);border:1px solid #fde68a;border-radius:8px;padding:8px 11px;margin:8px 0;display:none}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <div class="logo">📧 Übungsportal · Kaufvertragsstörungen</div>
+    <div class="sub">Bürobedarf &amp; Handel · B2B · Vorbereitung Schulaufgabe</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="reflink" onclick="openRef('gesetze')">📖 Gesetzestexte</button>
+  <button class="reflink" onclick="openRef('leitfaden')">🧭 Prüfleitfaden</button>
+  <button class="tbtn" id="teacherBtn">🔑 Lehrer-Login</button>
+</div>
+<div class="teacherbanner">👩‍🏫 <strong>Lehrer-Modus aktiv</strong> – Theorie-Checks werden übersprungen, alle Stufen und Musterlösungen sind freigeschaltet. <button class="ghost" style="padding:2px 10px;font-size:.8rem" id="teacherOff">verlassen</button></div>
+
+<div class="app">
+  <aside class="inbox">
+    <div class="inbox-head">📥 Posteingang <span class="badge-count" id="unreadCount">0</span></div>
+    <div id="mailList"></div>
+  </aside>
+  <main class="reader" id="reader">
+    <div class="placeholder">
+      <div class="big">✉️</div>
+      <p>Wähle links eine E-Mail aus.<br>Zuerst beantwortest du ein paar Theoriefragen – danach kannst du die E-Mail lesen und bearbeiten.</p>
+    </div>
+  </main>
+</div>
+
+<div class="overlay" id="refOverlay">
+  <div class="overlay-bar"><span id="refTitle"></span><button onclick="closeRef()">✕ Schließen</button></div>
+  <iframe id="refFrame" title="Referenz"></iframe>
+</div>
+<template id="tpl-gesetze"><style>
+  :root{
+    --bg:#f4f6fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;
+    --brand:#1d4ed8;--bgb:#0e7490;--hgb:#b45309;
+    --lv:#1d4ed8;--mangel:#7c3aed;--zahlung:#15803d;--grund:#475569;
+    --orig:#0f172a;--origbg:#f1f5f9;--einfach:#065f46;--einfachbg:#ecfdf5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.55}
+  header.top{background:linear-gradient(135deg,#1d4ed8,#0e7490);color:#fff;padding:26px 20px}
+  header.top .wrap{max-width:1000px;margin:0 auto}
+  header.top h1{margin:0 0 6px;font-size:1.6rem}
+  header.top p{margin:2px 0;opacity:.95;font-size:.92rem}
+  .controls{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);
+            padding:10px 20px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center}
+  .ctl-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .ctl-group .lab{font-size:.75rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-right:2px}
+  button.chip{font-size:.82rem;border:1px solid #cbd5e1;background:#fff;color:#334155;
+              padding:6px 12px;border-radius:999px;cursor:pointer;font-weight:600}
+  button.chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  button.mode{font-size:.82rem;border:1px solid #cbd5e1;background:#fff;color:#334155;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+  button.mode.active{background:#0f172a;color:#fff;border-color:#0f172a}
+  main{max-width:1000px;margin:0 auto;padding:22px 20px 80px}
+  .secttitle{font-size:1.15rem;margin:26px 0 6px;padding-left:12px;border-left:5px solid var(--brand)}
+  .law{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0;
+       box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .law h3{margin:0 0 4px;font-size:1.05rem;display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+  .law h3 .num{color:var(--brand);font-weight:800}
+  .badge{display:inline-block;font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .b-bgb{background:#cffafe;color:#155e75}.b-hgb{background:#fef3c7;color:#92400e}
+  .b-lv{background:#dbeafe;color:#1e3a8a}.b-mangel{background:#ede9fe;color:#6b21a8}
+  .b-zahlung{background:#dcfce7;color:#166534}.b-grund{background:#e2e8f0;color:#334155}
+  .txtblock{border-radius:10px;padding:10px 13px;margin:9px 0;font-size:.92rem}
+  .orig{background:var(--origbg);border:1px solid #e2e8f0}
+  .orig .tag{font-size:.7rem;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.04em}
+  .einfach{background:var(--einfachbg);border:1px solid #a7f3d0}
+  .einfach .tag{font-size:.7rem;font-weight:800;color:var(--einfach);text-transform:uppercase;letter-spacing:.04em}
+  .orig p,.einfach p{margin:5px 0}
+  .orig .abs{display:block;margin:4px 0}
+  .auszug{font-size:.7rem;color:var(--muted);font-style:italic}
+  /* visibility modes */
+  body.mode-orig .einfach{display:none}
+  body.mode-einfach .orig{display:none}
+  .hidden{display:none !important}
+  .hint{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 15px;font-size:.9rem;margin:10px 0}
+  .muted{color:var(--muted);font-size:.85rem}
+  .footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:34px}
+  @media print{.controls{display:none}.einfach,.orig{display:block !important}header.top{-webkit-print-color-adjust:exact;print-color-adjust:exact}.law{break-inside:avoid}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <h1>Gesetzestextsammlung — Kaufvertragsstörungen</h1>
+    <p>Alle benötigten Paragraphen (BGB &amp; HGB) · Originaltext und zusätzlich in einfacher Sprache</p>
+    <p>ÖB · Klasse Z10 · Themen: Lieferverzug · mangelhafte Lieferung · Zahlungsverzug · einbindbar ins Übungsportal</p>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="ctl-group">
+    <span class="lab">Sprache</span>
+    <button class="mode" data-mode="orig">Originaltext</button>
+    <button class="mode" data-mode="einfach">Einfache Sprache</button>
+    <button class="mode active" data-mode="both">Beide</button>
+  </div>
+  <div class="ctl-group">
+    <span class="lab">Thema</span>
+    <button class="chip active" data-thema="all">Alle</button>
+    <button class="chip" data-thema="grund">Grundlagen</button>
+    <button class="chip" data-thema="lv">Lieferverzug</button>
+    <button class="chip" data-thema="mangel">Mangel</button>
+    <button class="chip" data-thema="zahlung">Zahlungsverzug</button>
+  </div>
+</div>
+
+<main>
+  <div class="hint">
+    <strong>So nutzt du die Sammlung:</strong> Oben kannst du zwischen <em>Originaltext</em>, <em>einfacher Sprache</em> oder
+    <em>beidem</em> umschalten und nach Thema filtern. Lange Paragraphen sind teilweise als <span class="auszug">Auszug</span>
+    gekennzeichnet (nur die für den Unterricht wichtigen Absätze). Stand der Gesetzestexte: 2026.
+  </div>
+
+  <!-- ===================== GRUNDLAGEN ===================== -->
+  <h2 class="secttitle">Grundlagen des Kaufvertrags</h2>
+
+  <div class="law" data-thema="grund zahlung mangel">
+    <h3><span class="num">§ 433 BGB</span> Vertragstypische Pflichten beim Kaufvertrag <span class="badge b-bgb">BGB</span> <span class="badge b-grund">Grundlage</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">(1) Durch den Kaufvertrag wird der Verkäufer einer Sache verpflichtet, dem Käufer die Sache zu übergeben und das Eigentum an der Sache zu verschaffen. Der Verkäufer hat dem Käufer die Sache frei von Sach- und Rechtsmängeln zu verschaffen.</span>
+      <span class="abs">(2) Der Käufer ist verpflichtet, dem Verkäufer den vereinbarten Kaufpreis zu zahlen und die gekaufte Sache abzunehmen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Ein Kaufvertrag hat zwei Seiten. Der <strong>Verkäufer</strong> muss die Ware liefern – pünktlich, mangelfrei und als Eigentum. Der <strong>Käufer</strong> muss den vereinbarten Preis zahlen und die Ware annehmen.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="grund lv">
+    <h3><span class="num">§ 241 BGB</span> Pflichten aus dem Schuldverhältnis <span class="badge b-bgb">BGB</span> <span class="badge b-grund">Grundlage</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">(1) Kraft des Schuldverhältnisses ist der Gläubiger berechtigt, von dem Schuldner eine Leistung zu fordern. Die Leistung kann auch in einem Unterlassen bestehen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Wer einen Vertrag geschlossen hat, darf die vereinbarte Leistung verlangen. Der Käufer darf also darauf <strong>bestehen, dass geliefert wird</strong> (Erfüllungsanspruch).</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="grund lv">
+    <h3><span class="num">§ 271 BGB</span> Leistungszeit <span class="badge b-bgb">BGB</span> <span class="badge b-grund">Grundlage</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">(1) Ist eine Zeit für die Leistung weder bestimmt noch aus den Umständen zu entnehmen, so kann der Gläubiger die Leistung sofort verlangen, der Schuldner sie sofort bewirken.</span>
+      <span class="abs">(2) Ist eine Zeit bestimmt, so ist im Zweifel anzunehmen, dass der Gläubiger die Leistung nicht vor dieser Zeit verlangen, der Schuldner aber sie vorher bewirken kann.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Ist <strong>kein Termin</strong> vereinbart, darf man sofort liefern und sofort verlangen. Ist ein <strong>Termin</strong> vereinbart, gilt dieser. Fälligkeit = der Zeitpunkt, ab dem geliefert/gezahlt werden muss.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="grund">
+    <h3><span class="num">§ 247 BGB</span> Basiszinssatz <span class="badge b-bgb">BGB</span> <span class="badge b-grund">Grundlage</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Der Basiszinssatz beträgt 3,62 Prozent. Er verändert sich zum 1. Januar und 1. Juli eines jeden Jahres … Die Deutsche Bundesbank gibt den geltenden Basiszinssatz … bekannt.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Der Basiszinssatz ist ein Wert, den die <strong>Bundesbank halbjährlich</strong> (1.1. und 1.7.) festlegt. <strong>Aktuell 2026: 1,27 %.</strong> Auf ihn rechnet man die Prozentpunkte für die Verzugszinsen (§ 288) drauf.</p>
+    </div>
+  </div>
+
+  <!-- ===================== LIEFERVERZUG ===================== -->
+  <h2 class="secttitle" style="border-color:var(--lv)">Lieferverzug (verspätete / ausbleibende Lieferung)</h2>
+
+  <div class="law" data-thema="lv zahlung">
+    <h3><span class="num">§ 286 BGB</span> Verzug des Schuldners <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span> <span class="badge b-zahlung">Zahlungsverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Leistet der Schuldner auf eine Mahnung des Gläubigers nicht, die nach dem Eintritt der Fälligkeit erfolgt, so kommt er durch die Mahnung in Verzug.</span>
+      <span class="abs">(2) Der Mahnung bedarf es nicht, wenn<br>1. für die Leistung eine Zeit nach dem Kalender bestimmt ist,<br>2. der Leistung ein Ereignis vorauszugehen hat und eine angemessene Zeit für die Leistung in der Weise bestimmt ist, dass sie sich von dem Ereignis an nach dem Kalender berechnen lässt,<br>3. der Schuldner die Leistung ernsthaft und endgültig verweigert,<br>4. aus besonderen Gründen unter Abwägung der beiderseitigen Interessen der sofortige Eintritt des Verzugs gerechtfertigt ist.</span>
+      <span class="abs">(3) Der Schuldner einer Entgeltforderung kommt spätestens in Verzug, wenn er nicht innerhalb von 30 Tagen nach Fälligkeit und Zugang einer Rechnung … leistet; gegenüber einem Verbraucher gilt dies nur, wenn auf diese Folgen in der Rechnung besonders hingewiesen wurde.</span>
+      <span class="abs">(4) Der Schuldner kommt nicht in Verzug, solange die Leistung infolge eines Umstands unterbleibt, den er nicht zu vertreten hat.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p><strong>Verzug</strong> heißt: Der Schuldner liefert oder zahlt zu spät, obwohl er schon müsste (= fällig). Meist braucht es vorher eine <strong>Mahnung</strong>.</p>
+      <p><strong>Keine Mahnung nötig</strong>, wenn:<br>1. ein <strong>fester Kalendertermin</strong> vereinbart ist („Lieferung am 27.06.“),<br>2. sich der Termin aus einem Ereignis berechnen lässt,<br>3. der Schuldner <strong>ernsthaft verweigert</strong>,<br>4. besondere Gründe den sofortigen Verzug rechtfertigen.</p>
+      <p>Bei <strong>Geldforderungen</strong>: spätestens 30 Tage nach Rechnung + Fälligkeit (bei Verbrauchern nur mit Hinweis auf der Rechnung). <strong>Kein Verzug</strong>, wenn der Schuldner nichts dafür kann (z. B. höhere Gewalt).</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv mangel zahlung">
+    <h3><span class="num">§ 280 BGB</span> Schadensersatz wegen Pflichtverletzung <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">(1) Verletzt der Schuldner eine Pflicht aus dem Schuldverhältnis, so kann der Gläubiger Ersatz des hierdurch entstehenden Schadens verlangen. Dies gilt nicht, wenn der Schuldner die Pflichtverletzung nicht zu vertreten hat.</span>
+      <span class="abs">(2) Schadensersatz wegen Verzögerung der Leistung kann der Gläubiger nur unter der zusätzlichen Voraussetzung des § 286 verlangen.</span>
+      <span class="abs">(3) Schadensersatz statt der Leistung kann der Gläubiger nur unter den zusätzlichen Voraussetzungen des § 281, des § 282 oder des § 283 verlangen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Verletzt jemand eine Pflicht aus dem Vertrag, muss er den <strong>Schaden ersetzen</strong> – außer er kann nichts dafür. Schadensersatz <strong>wegen Verspätung</strong> gibt es nur, wenn auch Verzug vorliegt (§ 286). Schadensersatz <strong>statt der Leistung</strong> nur unter § 281.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv mangel">
+    <h3><span class="num">§ 281 BGB</span> Schadensersatz statt der Leistung <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Soweit der Schuldner die fällige Leistung nicht oder nicht wie geschuldet erbringt, kann der Gläubiger unter den Voraussetzungen des § 280 Abs. 1 Schadensersatz statt der Leistung verlangen, wenn er dem Schuldner erfolglos eine angemessene Frist zur Leistung oder Nacherfüllung bestimmt hat. …</span>
+      <span class="abs">(2) Die Fristsetzung ist entbehrlich, wenn der Schuldner die Leistung ernsthaft und endgültig verweigert oder wenn besondere Umstände vorliegen, die … die sofortige Geltendmachung des Schadensersatzanspruchs rechtfertigen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Liefert der Schuldner trotz <strong>angemessener Frist</strong> nicht (richtig), kann der Käufer <strong>statt der Lieferung Schadensersatz</strong> verlangen – z. B. die <strong>Mehrkosten eines Deckungskaufs</strong> (teurerer Ersatzlieferant). <strong>Keine Frist</strong> nötig, wenn der Schuldner ernsthaft verweigert.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv mangel">
+    <h3><span class="num">§ 284 BGB</span> Ersatz vergeblicher Aufwendungen <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">Anstelle des Schadensersatzes statt der Leistung kann der Gläubiger Ersatz der Aufwendungen verlangen, die er im Vertrauen auf den Erhalt der Leistung gemacht hat und billigerweise machen durfte, es sei denn, deren Zweck wäre auch ohne die Pflichtverletzung des Schuldners nicht erreicht worden.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Statt „Schadensersatz statt der Leistung“ kann man auch <strong>vergebliche Ausgaben</strong> ersetzt verlangen, die man im Vertrauen auf die Lieferung gemacht hat – z. B. bereits gedruckte Werbung oder Flyer für die bestellte Ware.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv mangel">
+    <h3><span class="num">§ 323 BGB</span> Rücktritt wegen nicht oder nicht vertragsgemäß erbrachter Leistung <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Erbringt bei einem gegenseitigen Vertrag der Schuldner eine fällige Leistung nicht oder nicht vertragsgemäß, so kann der Gläubiger, wenn er dem Schuldner erfolglos eine angemessene Frist zur Leistung oder Nacherfüllung bestimmt hat, vom Vertrag zurücktreten.</span>
+      <span class="abs">(2) Die Fristsetzung ist entbehrlich, wenn<br>1. der Schuldner die Leistung ernsthaft und endgültig verweigert,<br>2. der Schuldner die Leistung bis zu einem im Vertrag bestimmten Termin … nicht bewirkt und der Gläubiger … den Fortbestand seines Leistungsinteresses an die Rechtzeitigkeit der Leistung gebunden hat,<br>3. … besondere Umstände vorliegen, die … den sofortigen Rücktritt rechtfertigen.</span>
+      <span class="abs">(5) … Hat der Schuldner die Leistung nicht vertragsgemäß bewirkt, so kann der Gläubiger vom Vertrag nicht zurücktreten, wenn die Pflichtverletzung unerheblich ist.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Liefert der Schuldner nicht (richtig), kann der Gläubiger nach <strong>erfolgloser angemessener Frist zurücktreten</strong> – der Vertrag wird rückabgewickelt. <strong>Keine Frist</strong> nötig, wenn er ernsthaft verweigert, ein <strong>Fixtermin</strong> verstrichen ist oder besondere Gründe vorliegen. Bei nur <strong>unerheblichem Mangel</strong> ist kein Rücktritt möglich.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv">
+    <h3><span class="num">§ 325 BGB</span> Schadensersatz und Rücktritt <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">Das Recht, bei einem gegenseitigen Vertrag Schadensersatz zu verlangen, wird durch den Rücktritt nicht ausgeschlossen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Man darf <strong>zurücktreten UND zusätzlich Schadensersatz</strong> verlangen. Beides zusammen ist erlaubt – z. B. Rücktritt vom Vertrag und Ersatz der Mehrkosten des Deckungskaufs.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv mangel">
+    <h3><span class="num">§ 275 BGB</span> Ausschluss der Leistungspflicht (Unmöglichkeit) <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Der Anspruch auf Leistung ist ausgeschlossen, soweit diese für den Schuldner oder für jedermann unmöglich ist.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Was <strong>unmöglich</strong> ist, muss niemand leisten. Ist die Ware z. B. durch eine <strong>Umweltkatastrophe / höhere Gewalt</strong> zerstört, entfällt die Lieferpflicht. Dann liegt kein verschuldeter Verzug vor (siehe § 286 Abs. 4).</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv">
+    <h3><span class="num">§ 276 BGB</span> Verantwortlichkeit des Schuldners (Verschulden) <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Der Schuldner hat Vorsatz und Fahrlässigkeit zu vertreten, wenn eine strengere oder mildere Haftung weder bestimmt noch aus dem sonstigen Inhalt des Schuldverhältnisses … zu entnehmen ist.</span>
+      <span class="abs">(2) Fahrlässig handelt, wer die im Verkehr erforderliche Sorgfalt außer Acht lässt.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Man haftet für <strong>Vorsatz</strong> (absichtlich) und <strong>Fahrlässigkeit</strong> (unvorsichtig). Fahrlässig = wer die nötige Sorgfalt außer Acht lässt. Bei <strong>höherer Gewalt</strong> (z. B. Hochwasser, Streik) trifft den Lieferer <strong>kein Verschulden</strong> → kein Verzug.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv mangel">
+    <h3><span class="num">§ 326 BGB</span> Rücktritt bei Unmöglichkeit <span class="badge b-bgb">BGB</span> <span class="badge b-lv">Lieferverzug</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug, Abs. 5)</span></span>
+      <span class="abs">(5) Braucht der Schuldner nach § 275 Abs. 1 bis 3 nicht zu leisten, kann der Gläubiger zurücktreten; auf den Rücktritt findet § 323 mit der Maßgabe entsprechende Anwendung, dass die Fristsetzung entbehrlich ist.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Ist die Leistung <strong>unmöglich</strong> (z. B. die bestellte Ware ist nicht mehr lieferbar), kann der Gläubiger <strong>sofort zurücktreten – ohne Frist</strong> zu setzen. Wichtig bei „Nacherfüllung nicht möglich“.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="lv">
+    <h3><span class="num">§ 376 HGB</span> Fixhandelskauf <span class="badge b-hgb">HGB</span> <span class="badge b-lv">Lieferverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug, Abs. 1)</span></span>
+      <span class="abs">(1) Ist bedungen, dass die Leistung des einen Teiles genau zu einer festbestimmten Zeit oder innerhalb einer festbestimmten Frist bewirkt werden soll, so kann der andere Teil, wenn die Leistung nicht zu der bestimmten Zeit … erfolgt, von dem Vertrage zurücktreten oder, falls der Schuldner im Verzug ist, statt der Erfüllung Schadensersatz wegen Nichterfüllung verlangen. Erfüllung kann er nur verlangen, wenn er sofort nach dem Ablaufe der Zeit … dem Gegner anzeigt, dass er auf Erfüllung bestehe.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p><strong>Fixhandelskauf</strong> (Geschäft zwischen Firmen mit festem Termin): Wird der <strong>Fixtermin verpasst</strong>, kann der Käufer <strong>sofort zurücktreten</strong> oder Schadensersatz verlangen – <strong>ohne Nachfrist</strong>. Auf Lieferung bestehen kann er nur, wenn er das sofort meldet. (Präziser als § 323 BGB bei festen Terminen im B2B.)</p>
+    </div>
+  </div>
+
+  <!-- ===================== MANGELHAFTE LIEFERUNG ===================== -->
+  <h2 class="secttitle" style="border-color:var(--mangel)">Mangelhafte Lieferung</h2>
+
+  <div class="law" data-thema="mangel">
+    <h3><span class="num">§ 434 BGB</span> Sachmangel <span class="badge b-bgb">BGB</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug, Fassung ab 01.01.2022)</span></span>
+      <span class="abs">(1) Die Sache ist frei von Sachmängeln, wenn sie bei Gefahrübergang den subjektiven Anforderungen, den objektiven Anforderungen und den Montageanforderungen dieser Vorschrift entspricht.</span>
+      <span class="abs">(2) Die Sache entspricht den <strong>subjektiven</strong> Anforderungen, wenn sie u. a. die <strong>vereinbarte Beschaffenheit</strong> hat, sich für die nach dem Vertrag vorausgesetzte Verwendung eignet und mit dem vereinbarten Zubehör übergeben wird.</span>
+      <span class="abs">(3) Die Sache entspricht den <strong>objektiven</strong> Anforderungen, wenn sie sich für die gewöhnliche Verwendung eignet und eine Beschaffenheit aufweist, die bei Sachen derselben Art üblich ist … (u. a. richtige Menge / Qualität).</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Die Ware ist <strong>mangelfrei</strong>, wenn sie passt – und zwar dreifach:<br>• zum <strong>Vereinbarten</strong> (richtiges Modell, Menge, Farbe, Eigenschaften),<br>• zum <strong>Üblichen/Erwartbaren</strong>,<br>• und sie sich richtig <strong>montieren</strong> lässt.</p>
+      <p>Stimmt etwas davon nicht – <strong>falsches Produkt, falsche Menge, falsche Farbe/Beschaffenheit oder beschädigt</strong> – liegt ein <strong>Sachmangel</strong> vor.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="mangel">
+    <h3><span class="num">§ 437 BGB</span> Rechte des Käufers bei Mängeln <span class="badge b-bgb">BGB</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">Ist die Sache mangelhaft, kann der Käufer, wenn die Voraussetzungen der folgenden Vorschriften vorliegen und soweit nicht ein anderes bestimmt ist,<br>1. nach § 439 Nacherfüllung verlangen,<br>2. nach den §§ 440, 323 und 326 Abs. 5 von dem Vertrag zurücktreten oder nach § 441 den Kaufpreis mindern und<br>3. nach den §§ 440, 280, 281, 283 und 311a Schadensersatz oder nach § 284 Ersatz vergeblicher Aufwendungen verlangen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Die <strong>zentrale Übersichtsnorm</strong>: Bei einem Mangel hat der Käufer drei Wege:<br>1. <strong>Nacherfüllung</strong> (§ 439),<br>2. <strong>Rücktritt</strong> (§§ 440, 323, 326 V) <em>oder</em> <strong>Minderung</strong> (§ 441),<br>3. <strong>Schadensersatz</strong> (§§ 280, 281 …) oder Ersatz vergeblicher <strong>Aufwendungen</strong> (§ 284).</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="mangel">
+    <h3><span class="num">§ 439 BGB</span> Nacherfüllung <span class="badge b-bgb">BGB</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Der Käufer kann als Nacherfüllung nach seiner Wahl die Beseitigung des Mangels oder die Lieferung einer mangelfreien Sache verlangen.</span>
+      <span class="abs">(2) Der Verkäufer hat die zum Zwecke der Nacherfüllung erforderlichen Aufwendungen, insbesondere Transport-, Wege-, Arbeits- und Materialkosten, zu tragen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p><strong>Nacherfüllung</strong> = zweite Chance für den Verkäufer. Der <strong>Käufer wählt</strong>: entweder <strong>Mangel beseitigen</strong> (Reparatur) oder <strong>neue, mangelfreie Ware</strong> liefern. Die Kosten dafür trägt der <strong>Verkäufer</strong>.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="mangel">
+    <h3><span class="num">§ 440 BGB</span> Besondere Bestimmungen für Rücktritt und Schadensersatz <span class="badge b-bgb">BGB</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">Außer in den Fällen des § 281 Abs. 2 und des § 323 Abs. 2 bedarf es der Fristsetzung auch dann nicht, wenn der Verkäufer beide Arten der Nacherfüllung … verweigert oder wenn die dem Käufer zustehende Art der Nacherfüllung fehlgeschlagen oder ihm unzumutbar ist. Eine Nachbesserung gilt nach dem erfolglosen zweiten Versuch als fehlgeschlagen …</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p><strong>Keine Nachfrist nötig</strong>, wenn der Verkäufer die Nacherfüllung <strong>verweigert</strong>, sie <strong>fehlgeschlagen</strong> (zwei misslungene Reparaturversuche) oder <strong>unzumutbar</strong> ist. Dann darf der Käufer direkt <strong>zurücktreten oder mindern</strong>.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="mangel">
+    <h3><span class="num">§ 441 BGB</span> Minderung <span class="badge b-bgb">BGB</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Statt zurückzutreten, kann der Käufer den Kaufpreis durch Erklärung gegenüber dem Verkäufer mindern. …</span>
+      <span class="abs">(3) Bei der Minderung ist der Kaufpreis in dem Verhältnis herabzusetzen, in welchem zur Zeit des Vertragsschlusses der Wert der Sache in mangelfreiem Zustand zu dem wirklichen Wert gestanden haben würde.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p><strong>Minderung</strong> = der Käufer <strong>behält die mangelhafte Ware</strong>, zahlt aber <strong>weniger</strong>. Der Preis wird im Verhältnis zum Wertverlust gesenkt. Alternative zum Rücktritt.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="mangel">
+    <h3><span class="num">§ 377 HGB</span> Untersuchungs- und Rügepflicht <span class="badge b-hgb">HGB</span> <span class="badge b-mangel">Mangel</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Ist der Kauf für beide Teile ein Handelsgeschäft, so hat der Käufer die Ware unverzüglich nach der Ablieferung … zu untersuchen und, wenn sich ein Mangel zeigt, dem Verkäufer unverzüglich Anzeige zu machen.</span>
+      <span class="abs">(2) Unterlässt der Käufer die Anzeige, so gilt die Ware als genehmigt, es sei denn, dass es sich um einen Mangel handelt, der bei der Untersuchung nicht erkennbar war.</span>
+      <span class="abs">(3) Zeigt sich später ein solcher Mangel, so muss die Anzeige unverzüglich nach der Entdeckung gemacht werden; anderenfalls gilt die Ware auch in Ansehung dieses Mangels als genehmigt.</span>
+      <span class="abs">(4) Zur Erhaltung der Rechte des Käufers genügt die rechtzeitige Absendung der Anzeige.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Kaufen <strong>zwei Firmen</strong> (Handelskauf), muss der Käufer die Ware <strong>sofort prüfen</strong> und Mängel <strong>sofort melden</strong> („rügen“). <strong>„Unverzüglich“ = ohne schuldhaftes Zögern.</strong> Wer schweigt, bei dem gilt die Ware als <strong>genehmigt</strong> – die Mängelrechte sind weg (Genehmigungsfiktion). <strong>Versteckte</strong> Mängel sofort nach Entdeckung melden. <em>Im Privatkauf (B2C) gilt diese Rügepflicht nicht.</em></p>
+    </div>
+  </div>
+
+  <!-- ===================== ZAHLUNGSVERZUG ===================== -->
+  <h2 class="secttitle" style="border-color:var(--zahlung)">Zahlungsverzug</h2>
+
+  <div class="law" data-thema="zahlung">
+    <h3><span class="num">§ 288 BGB</span> Verzugszinsen und sonstiger Verzugsschaden <span class="badge b-bgb">BGB</span> <span class="badge b-zahlung">Zahlungsverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Eine Geldschuld ist während des Verzugs zu verzinsen. Der Verzugszinssatz beträgt für das Jahr fünf Prozentpunkte über dem Basiszinssatz.</span>
+      <span class="abs">(2) Bei Rechtsgeschäften, an denen ein Verbraucher nicht beteiligt ist, beträgt der Zinssatz für Entgeltforderungen neun Prozentpunkte über dem Basiszinssatz.</span>
+      <span class="abs">(5) Der Gläubiger einer Entgeltforderung hat bei Verzug des Schuldners, wenn dieser kein Verbraucher ist, außerdem einen Anspruch auf Zahlung einer Pauschale in Höhe von 40 Euro. …</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Bei Zahlungsverzug gibt es <strong>Verzugszinsen</strong>:<br>• <strong>Privat (B2C):</strong> 5 Prozentpunkte über dem Basiszins (2026 = 6,27 %).<br>• <strong>Zwischen Firmen (B2B):</strong> 9 Prozentpunkte über dem Basiszins (2026 = 10,27 %).</p>
+      <p>Zusätzlich darf man zwischen Firmen eine <strong>40-€-Pauschale</strong> verlangen (nicht gegenüber Verbrauchern).</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="zahlung">
+    <h3><span class="num">§ 433 Abs. 2 BGB</span> Kaufpreiszahlung <span class="badge b-bgb">BGB</span> <span class="badge b-zahlung">Zahlungsverzug</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext</span>
+      <span class="abs">(2) Der Käufer ist verpflichtet, dem Verkäufer den vereinbarten Kaufpreis zu zahlen und die gekaufte Sache abzunehmen.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Die <strong>Pflicht des Käufers</strong>: den Preis zahlen. Zahlt er nicht rechtzeitig, ist das die Pflichtverletzung, die zum Zahlungsverzug führt.</p>
+    </div>
+  </div>
+
+  <!-- ===================== WEITERE ===================== -->
+  <h2 class="secttitle" style="border-color:var(--grund)">Weitere Störungen &amp; Rücktrittsfolgen</h2>
+
+  <div class="law" data-thema="grund lv mangel">
+    <h3><span class="num">§ 346 BGB</span> Wirkungen des Rücktritts <span class="badge b-bgb">BGB</span> <span class="badge b-grund">Folge</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">(1) Hat sich eine Vertragspartei … den Rücktritt vorbehalten, so sind im Falle des Rücktritts die empfangenen Leistungen zurückzugewähren und die gezogenen Nutzungen herauszugeben.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p>Nach einem <strong>Rücktritt</strong> geben beide Seiten zurück, was sie bekommen haben: <strong>Ware zurück, Geld zurück</strong>. Wichtig z. B., wenn schon per Vorkasse gezahlt wurde.</p>
+    </div>
+  </div>
+
+  <div class="law" data-thema="grund">
+    <h3><span class="num">§ 293 / § 304 BGB</span> Annahmeverzug <span class="badge b-bgb">BGB</span> <span class="badge b-grund">Weitere Störung</span></h3>
+    <div class="txtblock orig"><span class="tag">Originaltext <span class="auszug">(Auszug)</span></span>
+      <span class="abs">§ 293: Der Gläubiger kommt in Verzug, wenn er die ihm angebotene Leistung nicht annimmt.</span>
+      <span class="abs">§ 304: Der Schuldner kann im Falle des Verzugs des Gläubigers Ersatz der Mehraufwendungen verlangen, die er für das erfolglose Angebot sowie für die Aufbewahrung … machen musste.</span>
+    </div>
+    <div class="txtblock einfach"><span class="tag">Einfach erklärt</span>
+      <p><strong>Annahmeverzug</strong>: Der <strong>Käufer nimmt die richtig angebotene Ware nicht an</strong>. Folge: Der Verkäufer kann seine <strong>Mehrkosten</strong> (z. B. Lagerung, erneute Anlieferung) ersetzt verlangen.</p>
+    </div>
+  </div>
+
+  <p class="footer">Gesetzestextsammlung · Kaufvertragsstörungen · ÖB Z10 · Stand 2026 · Auszüge dienen Unterrichtszwecken; maßgeblich ist der amtliche Gesetzestext.</p>
+</main>
+
+<script>
+  // Sprache (Modus) umschalten
+  document.querySelectorAll('button.mode').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('button.mode').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.body.className='mode-'+b.dataset.mode;
+    });
+  });
+  // Thema filtern
+  document.querySelectorAll('button.chip').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('button.chip').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const t=b.dataset.thema;
+      document.querySelectorAll('.law').forEach(law=>{
+        const themes=(law.dataset.thema||'').split(' ');
+        law.classList.toggle('hidden', t!=='all' && !themes.includes(t));
+      });
+      // Abschnittsüberschriften ausblenden, wenn kein sichtbares Gesetz folgt
+      document.querySelectorAll('.secttitle').forEach(h=>{
+        let n=h.nextElementSibling, vis=false;
+        while(n && !n.classList.contains('secttitle')){
+          if(n.classList.contains('law') && !n.classList.contains('hidden')) vis=true;
+          n=n.nextElementSibling;
+        }
+        h.classList.toggle('hidden', !vis);
+      });
+    });
+  });
+</script>
+</template>
+<template id="tpl-leitfaden"><style>
+  :root{
+    --bg:#f4f6fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;
+    --brand:#1d4ed8;--lv:#1d4ed8;--mangel:#7c3aed;--zahlung:#15803d;
+    --ok:#15803d;--okbg:#dcfce7;--warn:#b45309;--warnbg:#fef3c7;--no:#b91c1c;--nobg:#fee2e2;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.55}
+  header.top{background:linear-gradient(135deg,#1d4ed8,#0e7490);color:#fff;padding:26px 20px}
+  header.top .wrap{max-width:1040px;margin:0 auto}
+  header.top h1{margin:0 0 6px;font-size:1.6rem}
+  header.top p{margin:2px 0;opacity:.95;font-size:.92rem}
+  nav.toc{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);
+          padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  nav.toc a{font-size:.82rem;text-decoration:none;color:var(--brand);background:#eef2ff;
+            padding:6px 12px;border-radius:999px;border:1px solid #dbe3ff}
+  nav.toc a:hover{background:var(--brand);color:#fff}
+  main{max-width:1040px;margin:0 auto;padding:22px 18px 80px}
+  h2{font-size:1.3rem;padding-left:12px;border-left:6px solid var(--brand);margin:34px 0 6px}
+  h2.lv{border-color:var(--lv)} h2.mangel{border-color:var(--mangel)} h2.zahlung{border-color:var(--zahlung)}
+  h3{font-size:1.05rem;margin:18px 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .lead{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 16px;font-size:.93rem}
+  .step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}
+  .step .no{flex:0 0 34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;
+            display:flex;align-items:center;justify-content:center;font-size:.95rem}
+  .step.lv .no{background:var(--lv)} .step.mangel .no{background:var(--mangel)} .step.zahlung .no{background:var(--zahlung)}
+  .step .body{flex:1}
+  .step .body h4{margin:2px 0 4px;font-size:1rem}
+  .para{font-weight:800;color:var(--brand);white-space:nowrap}
+  .badge{display:inline-block;font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:999px}
+  .b-yes{background:var(--okbg);color:var(--ok)} .b-no{background:var(--nobg);color:var(--no)} .b-maybe{background:var(--warnbg);color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:8px 0}
+  th,td{border:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:700}
+  tr:nth-child(even) td{background:#fafbfc}
+  .yes{color:var(--ok);font-weight:700}.no{color:var(--no);font-weight:700}
+  ul{margin:6px 0;padding-left:20px}li{margin:3px 0}
+  .callout{border-left:4px solid;border-radius:6px;padding:9px 13px;margin:9px 0;font-size:.9rem}
+  .callout.tip{border-color:var(--ok);background:var(--okbg)}
+  .callout.warn{border-color:var(--warn);background:var(--warnbg)}
+  .callout.key{border-color:var(--brand);background:#eef2ff}
+  .formula{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:12px 15px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem;margin:8px 0}
+  .muted{color:var(--muted);font-size:.85rem}
+  .footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:34px}
+  .pillrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+  .pill{font-size:.74rem;background:#eef2ff;border:1px solid #dbe3ff;color:#1e3a8a;padding:3px 9px;border-radius:999px;font-weight:600}
+  @media print{nav.toc{display:none}.card{break-inside:avoid}header.top{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <h1>Prüfleitfaden — Kaufvertragsstörungen</h1>
+    <p>Schritt-für-Schritt prüfen: Welche Störung? Welche Voraussetzungen? Welche Rechte?</p>
+    <p>ÖB · Klasse Z10 · Lieferverzug · mangelhafte Lieferung · Zahlungsverzug · einbindbar ins Übungsportal</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#start">Schnellstart</a>
+  <a href="#lv">A · Lieferverzug</a>
+  <a href="#mangel">B · Mangelhafte Lieferung</a>
+  <a href="#zahlung">C · Zahlungsverzug</a>
+  <a href="#b2b">B2B vs. B2C</a>
+</nav>
+
+<main>
+
+<!-- ===================== START ===================== -->
+<section id="start">
+  <div class="lead">
+    <strong>So prüfst du jeden Fall.</strong> Stelle dir immer drei Fragen — in dieser Reihenfolge:
+    <div class="pillrow" style="margin-top:8px">
+      <span class="pill">1 · Welche Störung liegt vor?</span>
+      <span class="pill">2 · Sind die Voraussetzungen erfüllt?</span>
+      <span class="pill">3 · Welche Rechte / Folgen ergeben sich?</span>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Welche Störung? — Schnellzuordnung</h3>
+    <table>
+      <tr><th>Erkennungsmerkmal im Fall</th><th>Störung</th><th>Leitfaden</th></tr>
+      <tr><td>Ware kommt zu spät oder gar nicht</td><td>Lieferverzug</td><td>Teil A</td></tr>
+      <tr><td>Ware ist da, aber falsch / zu wenig / beschädigt / falsche Eigenschaft</td><td>Mangelhafte Lieferung</td><td>Teil B</td></tr>
+      <tr><td>Kunde zahlt die Rechnung nicht (rechtzeitig)</td><td>Zahlungsverzug</td><td>Teil C</td></tr>
+      <tr><td>Käufer nimmt die richtig angebotene Ware nicht an</td><td>Annahmeverzug</td><td>siehe Gesetzessammlung §§ 293, 304</td></tr>
+    </table>
+    <div class="callout key"><strong>Vorfrage immer klären:</strong> Handelt es sich um ein Geschäft <strong>zwischen zwei Firmen (B2B)</strong> oder mit einem <strong>Verbraucher (B2C)</strong>? Davon hängen Rügepflicht (§ 377 HGB), Zinssatz (§ 288) und die 40-€-Pauschale ab (siehe unten).</div>
+  </div>
+</section>
+
+<!-- ===================== A · LIEFERVERZUG ===================== -->
+<section id="lv">
+  <h2 class="lv">A · Lieferverzug</h2>
+  <p class="muted">Der Verkäufer/Lieferant liefert nicht oder zu spät. Prüfe zuerst die Voraussetzungen des Verzugs, dann die Rechte.</p>
+
+  <div class="card">
+    <h3>Voraussetzungen — Schritt für Schritt</h3>
+    <div class="step lv"><div class="no">1</div><div class="body">
+      <h4>Fälligkeit <span class="para">§ 271</span></h4>
+      Die Lieferung ist fällig. Mit Termin: ab dem vereinbarten Datum. Ohne Termin: sofort.
+    </div></div>
+    <div class="step lv"><div class="no">2</div><div class="body">
+      <h4>Nichtleistung trotz Möglichkeit <span class="para">§ 275</span></h4>
+      Der Lieferant hat nicht geliefert, obwohl es ihm <strong>möglich</strong> wäre. Ist die Leistung unmöglich (Ware zerstört), → kein Verzug, sondern Unmöglichkeit (Schritt 4).
+    </div></div>
+    <div class="step lv"><div class="no">3</div><div class="body">
+      <h4>Mahnung — oder entbehrlich? <span class="para">§ 286 Abs. 1, 2</span></h4>
+      Grundsatz: Verzug erst nach <strong>Mahnung</strong>. <strong>Keine Mahnung nötig</strong> bei: fester Kalendertermin (Abs. 2 Nr. 1), berechenbarer Termin (Nr. 2), ernsthafte Verweigerung (Nr. 3), besondere Gründe (Nr. 4). Im B2B-Fixkauf zusätzlich <span class="para">§ 376 HGB</span>.
+    </div></div>
+    <div class="step lv"><div class="no">4</div><div class="body">
+      <h4>Verschulden des Lieferanten <span class="para">§ 286 Abs. 4</span>, <span class="para">§ 276</span></h4>
+      Verzug nur, wenn der Lieferant den Grund <strong>zu vertreten</strong> hat (Vorsatz/Fahrlässigkeit). Bei <strong>höherer Gewalt / Umweltkatastrophe</strong> = kein Verschulden → <strong>kein Verzug</strong> (§ 275 / § 326).
+    </div></div>
+  </div>
+
+  <div class="card">
+    <h3>Rechte des Käufers bei Lieferverzug</h3>
+    <table>
+      <tr><th>Recht</th><th>Voraussetzung</th><th>Paragraph</th></tr>
+      <tr><td><strong>Erfüllung verlangen</strong> (auf Lieferung bestehen)</td><td>ohne Nachfrist</td><td><span class="para">§ 241</span></td></tr>
+      <tr><td><strong>Schadensersatz wegen Verzögerung</strong> (Verzugsschaden)</td><td>Verzug + Schaden nachweisbar, ohne Nachfrist</td><td><span class="para">§ 280 I/II</span>, <span class="para">§ 286</span></td></tr>
+      <tr><td><strong>Rücktritt</strong> vom Kaufvertrag</td><td>nach erfolgloser <em>angemessener Frist</em> (entbehrlich bei Fixkauf/Verweigerung)</td><td><span class="para">§ 323</span></td></tr>
+      <tr><td><strong>Schadensersatz statt der Leistung</strong> (z. B. Deckungskauf-Mehrkosten)</td><td>nach erfolgloser Frist (entbehrlich bei Verweigerung/Fixkauf)</td><td><span class="para">§ 281</span></td></tr>
+      <tr><td><strong>Ersatz vergeblicher Aufwendungen</strong></td><td>statt SE statt Leistung</td><td><span class="para">§ 284</span></td></tr>
+      <tr><td><strong>Rücktritt + Schadensersatz kombiniert</strong></td><td>beides zusammen zulässig</td><td><span class="para">§ 325</span></td></tr>
+    </table>
+    <div class="callout tip"><strong>Deckungskauf:</strong> Der Käufer beschafft die Ware bei einem anderen Lieferanten – meist teurer. Die <strong>Mehrkosten</strong> (Preisdifferenz + ggf. Transport/Abholung) kann er als Schadensersatz statt der Leistung verlangen (§ 281).</div>
+  </div>
+
+  <div class="card">
+    <h3>Alle Fallkonstellationen des Lieferverzugs im Überblick</h3>
+    <table>
+      <tr><th>Konstellation</th><th>Mahnung / Frist nötig?</th><th>Verzug?</th><th>Wichtigste Rechte</th><th>Paragraphen</th></tr>
+      <tr>
+        <td><strong>Fixtermin</strong><br>(„Lieferung am 27.06. fix“)</td>
+        <td><span class="badge b-no">nein</span> Termin kalendermäßig bestimmt</td>
+        <td class="yes">ja, ab dem Tag danach</td>
+        <td>sofort Rücktritt &amp; SE statt Leistung – ohne Nachfrist</td>
+        <td><span class="para">§ 286 II Nr. 1</span>, <span class="para">§ 323 II Nr. 2</span>, <span class="para">§ 376 HGB</span></td>
+      </tr>
+      <tr>
+        <td><strong>Termin vereinbart, aber kein Fixkauf</strong></td>
+        <td><span class="badge b-no">keine Mahnung</span>, aber für Rücktritt/SE <span class="badge b-maybe">Nachfrist</span></td>
+        <td class="yes">ja, ab dem Tag danach</td>
+        <td>Erfüllung, Verzugsschaden; nach Frist Rücktritt/SE statt Leistung</td>
+        <td><span class="para">§ 286 II Nr. 1</span>, <span class="para">§ 323 I</span>, <span class="para">§ 281</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ohne Termin</strong></td>
+        <td><span class="badge b-maybe">Mahnung nötig</span></td>
+        <td class="yes">erst nach Mahnung</td>
+        <td>nach Mahnung dieselben Rechte (mit Nachfrist)</td>
+        <td><span class="para">§ 271 I</span>, <span class="para">§ 286 I</span></td>
+      </tr>
+      <tr>
+        <td><strong>Lieferant verweigert ernsthaft</strong></td>
+        <td><span class="badge b-no">nein</span></td>
+        <td class="yes">ja, sofort</td>
+        <td>sofort Rücktritt &amp; SE statt Leistung – ohne Frist</td>
+        <td><span class="para">§ 286 II Nr. 3</span>, <span class="para">§ 323 II Nr. 1</span>, <span class="para">§ 281 II</span></td>
+      </tr>
+      <tr>
+        <td><strong>Kein Verschulden / höhere Gewalt</strong><br>(Umweltkatastrophe, Streik, Ware zerstört)</td>
+        <td>—</td>
+        <td class="no">kein Verzug</td>
+        <td>kein Schadensersatz; bei Unmöglichkeit Rücktritt ohne Frist, beide werden von der Leistung frei</td>
+        <td><span class="para">§ 286 IV</span>, <span class="para">§ 275</span>, <span class="para">§ 326 V</span></td>
+      </tr>
+      <tr>
+        <td><strong>Deckungskauf</strong> (Ersatzbeschaffung teurer)</td>
+        <td>setzt Verzug voraus (s. o.)</td>
+        <td class="yes">ja</td>
+        <td>Mehrkosten = Schadensersatz statt der Leistung</td>
+        <td><span class="para">§ 281</span> (ggf. mit <span class="para">§ 323</span>/<span class="para">§ 325</span>)</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== B · MANGELHAFTE LIEFERUNG ===================== -->
+<section id="mangel">
+  <h2 class="mangel">B · Mangelhafte Lieferung</h2>
+  <p class="muted">Die Ware ist da, stimmt aber nicht. Prüfe: Liegt ein Sachmangel vor? Wurde rechtzeitig gerügt? Welche Rechte?</p>
+
+  <div class="card">
+    <h3>Voraussetzungen — Schritt für Schritt</h3>
+    <div class="step mangel"><div class="no">1</div><div class="body">
+      <h4>Sachmangel feststellen <span class="para">§ 434</span></h4>
+      Soll-Ist-Vergleich: Bestellung ↔ Auftragsbestätigung ↔ Lieferschein ↔ Wareneingangsprotokoll. Weicht etwas ab → Sachmangel. <strong>Art bestimmen</strong> (Tabelle unten).
+    </div></div>
+    <div class="step mangel"><div class="no">2</div><div class="body">
+      <h4>Prüf- und Rügepflicht (nur B2B!) <span class="para">§ 377 HGB</span></h4>
+      Bei Handelskauf: Ware <strong>unverzüglich prüfen</strong> und Mangel <strong>unverzüglich rügen</strong>. Sonst gilt die Ware als <strong>genehmigt</strong> – die Rechte sind weg (Genehmigungsfiktion). Im B2C entfällt diese Pflicht.
+    </div></div>
+    <div class="step mangel"><div class="no">3</div><div class="body">
+      <h4>Nacherfüllung verlangen <span class="para">§ 439</span></h4>
+      Erst hat der Verkäufer eine zweite Chance. Der Käufer wählt: <strong>Mangel beseitigen</strong> oder <strong>neue mangelfreie Ware</strong>.
+    </div></div>
+    <div class="step mangel"><div class="no">4</div><div class="body">
+      <h4>Nacherfüllung gescheitert / unmöglich / verweigert <span class="para">§ 440</span>, <span class="para">§ 326 V</span></h4>
+      Dann ohne weitere Frist: <strong>Rücktritt</strong> (§ 323) <em>oder</em> <strong>Minderung</strong> (§ 441) — dazu ggf. Schadensersatz/Aufwendungen.
+    </div></div>
+  </div>
+
+  <div class="card">
+    <h3>Sämtliche Mängelarten</h3>
+    <table>
+      <tr><th>Mängelart</th><th>Was ist passiert?</th><th>Beispiel (Fall Schulz)</th><th>Sachmangel?</th></tr>
+      <tr><td><strong>Falschlieferung</strong><br>(falsches Produkt)</td><td>anderes Produkt als bestellt</td><td>„ErgoPro 400“ statt „ErgoPro 500“</td><td class="yes">ja</td></tr>
+      <tr><td><strong>Falsche Beschaffenheit</strong><br>(Farbe / Eigenschaft / Qualität)</td><td>richtiges Produkt, aber falsche Eigenschaft</td><td>grau statt schwarz; feste statt höhenverstellbare Armlehnen; ohne Lordosenstütze</td><td class="yes">ja</td></tr>
+      <tr><td><strong>Minderlieferung</strong><br>(zu wenig)</td><td>weniger Stück als bestellt</td><td>48 statt 50 Stühle</td><td class="yes">ja</td></tr>
+      <tr><td><strong>Schlechtlieferung</strong><br>(beschädigt / defekt)</td><td>Ware kaputt oder funktioniert nicht</td><td>zerkratzte / defekte Stühle</td><td class="yes">ja</td></tr>
+      <tr><td><strong>Mehrlieferung / Zuviellieferung</strong></td><td>mehr als bestellt</td><td>52 statt 50 Stühle</td><td class="yes">ja (gilt als Abweichung; Mehrmenge muss nicht angenommen werden)</td></tr>
+      <tr><td><strong>Falsche / fehlende Montage</strong></td><td>unsachgemäße Montageanleitung/Montage</td><td>Stuhl nicht montierbar</td><td class="yes">ja (Montageanforderung § 434)</td></tr>
+    </table>
+    <div class="callout warn"><strong>B2B-Stolperstein:</strong> Auch der offensichtlichste Mangel nützt nichts ohne <strong>rechtzeitige Rüge</strong> (§ 377 HGB). Erst rügen, dann Nacherfüllung verlangen.</div>
+  </div>
+
+  <div class="card">
+    <h3>Rechte des Käufers bei Mangel (Überblicksnorm <span class="para">§ 437</span>)</h3>
+    <table>
+      <tr><th>Reihenfolge</th><th>Recht</th><th>Wann?</th><th>Paragraph</th></tr>
+      <tr><td>1.</td><td><strong>Nacherfüllung</strong> (Nachbesserung oder Nachlieferung)</td><td>zuerst – Verkäufer hat zweite Chance</td><td><span class="para">§ 439</span></td></tr>
+      <tr><td>2a.</td><td><strong>Rücktritt</strong> (Ware zurück, Geld zurück)</td><td>nach Scheitern/Unmöglichkeit der Nacherfüllung</td><td><span class="para">§ 323</span>, <span class="para">§ 440</span>, <span class="para">§ 326 V</span></td></tr>
+      <tr><td>2b.</td><td><strong>Minderung</strong> (Ware behalten, weniger zahlen)</td><td>alternativ zum Rücktritt</td><td><span class="para">§ 441</span></td></tr>
+      <tr><td>3.</td><td><strong>Schadensersatz</strong> / Ersatz vergeblicher Aufwendungen</td><td>zusätzlich, bei Verschulden</td><td><span class="para">§ 280</span>, <span class="para">§ 281</span>, <span class="para">§ 284</span></td></tr>
+    </table>
+    <div class="callout key"><strong>Merksatz:</strong> Erst <strong>rügen</strong> (§ 377 HGB) → dann <strong>Nacherfüllung</strong> (§ 439) → erst wenn die scheitert: <strong>Rücktritt oder Minderung</strong>. Nicht sofort zurücktreten!</div>
+  </div>
+</section>
+
+<!-- ===================== C · ZAHLUNGSVERZUG ===================== -->
+<section id="zahlung">
+  <h2 class="zahlung">C · Zahlungsverzug</h2>
+  <p class="muted">Perspektivwechsel: Wir sind der Verkäufer. Der Kunde zahlt die Rechnung nicht rechtzeitig.</p>
+
+  <div class="card">
+    <h3>Voraussetzungen — Schritt für Schritt</h3>
+    <div class="step zahlung"><div class="no">1</div><div class="body">
+      <h4>Fällige Kaufpreisforderung <span class="para">§ 433 II</span></h4>
+      Es besteht eine fällige Rechnung; das Zahlungsziel ist abgelaufen.
+    </div></div>
+    <div class="step zahlung"><div class="no">2</div><div class="body">
+      <h4>Verzug feststellen <span class="para">§ 286</span></h4>
+      <strong>Kalendermäßiges Zahlungsziel vereinbart</strong> (z. B. „zahlbar bis 15.05.“): Verzug ohne Mahnung ab dem Tag danach (<span class="para">§ 286 II Nr. 1</span>). <strong>Sonst:</strong> Mahnung – oder automatisch 30 Tage nach Rechnung &amp; Fälligkeit (<span class="para">§ 286 III</span>).
+    </div></div>
+    <div class="step zahlung"><div class="no">3</div><div class="body">
+      <h4>Folgen geltend machen <span class="para">§ 288</span></h4>
+      Verzugszinsen (B2B 9 PP, B2C 5 PP über Basiszins), im B2B zusätzlich 40-€-Pauschale (Abs. 5), ggf. weiterer Schaden (§ 280).
+    </div></div>
+  </div>
+
+  <div class="card">
+    <h3>Verzugszinsen berechnen</h3>
+    <div class="formula">Verzugszinsen = Rechnungsbetrag × Verzugszinssatz × Verzugstage ÷ 365</div>
+    <table>
+      <tr><th>Größe</th><th>Wert (Beispiel B2B 2026)</th></tr>
+      <tr><td>Basiszinssatz (§ 247)</td><td>1,27 %</td></tr>
+      <tr><td>Aufschlag B2B (§ 288 II)</td><td>+ 9 Prozentpunkte</td></tr>
+      <tr><td><strong>Verzugszinssatz B2B</strong></td><td><strong>10,27 %</strong></td></tr>
+      <tr><td>Beispiel: 2.400 € · 26 Tage</td><td>2.400 × 0,1027 × 26 ÷ 365 ≈ <strong>17,56 €</strong></td></tr>
+      <tr><td>+ Kostenpauschale (§ 288 V)</td><td>40,00 €</td></tr>
+      <tr><td><strong>Neue Gesamtforderung</strong></td><td>2.400 + 17,56 + 40 ≈ <strong>2.457,56 €</strong></td></tr>
+    </table>
+    <div class="callout warn"><strong>Einheitlich rechnen:</strong> Immer <strong>÷ 365</strong> (tatsächliche Tage) und kaufmännisch auf 2 Stellen runden. Nicht zwischen 360 und 365 mischen.</div>
+  </div>
+
+  <div class="card">
+    <h3>Aufbau einer Mahnung (Checkliste)</h3>
+    <ul>
+      <li>Bezug auf Rechnung (Nummer + Datum) und abgelaufenes Zahlungsziel</li>
+      <li>Feststellung des Verzugs mit Datum und Paragraph (§ 286 II Nr. 1)</li>
+      <li>Aufstellung: offener Betrag + Verzugszinsen (§ 288 II) + 40-€-Pauschale (§ 288 V) = neue Gesamtforderung</li>
+      <li>Neue Zahlungsfrist mit konkretem Datum</li>
+      <li>Hinweis auf weitere Schritte bei Nichtzahlung; sachlicher, geschäftlicher Ton; Grußformel</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== B2B/B2C ===================== -->
+<section id="b2b">
+  <h2>B2B vs. B2C — der entscheidende Unterschied</h2>
+  <div class="card">
+    <table>
+      <tr><th>Merkmal</th><th>B2B (Firma ↔ Firma)</th><th>B2C (Firma ↔ Verbraucher)</th></tr>
+      <tr><td>Untersuchungs-/Rügepflicht</td><td class="yes">ja — § 377 HGB, Genehmigungsfiktion bei Schweigen</td><td class="no">nein — Verbraucher behält Rechte</td></tr>
+      <tr><td>Verzugszinssatz (§ 288)</td><td>+ 9 Prozentpunkte (Abs. 2) = 10,27 %</td><td>+ 5 Prozentpunkte (Abs. 1) = 6,27 %</td></tr>
+      <tr><td>40-€-Pauschale (§ 288 V)</td><td class="yes">ja</td><td class="no">nein</td></tr>
+      <tr><td>Verzug ohne Mahnung nach 30 Tagen (§ 286 III)</td><td class="yes">automatisch</td><td>nur mit Hinweis auf der Rechnung</td></tr>
+      <tr><td>Fixhandelskauf (§ 376 HGB)</td><td class="yes">anwendbar</td><td class="no">nicht anwendbar</td></tr>
+    </table>
+    <div class="callout key"><strong>Im gesamten Material sind alle Fälle B2B.</strong> Prüfe trotzdem zuerst die Vorfrage – ein Verbraucherfall würde an Zinssatz, Pauschale und Rügepflicht anders gerechnet.</div>
+  </div>
+  <p class="footer">Prüfleitfaden · Kaufvertragsstörungen · ÖB Z10 · Stand 2026 · Paragraphen siehe Gesetzestextsammlung (Original + einfache Sprache).</p>
+</section>
+
+</main>
+</template>
+<script>
+/* =================== GESETZE =================== */
+const LAWS = {
+  p271:{t:'§ 271 BGB', n:'Leistungszeit / Fälligkeit', kurz:'Die Lieferung war zum vereinbarten Termin fällig.'},
+  p286:{t:'§ 286 BGB', n:'Verzug des Schuldners', kurz:'Der Lieferant ist in Lieferverzug, weil der Termin überschritten ist.'},
+  p276:{t:'§ 276 BGB', n:'Verschulden (Vorsatz/Fahrlässigkeit)', kurz:'Verschulden – bei höherer Gewalt liegt keines vor.'},
+  p275:{t:'§ 275 BGB', n:'Unmöglichkeit der Leistung', kurz:'Die Leistung ist unmöglich – es besteht keine Lieferpflicht.'},
+  p323:{t:'§ 323 BGB', n:'Rücktritt', kurz:'Rücktritt vom Kaufvertrag.'},
+  p281:{t:'§ 281 BGB', n:'Schadensersatz statt der Leistung', kurz:'Mehrkosten des Deckungskaufs als Schadensersatz statt der Leistung.'},
+  p280:{t:'§ 280 BGB', n:'Schadensersatz wegen Pflichtverletzung', kurz:'Schadensersatz wegen der Pflichtverletzung.'},
+  p284:{t:'§ 284 BGB', n:'Ersatz vergeblicher Aufwendungen', kurz:'Ersatz vergeblicher Aufwendungen.'},
+  p346:{t:'§ 346 BGB', n:'Wirkungen des Rücktritts', kurz:'Rückzahlung bereits geleisteter Beträge (z. B. Anzahlung) nach Rücktritt.'},
+  p326_5:{t:'§ 326 Abs. 5 BGB', n:'Rücktritt bei Unmöglichkeit', kurz:'Rücktritt ohne Frist, weil die Leistung unmöglich ist.'},
+  p376hgb:{t:'§ 376 HGB', n:'Fixhandelskauf', kurz:'Fixhandelskauf: Rücktritt ohne Nachfrist beim festen Termin.'},
+  p434:{t:'§ 434 BGB', n:'Sachmangel', kurz:'Die Ware weicht von der Bestellung ab – es liegt ein Sachmangel vor.'},
+  p437:{t:'§ 437 BGB', n:'Rechte des Käufers bei Mängeln', kurz:'Überblick der Käuferrechte bei Mängeln.'},
+  p377hgb:{t:'§ 377 HGB', n:'Untersuchungs- und Rügepflicht', kurz:'Der Mangel wird unverzüglich gerügt (Handelskauf).'},
+  p439:{t:'§ 439 BGB', n:'Nacherfüllung', kurz:'Nacherfüllung: Nachlieferung/Nachbesserung der richtigen Ware verlangen.'},
+  p441:{t:'§ 441 BGB', n:'Minderung', kurz:'Minderung des Kaufpreises (Ware behalten, weniger zahlen).'},
+  p433:{t:'§ 433 Abs. 2 BGB', n:'Kaufpreiszahlung', kurz:'Pflicht des Käufers, den Kaufpreis zu zahlen.'},
+  p288_2:{t:'§ 288 Abs. 2 BGB', n:'Verzugszinsen (B2B)', kurz:'Verzugszinsen: 9 Prozentpunkte über dem Basiszins (B2B).'},
+  p288_5:{t:'§ 288 Abs. 5 BGB', n:'Kostenpauschale', kurz:'40-€-Kostenpauschale (B2B).'},
+  p247:{t:'§ 247 BGB', n:'Basiszinssatz', kurz:'Basiszinssatz (Stand 2026: 1,27 %).'}
+};
+const POOL = {
+  lv:['p271','p286','p276','p275','p323','p281','p280','p284','p346','p326_5','p376hgb'],
+  sm:['p434','p437','p377hgb','p439','p441','p323','p280'],
+  zv:['p433','p286','p288_2','p288_5','p247','p280','p377hgb','p439']
+};
+
+/* =================== AUFGABEN =================== */
+const TASKS = [
+{
+  id:'LV1', type:'lv', title:'Fixtermin verpasst + Deckungskauf',
+  from:'BikeParts Nord GmbH', fromAddr:'service@bikeparts-nord.de', date:'08.06.2026',
+  subject:'Verspätete Lieferung – Bestellung B-2026-211',
+  toAddr:'service@bikeparts-nord.de',
+  situation:`<p>Hallo,</p><p>leider müssen wir Ihnen mitteilen, dass Ihre Bestellung <b>B-2026-211</b> (1 Laufradsatz „AeroRace Carbon“, 1.200,00 € netto) bei uns untergegangen ist. Den per Auftragsbestätigung <b>garantierten Liefertermin 05.06.2026</b> können wir nicht halten. Wir können erst am <b>12.06.2026</b> liefern.</p><p>Mit freundlichen Grüßen<br>BikeParts Nord GmbH</p>`,
+  context:`Du bist Einkäufer/in der <b>Fahrradhaus Velozia GmbH</b>. Der Laufradsatz wird für einen konkreten Kundenauftrag (Rennrad-Aufbau) <b>dringend</b> benötigt. Ein anderer Händler (Radsport Süd) kann den gleichen Satz <b>sofort</b> liefern, kostet aber <b>1.290,00 € netto (90,00 € mehr)</b>.`,
+  aufgabe:`Schreibe die Antwort-E-Mail an BikeParts Nord und mache die Rechte der Velozia GmbH geltend.`,
+  theory:[
+    {q:'Was bedeutet Lieferverzug?', o:['Der Käufer zahlt zu spät.','Der Lieferant liefert nicht oder zu spät, obwohl die Leistung fällig und möglich ist.','Der Käufer nimmt die Ware nicht an.'], c:1},
+    {q:'Warum ist hier keine Mahnung nötig?', o:['Weil der Lieferant ein Unternehmen ist.','Weil ein fester Kalendertermin (Fixtermin) vereinbart war.','Weil die Ware teuer ist.'], c:1}
+  ],
+  required:['p286','p323','p281'], ok:['p271','p280','p376hgb','p284'],
+  checklist:[
+    {l:'Bezug zur Bestellung / Betreff (B-2026-211)', any:['b-2026-211','211','betreff']},
+    {l:'Lieferverzug bzw. überschrittener Fixtermin benannt', any:['verzug','05.06','fix','termin']},
+    {l:'Rücktritt vom Kaufvertrag erklärt', any:['rücktritt','zurücktret','zurück']},
+    {l:'§ 323 BGB zitiert', any:['323']},
+    {l:'Deckungskauf-Mehrkosten 90 € gefordert', any:['90']},
+    {l:'§ 281 BGB zitiert', any:['281']},
+    {l:'Grußformel', any:['freundlich','grüßen','grüssen']}
+  ],
+  muster:`Betreff: Lieferverzug – Rücktritt vom Kaufvertrag, Bestellung B-2026-211
+
+Sehr geehrte Damen und Herren,
+
+für unsere Bestellung B-2026-211 haben Sie uns mit Auftragsbestätigung einen garantierten Liefertermin am 05.06.2026 zugesagt. Da ein kalendermäßig bestimmter Termin vereinbart war, befinden Sie sich seit dem 06.06.2026 ohne Mahnung im Lieferverzug (§ 286 Abs. 2 Nr. 1 BGB).
+
+Weil es sich um einen Fixtermin handelt, treten wir ohne weitere Nachfrist vom Kaufvertrag zurück (§ 323 Abs. 2 Nr. 2 BGB, § 376 HGB).
+
+Den Laufradsatz haben wir zur Erfüllung unseres Kundenauftrags bei einem anderen Händler zum Preis von 1.290,00 € netto beschafft. Die dadurch entstandenen Mehrkosten von 90,00 € machen wir als Schadensersatz statt der Leistung geltend (§ 281 i. V. m. § 280 BGB). Bitte überweisen Sie 90,00 € bis zum 22.06.2026 auf unser Konto.
+
+Mit freundlichen Grüßen
+Fahrradhaus Velozia GmbH`
+},
+{
+  id:'LV2', type:'lv', title:'Liefertermin ohne Fixkauf – erst Nachfrist setzen',
+  from:'Wareneingang Grünwerk (intern)', fromAddr:'wareneingang@gruenwerk.de', date:'12.06.2026',
+  subject:'Pflanzkübel nicht eingetroffen – Bestellung vom 01.06.2026',
+  toAddr:'vertrieb@pflanzprofi.de',
+  situation:`<p>Hallo Einkauf,</p><p>unsere <b>200 Terracotta-Pflanzkübel</b> (Bestellung B-2026-188 vom 01.06.2026, 6,00 €/Stück = 1.200,00 € netto) sind bis heute (<b>12.06.2026</b>) nicht eingetroffen. Vereinbart war ein Lieferdatum am <b>10.06.2026</b> – ein normaler Termin, <b>kein garantierter Fixtermin</b>. Der Lieferant PflanzProfi hat sich nicht gemeldet.</p><p>Bitte kümmere dich darum.</p>`,
+  context:`Du bist Einkäufer/in der <b>Gartencenter Grünwerk GmbH</b>. Die Kübel werden fürs Sommergeschäft gebraucht. Ein anderer Lieferant wurde <b>noch nicht</b> beauftragt.`,
+  aufgabe:`Schreibe die E-Mail an PflanzProfi. <b>Achtung:</b> Ohne Fixkauf darfst du nicht sofort zurücktreten – du musst zuerst eine angemessene Nachfrist setzen.`,
+  theory:[
+    {q:'Was bedeutet Lieferverzug?', o:['Der Lieferant liefert nicht oder zu spät, obwohl fällig und möglich.','Der Käufer zahlt zu spät.','Die Ware ist beschädigt.'], c:0},
+    {q:'Es war KEIN Fixtermin vereinbart. Was musst du tun, bevor du zurücktreten darfst?', o:['Sofort zurücktreten.','Eine angemessene Nachfrist setzen.','Sofort Schadensersatz verlangen.'], c:1}
+  ],
+  required:['p286','p323'], ok:['p271','p281','p280'],
+  checklist:[
+    {l:'Bezug zur Bestellung / Betreff', any:['betreff','01.06','pflanzkübel','kübel']},
+    {l:'Lieferverzug benannt (Termin 10.06. überschritten)', any:['verzug','10.06','termin']},
+    {l:'Angemessene Nachfrist mit Datum gesetzt', any:['nachfrist','frist','19.06','bis zum']},
+    {l:'§ 323 BGB zitiert', any:['323']},
+    {l:'Rechte nach Fristablauf angekündigt (Rücktritt/SE)', any:['rücktritt','schadensersatz','nach ablauf','danach']},
+    {l:'Grußformel', any:['freundlich','grüßen']}
+  ],
+  muster:`Betreff: Lieferverzug – Nachfristsetzung, Bestellung B-2026-188
+
+Sehr geehrte Damen und Herren,
+
+der vereinbarte Liefertermin für unsere 200 Terracotta-Pflanzkübel war der 10.06.2026. Bis heute (12.06.2026) ist die Lieferung nicht eingegangen. Damit befinden Sie sich im Lieferverzug (§ 286 BGB).
+
+Da kein Fixtermin vereinbart wurde, setzen wir Ihnen hiermit eine angemessene Nachfrist zur Lieferung bis zum 19.06.2026 (§ 323 Abs. 1 BGB).
+
+Sollte die Lieferung bis dahin nicht erfolgen, behalten wir uns vor, nach Ablauf der Frist vom Kaufvertrag zurückzutreten und Schadensersatz geltend zu machen.
+
+Mit freundlichen Grüßen
+Gartencenter Grünwerk GmbH`
+},
+{
+  id:'LV3', type:'lv', title:'Fixtermin verpasst – aber ohne Deckungskauf',
+  from:'Beschlag & Co. GmbH', fromAddr:'info@beschlag-co.de', date:'06.06.2026',
+  subject:'Ihre Bestellung Spezial-Scharniere – Lieferung nicht möglich',
+  toAddr:'info@beschlag-co.de',
+  situation:`<p>Sehr geehrte Damen und Herren,</p><p>leider können wir die bestellten <b>Spezial-Möbelscharniere</b> (Bestellung B-2026-145, 800,00 € netto, garantierter Liefertermin <b>08.06.2026</b>) <b>nicht liefern</b>. Wir müssen die Lieferung endgültig absagen.</p><p>Mit freundlichen Grüßen<br>Beschlag &amp; Co. GmbH</p>`,
+  context:`Du bist Einkäufer/in der <b>Schreinerei Holzwerk GmbH</b>. Eine <b>Anzahlung von 400,00 €</b> wurde bereits überwiesen. Der zugehörige Küchenauftrag deines Endkunden wurde inzwischen <b>storniert</b> – die Scharniere werden nicht mehr gebraucht, ein Deckungskauf findet nicht statt.`,
+  aufgabe:`Schreibe die E-Mail an Beschlag &amp; Co. <b>Achtung:</b> Es gibt keinen Deckungskauf – fordere keine Mehrkosten, sondern die Rückabwicklung.`,
+  theory:[
+    {q:'Der Lieferant verweigert beim Fixtermin endgültig. Darfst du sofort zurücktreten?', o:['Nein, erst nach Nachfrist.','Ja, ohne Nachfrist.','Nur mit Zustimmung des Lieferanten.'], c:1},
+    {q:'Es gibt keinen Deckungskauf. Was forderst du stattdessen?', o:['Die Mehrkosten eines Ersatzkaufs.','Die Rückzahlung der Anzahlung.','Eine Vertragsstrafe.'], c:1}
+  ],
+  required:['p286','p323','p346'], ok:['p376hgb','p280'],
+  checklist:[
+    {l:'Betreff / Bezug zur Bestellung', any:['betreff','scharnier','rücktritt']},
+    {l:'Verzug bzw. Verweigerung/Fixtermin benannt', any:['verweiger','fix','08.06','verzug']},
+    {l:'Rücktritt erklärt', any:['rücktritt','zurück']},
+    {l:'§ 323 oder § 376 HGB zitiert', any:['323','376']},
+    {l:'Rückzahlung der Anzahlung 400 € gefordert', any:['400','anzahlung','rückzahl','erstatt']},
+    {l:'§ 346 BGB zitiert', any:['346']},
+    {l:'Grußformel', any:['freundlich','grüßen']}
+  ],
+  muster:`Betreff: Lieferverzug – Rücktritt und Rückzahlung der Anzahlung, Bestellung B-2026-145
+
+Sehr geehrte Damen und Herren,
+
+für die bestellten Spezial-Möbelscharniere war ein garantierter Liefertermin am 08.06.2026 vereinbart. Sie haben die Lieferung endgültig verweigert; zudem ist der Termin als Fixtermin verstrichen. Damit liegt Lieferverzug vor und eine Nachfrist ist entbehrlich (§ 286 BGB, § 323 Abs. 2 BGB, § 376 HGB).
+
+Wir treten daher vom Kaufvertrag zurück. Da der zugrunde liegende Kundenauftrag entfallen ist, beschaffen wir die Ware nicht anderweitig.
+
+Bitte erstatten Sie uns die bereits geleistete Anzahlung von 400,00 € bis zum 20.06.2026 zurück (§ 346 BGB).
+
+Mit freundlichen Grüßen
+Schreinerei Holzwerk GmbH`
+},
+{
+  id:'LV4', type:'lv', title:'Lieferant trifft kein Verschulden (höhere Gewalt)',
+  from:'Quellklar Mineralbrunnen GmbH', fromAddr:'info@quellklar.de', date:'08.06.2026',
+  subject:'Lieferung Mineralwasser – Hochwasser im Lager',
+  toAddr:'info@quellklar.de',
+  situation:`<p>Sehr geehrte Damen und Herren,</p><p>durch ein schweres <b>Hochwasser</b> wurden unser Lager und die Zufahrtsstraßen zerstört. Ihre Bestellung B-2026-260 über <b>500 Kisten Mineralwasser</b> (2.000,00 € netto, Liefertermin <b>09.06.2026</b>) können wir derzeit <b>nicht liefern</b>. Diese Naturkatastrophe haben wir nicht zu vertreten.</p><p>Mit freundlichen Grüßen<br>Quellklar Mineralbrunnen GmbH</p>`,
+  context:`Du bist Einkäufer/in der <b>Getränke Frischauf GmbH</b>. Du benötigst das Wasser kurzfristig und kannst es bei einem anderen Anbieter beziehen.`,
+  aufgabe:`Schreibe die E-Mail an Quellklar. <b>Achtung:</b> Bei höherer Gewalt trifft den Lieferanten kein Verschulden – Schadensersatz gibt es nicht. Prüfe, welche Rechte bleiben.`,
+  theory:[
+    {q:'Den Lieferanten trifft kein Verschulden (höhere Gewalt). Liegt Lieferverzug vor?', o:['Ja, immer.','Nein – ohne Verschulden kein Verzug.','Nur wenn er Kaufmann ist.'], c:1},
+    {q:'Welches Recht hast du, wenn die Lieferung unmöglich ist?', o:['Schadensersatz statt der Leistung.','Rücktritt ohne Frist (§ 326 Abs. 5 BGB).','Verzugszinsen.'], c:1}
+  ],
+  required:['p276','p275','p326_5'], ok:['p286'],
+  checklist:[
+    {l:'Höhere Gewalt / kein Verschulden anerkannt', any:['höhere gewalt','hochwasser','unverschuldet','kein verschulden','nicht zu vertreten']},
+    {l:'Klarstellung: kein Schadensersatz', any:['kein schadensersatz','keinen schadensersatz','nicht geltend','verzicht']},
+    {l:'Unmöglichkeit benannt (§ 275)', any:['unmöglich','275']},
+    {l:'Rücktritt nach § 326 Abs. 5 BGB', any:['rücktritt','326','zurück']},
+    {l:'Grußformel', any:['freundlich','grüßen']}
+  ],
+  muster:`Betreff: Lieferverzug – Bestellung B-2026-260, Rücktritt wegen unmöglicher Lieferung
+
+Sehr geehrte Damen und Herren,
+
+vielen Dank für Ihre Mitteilung. Wir verstehen, dass die Lieferung infolge des Hochwassers unmöglich geworden ist und Sie dies nicht zu vertreten haben. Ein Lieferverzug und damit ein Schadensersatzanspruch bestehen deshalb nicht (§ 286 Abs. 4, § 276 BGB).
+
+Da die Lieferung derzeit unmöglich ist (§ 275 BGB) und wir das Wasser kurzfristig benötigen, treten wir vom Kaufvertrag zurück (§ 326 Abs. 5 BGB) und beschaffen die Ware anderweitig. Schadensersatz machen wir ausdrücklich nicht geltend.
+
+Eine bereits geleistete Zahlung erbitten wir gegebenenfalls zurück.
+
+Mit freundlichen Grüßen
+Getränke Frischauf GmbH`
+},
+{
+  id:'SM1', type:'sm', title:'Sachmangel: falsche Anzahl (Minderlieferung)',
+  from:'Wareneingangskontrolle (intern)', fromAddr:'wareneingang@buerowelt-kompakt.de', date:'15.06.2026',
+  subject:'Abweichung Lieferung PaperPlus – Bestellung B-2026-077',
+  toAddr:'service@paperplus.de',
+  situation:`<p>Hallo,</p><p>die Lieferung der <b>PaperPlus GmbH</b> zu unserer Bestellung <b>B-2026-077</b> wurde geprüft. Bestellt waren <b>500 Kartons Kopierpapier „PrintWhite A4“</b> (25,00 €/Karton). Geliefert wurden jedoch nur <b>450 Kartons</b>. Produkt, Qualität und Preis stimmen – nur die <b>Menge ist zu gering</b> (50 Kartons fehlen).</p><p>Bitte bearbeite den Vorgang weiter.</p>`,
+  context:`Du bist Einkäufer/in der <b>Bürowelt Kompakt GmbH</b> (Handelskauf, B2B).`,
+  aufgabe:`Schreibe die Mängelrüge an PaperPlus und fordere die korrekte Nacherfüllung.`,
+  theory:[
+    {q:'Was ist ein Sachmangel?', o:['Die Ware kommt zu spät.','Die Ware entspricht nicht der Bestellung/Vereinbarung.','Der Käufer zahlt nicht.'], c:1},
+    {q:'Was musst du im Handelskauf (B2B) bei einem Mangel sofort tun?', o:['Die Ware bezahlen.','Den Mangel unverzüglich rügen (§ 377 HGB).','Die Ware weiterverkaufen.'], c:1}
+  ],
+  required:['p434','p377hgb','p439'], ok:['p437'],
+  checklist:[
+    {l:'Betreff / Bezug (B-2026-077)', any:['betreff','b-2026-077','077']},
+    {l:'Minderlieferung beschrieben (450 / fehlende 50)', any:['450','50','minderlief','menge','fehlen']},
+    {l:'Mangel gerügt (Mängelrüge)', any:['rüge','rügen','gerügt','mängelrüge']},
+    {l:'§ 434 BGB / § 377 HGB zitiert', any:['434','377']},
+    {l:'Nacherfüllung (Nachlieferung) verlangt', any:['nacherfüll','nachlief','439']},
+    {l:'Grußformel', any:['freundlich','grüßen']}
+  ],
+  muster:`Betreff: Mängelrüge zur Bestellung B-2026-077 – Minderlieferung
+
+Sehr geehrte Damen und Herren,
+
+bei der heutigen Wareneingangskontrolle zu unserer Bestellung B-2026-077 haben wir festgestellt, dass statt der bestellten 500 Kartons Kopierpapier „PrintWhite A4“ nur 450 Kartons geliefert wurden. Es fehlen 50 Kartons.
+
+Damit liegt ein Sachmangel in Form einer Minderlieferung vor (§ 434 BGB). Diesen rügen wir hiermit unverzüglich (§ 377 HGB).
+
+Wir verlangen Nacherfüllung durch Nachlieferung der fehlenden 50 Kartons (§ 439 BGB) bis zum 19.06.2026.
+
+Mit freundlichen Grüßen
+Bürowelt Kompakt GmbH`
+},
+{
+  id:'SM2', type:'sm', title:'Sachmangel: falsches Produkt (Falschlieferung)',
+  from:'Wareneingangskontrolle (intern)', fromAddr:'wareneingang@protool.de', date:'15.06.2026',
+  subject:'Abweichung Lieferung Industrie-Bedarf Süd – Akkuschrauber',
+  toAddr:'service@industrie-bedarf-sued.de',
+  situation:`<p>Hallo,</p><p>die Lieferung der <b>Industrie-Bedarf Süd GmbH</b> wurde geprüft. Zu unserer <b>Bestellung B-2026-093</b> waren 20 Akku-Bohrschrauber „PowerX 18V“ bestellt. Geliefert wurden <b>20 Geräte „PowerX 12V“</b> – also das <b>falsche Modell</b>. Die Menge (20 Stück) stimmt, das Produkt nicht.</p><p>Bitte bearbeite den Vorgang weiter.</p>`,
+  context:`Du bist Einkäufer/in der <b>Werkzeughandel ProTool GmbH</b> (Handelskauf, B2B).`,
+  aufgabe:`Schreibe die Mängelrüge an Industrie-Bedarf Süd und fordere die richtige Ware.`,
+  theory:[
+    {q:'Es wurde das falsche Modell geliefert. Welche Mängelart ist das?', o:['Minderlieferung','Falschlieferung','Zahlungsverzug'], c:1},
+    {q:'Was musst du im Handelskauf (B2B) bei einem Mangel sofort tun?', o:['Den Mangel unverzüglich rügen (§ 377 HGB).','Die Ware bezahlen.','Drei Wochen abwarten.'], c:0}
+  ],
+  required:['p434','p377hgb','p439'], ok:['p437'],
+  checklist:[
+    {l:'Betreff / Bezug (Akkuschrauber)', any:['betreff','powerx','bohrschrauber','akkuschrauber']},
+    {l:'Falsches Produkt benannt (18V statt 12V)', any:['18v','12v','falsch','falschlief','modell']},
+    {l:'Mangel gerügt (Mängelrüge)', any:['rüge','rügen','gerügt','mängelrüge']},
+    {l:'§ 434 BGB / § 377 HGB zitiert', any:['434','377']},
+    {l:'Nacherfüllung – richtige Ware (18V) verlangt', any:['nacherfüll','439','18v','richtige']},
+    {l:'Grußformel', any:['freundlich','grüßen']}
+  ],
+  muster:`Betreff: Mängelrüge – Bestellung B-2026-093, Falschlieferung Akku-Bohrschrauber
+
+Sehr geehrte Damen und Herren,
+
+bei der Wareneingangskontrolle haben wir festgestellt, dass statt der bestellten 20 Akku-Bohrschrauber „PowerX 18V“ 20 Geräte des Modells „PowerX 12V“ geliefert wurden. Es wurde damit das falsche Produkt geliefert.
+
+Es liegt ein Sachmangel in Form einer Falschlieferung vor (§ 434 BGB), den wir hiermit unverzüglich rügen (§ 377 HGB).
+
+Wir verlangen Nacherfüllung durch Lieferung der bestellten 20 Geräte „PowerX 18V“ (§ 439 BGB) bis zum 19.06.2026 und bitten um Abholung der falsch gelieferten Ware.
+
+Mit freundlichen Grüßen
+Werkzeughandel ProTool GmbH`
+},
+{
+  id:'SM3', type:'sm', title:'Sachmangel: falsche Beschaffenheit (Farbe)',
+  from:'Wareneingangskontrolle (intern)', fromAddr:'wareneingang@wohnart.de', date:'15.06.2026',
+  subject:'Abweichung Lieferung Meridian – Möbelstoff Farbe',
+  toAddr:'service@meridian-textil.de',
+  situation:`<p>Hallo,</p><p>die Lieferung der <b>TextilGroßhandel Meridian GmbH</b> wurde geprüft. Zu unserer <b>Bestellung B-2026-104</b> waren 60 m Möbelstoff „Velvet Line“ in der Farbe Anthrazit bestellt. Geliefert wurden 60 m „Velvet Line“ – jedoch in der Farbe <b>Beige</b>. Menge und Produkt stimmen, nur die <b>vereinbarte Beschaffenheit (Farbe)</b> weicht ab.</p><p>Bitte bearbeite den Vorgang weiter.</p>`,
+  context:`Du bist Einkäufer/in der <b>Raumausstatter WohnArt GmbH</b> (Handelskauf, B2B).`,
+  aufgabe:`Schreibe die Mängelrüge an Meridian und fordere die korrekte Ware.`,
+  theory:[
+    {q:'Die Farbe weicht ab (Anthrazit bestellt, Beige geliefert). Welche Mängelart ist das?', o:['Falsche Beschaffenheit','Minderlieferung','Annahmeverzug'], c:0},
+    {q:'Was musst du im Handelskauf (B2B) bei einem Mangel sofort tun?', o:['Den Mangel unverzüglich rügen (§ 377 HGB).','Die Ware behalten und schweigen.','Sofort vom Vertrag zurücktreten.'], c:0}
+  ],
+  required:['p434','p377hgb','p439'], ok:['p437'],
+  checklist:[
+    {l:'Betreff / Bezug (Möbelstoff)', any:['betreff','velvet','stoff','farbe']},
+    {l:'Falsche Beschaffenheit/Farbe benannt', any:['anthrazit','beige','farbe','beschaffenheit']},
+    {l:'Mangel gerügt (Mängelrüge)', any:['rüge','rügen','gerügt','mängelrüge']},
+    {l:'§ 434 BGB / § 377 HGB zitiert', any:['434','377']},
+    {l:'Nacherfüllung – Farbe Anthrazit verlangt', any:['nacherfüll','439','anthrazit']},
+    {l:'Grußformel', any:['freundlich','grüßen']}
+  ],
+  muster:`Betreff: Mängelrüge – Bestellung B-2026-104, falsche Farbe Möbelstoff „Velvet Line“
+
+Sehr geehrte Damen und Herren,
+
+zu unserer Bestellung über 60 m Möbelstoff „Velvet Line“ in Anthrazit haben wir bei der Wareneingangskontrolle festgestellt, dass der Stoff in der Farbe Beige geliefert wurde. Die Ware entspricht damit nicht der vereinbarten Beschaffenheit.
+
+Es liegt ein Sachmangel vor (§ 434 BGB), den wir hiermit unverzüglich rügen (§ 377 HGB).
+
+Wir verlangen Nacherfüllung durch Nachlieferung von 60 m „Velvet Line“ in der bestellten Farbe Anthrazit (§ 439 BGB) bis zum 19.06.2026.
+
+Mit freundlichen Grüßen
+Raumausstatter WohnArt GmbH`
+},
+{
+  id:'ZV1', type:'zv', title:'Zahlungsverzug: Kunde zahlt nicht – Mahnung',
+  from:'Buchhaltung (intern)', fromAddr:'buchhaltung@lindner.de', date:'15.06.2026',
+  subject:'Zahlungsausfall – Kontor Nord OHG – RE: LI-2026-0312',
+  toAddr:'buchhaltung@kontor-nord.de',
+  situation:`<p>Hallo zusammen,</p><p>für unsere Rechnung Nr. <b>LI-2026-0312 vom 06.05.2026</b> über <b>3.200,00 €</b> (40 Schreibtischlampen „LumoDesk“ an die <b>Kontor Nord OHG</b>) ist bis heute (<b>15.06.2026</b>) kein Zahlungseingang erfolgt. Das Zahlungsziel war der <b>20.05.2026</b>.</p><p>Bitte bereitet eine Mahnung vor und macht Verzugszinsen sowie die 40-€-Pauschale geltend.<br>Basiszinssatz 2026: 1,27 % · B2B-Satz (§ 288 Abs. 2): +9 Prozentpunkte = 10,27 %.</p><p>Danke, Buchhaltung</p>`,
+  context:`Du bist Sachbearbeiter/in der <b>Schreibwaren Lindner GmbH</b> (Verkäufer). Kunde: Kontor Nord OHG (B2B). <br><b>Berechnung:</b> erster Verzugstag 21.05.2026 · 26 Verzugstage bis 15.06.2026 · Verzugszinsen 3.200 × 0,1027 × 26 ÷ 365 = <b>23,41 €</b> · Pauschale 40,00 € · Gesamtforderung <b>3.263,41 €</b>.`,
+  aufgabe:`Schreibe die Mahnung an die Kontor Nord OHG mit Aufstellung und neuer Zahlungsfrist.`,
+  theory:[
+    {q:'Wann tritt Zahlungsverzug ohne Mahnung ein?', o:['Sofort nach der Lieferung.','Wenn ein kalendermäßiges Zahlungsziel überschritten ist.','Erst nach drei Mahnungen.'], c:1},
+    {q:'Wie hoch ist der Verzugszinssatz zwischen Firmen (B2B)?', o:['5 Prozentpunkte über Basiszins.','9 Prozentpunkte über Basiszins.','Genau 10 % fest.'], c:1}
+  ],
+  required:['p433','p286','p288_2','p288_5'], ok:['p247','p280'],
+  checklist:[
+    {l:'Betreff / Bezug (Rechnung LI-2026-0312, Mahnung)', any:['betreff','li-2026-0312','0312','mahnung']},
+    {l:'Verzug benannt (ab 21.05. / Zahlungsziel 20.05.)', any:['21.05','verzug','zahlungsziel','20.05']},
+    {l:'§ 286 BGB zitiert', any:['286']},
+    {l:'Verzugszinsen 23,41 € / § 288 Abs. 2', any:['23,41','23.41','288','zinsen']},
+    {l:'Kostenpauschale 40 € / § 288 Abs. 5', any:['40']},
+    {l:'Neue Gesamtforderung 3.263,41 €', any:['3.263','3263','gesamt']},
+    {l:'Neue Zahlungsfrist gesetzt', any:['25.06','bis spätestens','frist']},
+    {l:'Grußformel', any:['freundlich','grüßen']}
+  ],
+  muster:`Betreff: Mahnung wegen Zahlungsverzugs – Rechnung Nr. LI-2026-0312
+
+Sehr geehrte Damen und Herren,
+
+zu unserer Rechnung Nr. LI-2026-0312 vom 06.05.2026 über 3.200,00 € konnten wir bisher keinen Zahlungseingang feststellen. Das vereinbarte Zahlungsziel lief am 20.05.2026 ab. Da ein kalendermäßiges Zahlungsziel vereinbart war, befinden Sie sich seit dem 21.05.2026 ohne Mahnung im Zahlungsverzug (§ 286 Abs. 2 Nr. 1 BGB; Kaufpreispflicht § 433 Abs. 2 BGB).
+
+Wir machen daher folgende Forderung geltend:
+Offener Rechnungsbetrag           3.200,00 €
+Verzugszinsen (§ 288 Abs. 2 BGB)     23,41 €
+Kostenpauschale (§ 288 Abs. 5 BGB)   40,00 €
+Neue Gesamtforderung              3.263,41 €
+
+Bitte überweisen Sie den Gesamtbetrag von 3.263,41 € bis spätestens 25.06.2026 auf unser Konto. Bei ausbleibender Zahlung behalten wir uns weitere rechtliche Schritte vor.
+
+Mit freundlichen Grüßen
+Schreibwaren Lindner GmbH`
+}
+];
+
+/* === Betreff-Konfiguration: Nummer aus Eingangssituation + Stichwort === */
+const SUBJECTCFG={LV1:['b-2026-211','211'],LV2:['b-2026-188','188'],LV3:['b-2026-145','145'],LV4:['b-2026-260','260'],SM1:['b-2026-077','077'],SM2:['b-2026-093','093'],SM3:['b-2026-104','104'],ZV1:['li-2026-0312','0312']};
+const KW={lv:{label:'Lieferverzug',match:['lieferverzug']},sm:{label:'Mängelrüge',match:['mängelrüge','mangelrüge','mängelruege','rüge']},zv:{label:'Zahlungsverzug',match:['zahlungsverzug']}};
+TASKS.forEach(t=>{ t.num=SUBJECTCFG[t.id]; t.numDisplay=(SUBJECTCFG[t.id][0]||"").toUpperCase(); t.kw=KW[t.type].label; t.kwMatch=KW[t.type].match; t.checklist=t.checklist.filter(c=>!/Betreff/i.test(c.l)); });
+
+/* =================== STATE =================== */
+let teacher = false;
+let activeId = null;
+const state = {};
+TASKS.forEach(t=>state[t.id]={read:false,theoryPassed:false,lawsOk:false,selected:new Set(),done:false});
+
+/* =================== HELPERS =================== */
+const $ = sel => document.querySelector(sel);
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+const TYPENAME={lv:'Lieferverzug',sm:'Sachmangel',zv:'Zahlungsverzug'};
+
+/* =================== INBOX =================== */
+function renderInbox(){
+  const list=$('#mailList'); list.innerHTML='';
+  let unread=0;
+  TASKS.forEach(t=>{
+    const st=state[t.id];
+    if(!st.read) unread++;
+    const div=document.createElement('div');
+    div.className='mail '+(st.read?'read':'')+(activeId===t.id?' active':'');
+    div.innerHTML=`<div class="dot"></div><div class="mc">
+      <div class="mfrom">${esc(t.from)}<span class="date">${t.date}</span></div>
+      <div class="msub">${esc(t.subject)}</div>
+      <div class="mprev">Aufgabe ${t.id} · ${TYPENAME[t.type]}</div>
+      <span class="tag t-${t.type}">${TYPENAME[t.type]}</span>
+      ${st.done?'<span class="tag t-done">✓ bearbeitet</span>':''}
+    </div>`;
+    div.onclick=()=>openTask(t.id);
+    list.appendChild(div);
+  });
+  $('#unreadCount').textContent=unread;
+}
+
+/* =================== OPEN TASK =================== */
+function openTask(id){
+  activeId=id;
+  const st=state[id];
+  st.read=true;
+  renderInbox();
+  renderReader(id);
+}
+
+function stepState(st){
+  // returns array of [label, status] for the 5 steps
+  const theory = (teacher||st.theoryPassed);
+  return [
+    ['1 Theorie', st.theoryPassed?'done':(theory?'active':'active')],
+    ['2 E-Mail lesen', theory?'done':'',],
+    ['3 Paragraphen', st.lawsOk?'done':(theory?'active':'')],
+    ['4 Antwort', st.done?'done':(st.lawsOk?'active':'')],
+    ['5 Musterlösung', '']
+  ];
+}
+
+function renderReader(id){
+  const t=TASKS.find(x=>x.id===id), st=state[id];
+  const reader=$('#reader');
+  const theoryOpen = teacher || st.theoryPassed;
+
+  let html='';
+  // steps
+  html+='<div class="steps">';
+  stepState(st).forEach(s=>{ html+=`<div class="stepchip ${s[1]}">${s[0]}</div>`; });
+  html+='</div>';
+
+  html+=`<div class="done-banner ${st.done?'show':''}" id="doneBanner">✓ Sehr gut! Du hast alle Checklisten-Punkte erfüllt. Vergleiche jetzt mit der Musterlösung.</div>`;
+
+  if(!theoryOpen){
+    /* ---- Theorie-Gate ---- */
+    html+=`<div class="card"><h3>🔒 Theorie-Check zu Aufgabe ${t.id}</h3>
+      <p>Beantworte zuerst beide Fragen richtig. Erst danach kannst du die E-Mail lesen und bearbeiten.</p>
+      <div class="quiz" id="quiz">`;
+    t.theory.forEach((q,qi)=>{
+      html+=`<div class="qq">${qi+1}. ${esc(q.q)}</div>`;
+      q.o.forEach((o,oi)=>{
+        html+=`<label class="opt" data-q="${qi}" data-o="${oi}"><input type="radio" name="q${qi}" value="${oi}">${esc(o)}</label>`;
+      });
+    });
+    html+=`</div>
+      <div class="row"><button class="action" id="checkTheory">Antworten prüfen</button></div>
+      <div class="feedback" id="theoryFb"></div>
+      <div class="smallnote">Tipp: Hilfe findest du im <span class="inlink" onclick="openRef('leitfaden')">Prüfleitfaden</span> und in den <span class="inlink" onclick="openRef('gesetze')">Gesetzestexten</span>.</div>
+    </div>`;
+    reader.innerHTML=html;
+    bindTheory(t);
+    return;
+  }
+
+  /* ---- E-Mail (bleibt sichtbar) ---- */
+  html+=`<div class="card" id="emailCard"><h3>✉️ ${esc(t.subject)}</h3>
+    <div class="emailhead"><b>Von:</b> ${esc(t.from)} &lt;${esc(t.fromAddr)}&gt; &nbsp;·&nbsp; <b>Datum:</b> ${t.date}</div>
+    <div class="emailbody">${t.situation}</div>
+    <div class="aufgabe"><b>Dein Kontext:</b> ${t.context}<br><br><b>📌 Aufgabe:</b> ${t.aufgabe}</div>
+  </div>`;
+
+  /* ---- Paragraphen wählen ---- */
+  html+=`<div class="card"><h3>3 · Welche Paragraphen brauchst du?</h3>
+    <p>Wähle die passenden Vorschriften aus und klicke auf <b>Auswahl prüfen</b>. Du bekommst sofort Feedback. <span class="inlink" onclick="openRef('gesetze')">📖 Gesetzestexte öffnen</span></p>
+    <div class="lawgrid" id="lawGrid">`;
+  POOL[t.type].forEach(lid=>{
+    const L=LAWS[lid];
+    const checked=st.selected.has(lid)?'checked':'';
+    html+=`<label class="lawopt" data-l="${lid}"><input type="checkbox" value="${lid}" ${checked}>
+      <span><span class="lt">${L.t}</span> <span class="ln">– ${esc(L.n)}</span></span></label>`;
+  });
+  html+=`</div>
+    <div class="row"><button class="action" id="checkLaws">Auswahl prüfen</button>
+      <button class="ghost" id="resetLaws">Zurücksetzen</button></div>
+    <div class="feedback" id="lawFb"></div>
+  </div>`;
+
+  /* ---- Antwort schreiben ---- */
+  html+=`<div class="card"><h3>4 · Deine Antwort-E-Mail</h3>
+    <div class="composehead"><b>An:</b> ${esc(t.toAddr)}</div>
+    <label class="fieldlbl" for="subject">Betreff</label>
+    <div class="subjectwrap">
+      <input type="text" class="subjectfield" id="subject" placeholder="Betreff der E-Mail eingeben …" autocomplete="off">
+      <button type="button" class="tipbtn" id="tipBtn" title="Tipp zum Betreff" aria-label="Tipp zum Betreff">💡</button>
+      <div class="tipbox" id="tipBox">💡 <b>Tipp:</b> Der Betreff braucht die Nummer aus der Eingangssituation (hier: <b>${t.numDisplay}</b>) und das Stichwort „<b>${t.kw}</b>". Beispiel: „${t.kw} – ${t.numDisplay}".</div>
+    </div>
+    <div class="subjfb"><span class="crit" id="critNum">✓ Bestell-/Rechnungsnummer im Betreff</span><span class="crit" id="critKw">✓ Stichwort „${t.kw}“</span></div>
+    <div class="bausteinpanel" id="bausteinPanel" style="display:none">
+      <div class="bptitle">🧩 Deine Bausteine — formuliere jeden Punkt als vollständigen Satz in deiner E-Mail aus:</div>
+      <ul id="bausteinList"></ul>
+    </div>
+    <label class="fieldlbl" for="answer">Nachricht</label>
+    <textarea class="answer" id="answer" placeholder="Schreibe hier deinen E-Mail-Text: Anrede, die ausformulierten Bausteine und eine Grußformel …"></textarea>
+    <div class="row"><span class="scoretxt" id="scoreTxt"></span></div>
+    <div class="scorebar"><i id="scoreFill"></i></div>
+    <div class="checklist" id="checklist"></div>
+  </div>`;
+
+  /* ---- Musterlösung ---- */
+  html+=`<div class="card"><h3>5 · Musterlösung</h3>
+    <p>Die Musterlösung wird freigeschaltet, sobald du mindestens <b>60 %</b> der Bausteine ausformuliert hast.</p>
+    <div class="locknote" id="musterLock"></div>
+    <div class="row">
+      <button class="ghost" id="toggleMuster" disabled>Musterlösung anzeigen</button>
+      <button class="action" id="pdfMuster" disabled>📄 Musterlösung als PDF</button>
+    </div>
+    <div class="muster" id="musterBox">${esc(t.muster)}</div>
+  </div>`;
+
+  reader.innerHTML=html;
+  bindWorkbench(t);
+}
+
+/* =================== THEORIE =================== */
+function bindTheory(t){
+  $('#checkTheory').onclick=()=>{
+    let allRight=true;
+    t.theory.forEach((q,qi)=>{
+      const sel=document.querySelector(`input[name="q${qi}"]:checked`);
+      document.querySelectorAll(`.opt[data-q="${qi}"]`).forEach(el=>el.classList.remove('right','wrong'));
+      if(!sel){allRight=false;return;}
+      const oi=parseInt(sel.value);
+      const lbl=document.querySelector(`.opt[data-q="${qi}"][data-o="${oi}"]`);
+      if(oi===q.c){lbl.classList.add('right');}
+      else{lbl.classList.add('wrong');allRight=false;
+           const correct=document.querySelector(`.opt[data-q="${qi}"][data-o="${q.c}"]`);correct.classList.add('right');}
+    });
+    const fb=$('#theoryFb');fb.classList.add('show');
+    if(allRight){
+      fb.className='feedback show good';
+      fb.innerHTML='✓ Richtig! Die E-Mail wird jetzt freigeschaltet …';
+      state[t.id].theoryPassed=true;
+      setTimeout(()=>renderReader(t.id),700);
+    }else{
+      fb.className='feedback show bad';
+      fb.innerHTML='Noch nicht ganz. Sieh dir die markierten Antworten an und versuche es erneut.';
+    }
+  };
+}
+
+/* =================== WORKBENCH =================== */
+function bindWorkbench(t){
+  const st=state[t.id];
+
+  // law selection
+  $('#lawGrid').querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.onchange=()=>{ if(cb.checked)st.selected.add(cb.value); else st.selected.delete(cb.value);
+      // clear visual feedback when editing
+      document.querySelectorAll('.lawopt').forEach(el=>el.classList.remove('req-ok','req-miss','bonus','wrongpick'));
+      $('#lawFb').classList.remove('show');
+    };
+  });
+  $('#resetLaws').onclick=()=>{ st.selected.clear(); st.lawsOk=false; renderReader(t.id); };
+
+  $('#checkLaws').onclick=()=>{
+    const req=t.required, ok=t.ok||[];
+    let missing=0, wrong=0;
+    document.querySelectorAll('.lawopt').forEach(el=>{
+      const lid=el.dataset.l, sel=st.selected.has(lid);
+      el.classList.remove('req-ok','req-miss','bonus','wrongpick');
+      if(req.includes(lid)){ if(sel)el.classList.add('req-ok'); else{el.classList.add('req-miss');missing++;} }
+      else if(ok.includes(lid)){ if(sel)el.classList.add('bonus'); }
+      else { if(sel){el.classList.add('wrongpick');wrong++;} }
+    });
+    const fb=$('#lawFb');fb.classList.add('show');
+    if(missing===0 && wrong===0){
+      st.lawsOk=true;
+      fb.className='feedback show good';
+      fb.innerHTML='✓ Perfekt – alle nötigen Paragraphen ausgewählt. Unten bei „Deine Antwort-E-Mail“ erscheinen jetzt deine <b>Bausteine</b>. Formuliere jeden Punkt als ganzen Satz aus.';
+      fillBausteine(t);
+      updateChecklist(t);
+    }else{
+      st.lawsOk=false;
+      fb.className='feedback show bad';
+      let msg='';
+      if(missing>0)msg+='Es fehlen noch '+missing+' nötige Paragraph(en) (rot umrandet). ';
+      if(wrong>0)msg+=wrong+' Auswahl(en) passen hier nicht (rot markiert). ';
+      fb.innerHTML=msg+'Korrigiere deine Auswahl und prüfe erneut.';
+      const bp=$('#bausteinPanel'); if(bp) bp.style.display='none';
+    }
+  };
+
+  // Betreff + Nachricht überwachen
+  const ta=$('#answer');
+  ta.oninput=()=>updateChecklist(t);
+  $('#subject').oninput=()=>updateChecklist(t);
+  renderChecklistSkeleton(t);
+  if(st.lawsOk) fillBausteine(t);
+  updateChecklist(t);
+
+  // Tipp zum Betreff
+  const tb=$('#tipBtn'); if(tb) tb.onclick=()=>{ const x=$('#tipBox'); if(x) x.classList.toggle('show'); };
+
+  // muster (erst ab 60 % freigeschaltet, Lehrkraft immer)
+  $('#toggleMuster').onclick=()=>{
+    if($('#toggleMuster').disabled) return;
+    const box=$('#musterBox'); box.classList.toggle('show');
+    $('#toggleMuster').textContent=box.classList.contains('show')?'Musterlösung ausblenden':'Musterlösung anzeigen';
+  };
+  $('#pdfMuster').onclick=()=>{ if($('#pdfMuster').disabled) return; exportPDF(t); };
+}
+
+function fillBausteine(t){
+  const st=state[t.id];
+  const ids=t.required.concat((t.ok||[]).filter(x=>st.selected.has(x)));
+  const ul=$('#bausteinList'); if(!ul) return;
+  ul.innerHTML='';
+  const anr=document.createElement('li'); anr.innerHTML='<b>Anrede</b> – z. B. „Sehr geehrte Damen und Herren,\u201c'; ul.appendChild(anr);
+  ids.forEach(id=>{ const li=document.createElement('li'); li.innerHTML=esc(LAWS[id].kurz)+' <span class="bp">('+LAWS[id].t+')</span>'; ul.appendChild(li); });
+  const bp=$('#bausteinPanel'); if(bp) bp.style.display='block';
+}
+
+function renderChecklistSkeleton(t){
+  const cl=$('#checklist'); cl.innerHTML='';
+  t.checklist.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='checkitem'; d.id='ci'+i;
+    d.innerHTML=`<div class="ci">○</div><div>${esc(c.l)}</div>`;
+    cl.appendChild(d);
+  });
+}
+function updateChecklist(t){
+  const st=state[t.id];
+  const subj=($('#subject')?($('#subject').value||''):'').toLowerCase();
+  const body=($('#answer')?($('#answer').value||''):'').toLowerCase();
+  const combined=subj+' \n '+body;
+  let hits=0;
+  t.checklist.forEach((c,i)=>{
+    const hit=c.any.some(k=>combined.includes(k.toLowerCase()));
+    const el=$('#ci'+i); if(!el) return;
+    if(hit){el.classList.add('hit');el.querySelector('.ci').textContent='✓';hits++;}
+    else{el.classList.remove('hit');el.querySelector('.ci').textContent='○';}
+  });
+  // Betreff-Kriterien: Nummer + Stichwort (nur im Betreff-Feld)
+  const numOk=t.num.some(n=>subj.includes(n));
+  const kwOk=t.kwMatch.some(k=>subj.includes(k));
+  const cn=$('#critNum'), ck=$('#critKw');
+  if(cn) cn.classList.toggle('ok',numOk);
+  if(ck) ck.classList.toggle('ok',kwOk);
+  const subjHits=(numOk?1:0)+(kwOk?1:0);
+  const total=t.checklist.length+2;
+  const all=hits+subjHits;
+  const sc=$('#scoreTxt'); if(sc) sc.textContent=all+' von '+total+' Punkten';
+  const sf=$('#scoreFill'); if(sf) sf.style.width=Math.round(all/total*100)+'%';
+  // Musterlösung erst ab 60 % der Bausteine (Lehrkraft: immer)
+  const pct = t.checklist.length ? hits/t.checklist.length : 1;
+  const unlocked = teacher || pct>=0.6;
+  const tog=$('#toggleMuster'), pdf=$('#pdfMuster'), lk=$('#musterLock');
+  if(tog) tog.disabled=!unlocked;
+  if(pdf) pdf.disabled=!unlocked;
+  if(lk){ lk.style.display=unlocked?'none':'block'; lk.textContent='🔒 Die Musterlösung wird freigeschaltet, sobald du mindestens 60 % der Bausteine ausformuliert hast (aktuell '+Math.round(pct*100)+' %).'; }
+  const wasDone=st.done;
+  st.done = (hits===t.checklist.length) && numOk && kwOk;
+  $('#doneBanner').classList.toggle('show',st.done);
+  if(st.done && !wasDone) renderInbox();
+}
+
+/* =================== PDF EXPORT =================== */
+function exportPDF(t){
+  const st=state[t.id];
+  const ids=t.required.concat(t.ok||[]);
+  const win=window.open('','_blank');
+  if(!win){ alert('Bitte erlaube Pop-up-Fenster, um die PDF-Ansicht zu öffnen. Alternativ: „Musterlösung anzeigen“ und über den Browser drucken.'); return; }
+  const html=`<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>Musterlösung ${t.id}</title>
+  <style>body{font-family:Arial,Helvetica,sans-serif;max-width:720px;margin:32px auto;color:#1f2937;line-height:1.5;padding:0 16px}
+  h1{font-size:1.25rem;margin-bottom:2px}.meta{color:#666;font-size:.85rem;margin-bottom:14px}
+  h2{font-size:1rem;border-bottom:2px solid #1d4ed8;padding-bottom:3px;margin-top:22px}
+  .sit{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px}
+  pre{white-space:pre-wrap;font-family:Arial,Helvetica,sans-serif;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:16px}
+  .paras span{display:inline-block;background:#eef2ff;border:1px solid #dbe3ff;color:#1e3a8a;border-radius:999px;padding:2px 9px;margin:2px;font-size:.82rem;font-weight:600}
+  @media print{.noprint{display:none}}</style></head><body>
+  <h1>Musterlösung – Aufgabe ${t.id}: ${esc(t.title)}</h1>
+  <div class="meta">${esc(TYPENAME[t.type])} · ${esc(t.from)} · ${esc(t.subject)}</div>
+  <h2>Situation</h2><div class="sit">${t.situation}${t.context?('<p><b>Kontext:</b> '+t.context+'</p>'):''}</div>
+  <h2>Aufgabe</h2><p>${t.aufgabe}</p>
+  <h2>Musterlösung-Antwort</h2><pre>${esc(t.muster)}</pre>
+  <h2>Verwendete Paragraphen</h2><div class="paras">${ids.map(id=>'<span>'+LAWS[id].t+'</span>').join('')}</div>
+  <p class="noprint" style="margin-top:24px"><button onclick="window.print()" style="padding:8px 16px;font-weight:700">📄 Drucken / als PDF speichern</button></p>
+  <script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+  </body></html>`;
+  win.document.write(html); win.document.close();
+}
+
+/* =================== LEHRER-LOGIN =================== */
+$('#teacherBtn').onclick=()=>{
+  if(teacher){ return; }
+  const code=prompt('Lehrer-Code eingeben:');
+  if(code==='69969'){
+    teacher=true; document.body.classList.add('teacher');
+    $('#teacherBtn').classList.add('teacher-on'); $('#teacherBtn').textContent='🔓 Lehrer-Modus';
+    if(activeId) renderReader(activeId);
+    renderInbox();
+  }else if(code!==null){ alert('Falscher Code.'); }
+};
+$('#teacherOff').onclick=()=>{
+  teacher=false; document.body.classList.remove('teacher');
+  $('#teacherBtn').classList.remove('teacher-on'); $('#teacherBtn').textContent='🔑 Lehrer-Login';
+  if(activeId) renderReader(activeId);
+};
+
+/* =================== INIT =================== */
+/* =================== REFERENZ-ANSICHTEN (integriert) =================== */
+function openRef(which){
+  const tpl=document.getElementById(which==='gesetze'?'tpl-gesetze':'tpl-leitfaden');
+  const f=document.getElementById('refFrame');
+  f.srcdoc='<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><style>html{-webkit-text-size-adjust:100%}@media(pointer:coarse){body{font-size:16px}button.chip,button.mode{min-height:42px;padding:10px 14px;font-size:.9rem}.controls{gap:10px;padding:12px 14px}.law,.card{padding:16px 16px}h3,.law h3{font-size:1.05rem}table{font-size:.93rem}th,td{padding:10px 11px}.txtblock{font-size:.96rem}.step .no{width:38px;height:38px}}</style></head><body>'+tpl.innerHTML+'</body></html>';
+  document.getElementById('refTitle').textContent = which==='gesetze' ? '📖 Gesetzestextsammlung' : '🧭 Prüfleitfaden';
+  document.getElementById('refOverlay').classList.add('show');
+}
+function closeRef(){
+  document.getElementById('refOverlay').classList.remove('show');
+  document.getElementById('refFrame').srcdoc='';
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeRef(); });
+
+renderInbox();
+</script>
+</body>
+</html>
