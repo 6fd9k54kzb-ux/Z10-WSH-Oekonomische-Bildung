@@ -12,7 +12,7 @@ Hier findest du die Lernportale, Editoren und Übungsseiten für den Unterricht.
 | 1 | Gesetzliche Grundlage | Mangelhafte Lieferung | [Lernportal öffnen](https://6fd9k54kzb-ux.github.io/HeiSop256.github.io/02_lernportal_mangelhafte_lieferung_ueberarbeitet.html) |
 | 2 | Mängelrüge-Editor | Die erste Mängelrüge verfassen | [Editor öffnen](https://6fd9k54kzb-ux.github.io/HeiSop256.github.io/04_maengelruege-editor.html) |
 | 3 | E-Mail-Postfach | Mängelrüge und erfolglose Nacherfüllung | [Fall öffnen](https://6fd9k54kzb-ux.github.io/HeiSop256.github.io/02_email_postfach_maengelruege_aktualisiert_10_06_2026.html) |
-| 4 | Firmen-Intranet und E-Mail| Zahlungsverzug bearbeiten | [Intranet öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Kaufvertragsstoerungen/02_zahlungsverzug_02_portal_ueberarbeitet(1).html) |
+| 4 | Firmen-Intranet und E-Mail| Zahlungsverzug er- und bearbeiten | [Intranet öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Kaufvertragsstoerungen/02_zahlungsverzug_02_portal_ueberarbeitet(1).html) |
 
 ---
 
