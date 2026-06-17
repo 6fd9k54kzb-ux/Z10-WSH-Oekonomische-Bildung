@@ -506,7 +506,7 @@ Mit freundlichen Grüßen
 Kai Müller, Vertriebsmanager`,
  params:{lvp:5500,krR:20,ksR:2,sk:3700,minGR:15},
  sol:{},
- schema:['lvp','kr','zvp','ks','bvp','sk_given','gewinn','gewinnR','fazit'],
+ schema:['sk_given','gewinn','bvp','ks','zvp','kr','lvp','gewinnR','fazit'],
  sampleEmail:`Sehr geehrter Herr Müller,
 
 vielen Dank für Ihre Anfrage bezüglich der Schreibtischstühle „ErgoComfort X".
@@ -535,7 +535,7 @@ Mit freundlichen Grüßen
 Anna Kowalski, Kundenbetreuung`,
  params:{lvp:8400,krR:25,sk:4800,gR:18},
  sol:{},
- schema:['lvp','kr','zvp','sk_given','minGewinn','minBvp','maxKs','maxKsR'],
+ schema:['sk_given','minGewinn','minBvp','zvp','kr','lvp','maxKs','maxKsR'],
  sampleEmail:`Sehr geehrte Frau Kowalski,
 
 vielen Dank für Ihre Anfrage bezüglich der Büroregale „OfficeLine Pro".
@@ -656,8 +656,8 @@ Klaus Trübner, Einkauf`,
          lvp_brutto_d:1190,ustR_vk:19,krR:5,ksR:2},
  sol:{},
  schema:['lep_brutto_diff','ust_ein_diff','lep_netto_diff','rabatt_diff','zep_diff','skonto_diff','bep_diff','bk_diff','bp_diff','hk_diff','sk_diff',
-         'lvp_brutto_diff','ust_vk_diff','nvp_diff','kr_diff','zvp_diff','ks_diff','bvp_diff',
-         'gewinn_diff','gewinnR_diff'],
+         'gewinn_diff','bvp_diff','ks_diff','zvp_diff','kr_diff','nvp_diff','ust_vk_diff','lvp_brutto_diff',
+         'gewinnR_diff'],
  sampleEmail:`Sehr geehrter Herr Trübner,
 
 vielen Dank für Ihre Anfrage zur Gewinnermittlung des Wohnzimmerschranks "Elegant Line".
@@ -697,8 +697,8 @@ Petra Schneider, Verwaltung`,
          lvp_brutto_d:1324,ustR_vk:19,krR:19.5,ksR:2},
  sol:{},
  schema:['lep_brutto_diff','ust_ein_diff','lep_netto_diff','rabatt_diff','zep_diff','skonto_diff','bep_diff','bk_diff','bp_diff','hk_diff','sk_diff',
-         'lvp_brutto_diff','ust_vk_diff','nvp_diff','kr_diff','zvp_diff','ks_diff','bvp_diff',
-         'gewinn_diff','gewinnR_diff'],
+         'gewinn_diff','bvp_diff','ks_diff','zvp_diff','kr_diff','nvp_diff','ust_vk_diff','lvp_brutto_diff',
+         'gewinnR_diff'],
  sampleEmail:`Sehr geehrte Frau Schneider,
 
 vielen Dank für Ihre Anfrage zur Differenzkalkulation des Schreibtischs "OfficePro 200".
@@ -738,8 +738,8 @@ Felix Brauer, Vertrieb`,
          lvp_brutto_d:140,ustR_vk:19,krR:1.5,ksR:1.5},
  sol:{},
  schema:['lep_brutto_diff','ust_ein_diff','lep_netto_diff','rabatt_diff','zep_diff','skonto_diff','bep_diff','bk_diff','bp_diff','hk_diff','sk_diff',
-         'lvp_brutto_diff','ust_vk_diff','nvp_diff','kr_diff','zvp_diff','ks_diff','bvp_diff',
-         'gewinn_diff','gewinnR_diff'],
+         'gewinn_diff','bvp_diff','ks_diff','zvp_diff','kr_diff','nvp_diff','ust_vk_diff','lvp_brutto_diff',
+         'gewinnR_diff'],
  sampleEmail:`Sehr geehrter Herr Brauer,
 
 vielen Dank für Ihre Anfrage zur Gewinnermittlung des Tablets "SmartTab 10".
@@ -1169,12 +1169,10 @@ function buildInbox(){
   const done=Object.keys(taskDone).filter(k=>taskDone[k]).length;
   document.getElementById('inbox-progress').style.width=(done/13*100)+'%';
   list.innerHTML='';
-  // First 6 must all be done before 7-13 unlock
-  const first6done=[1,2,3,4,5,6].every(id=>taskDone[id]);
   TASKS.forEach(t=>{
     const d=taskDone[t.id];
     const isAdvanced=t.id>=7;
-    const locked=isAdvanced&&!first6done;
+    const locked=false;
     const div=document.createElement('div');
     div.className='inbox-item'+(d?' done':locked?' locked':'');
     if(!locked) div.onclick=()=>loadTask(t.id);
@@ -1245,7 +1243,7 @@ const FIELD_DEFS={
   kr:     {op:'+', label:'Kundenrabatt (im Hundert)',    pct:true,pctKey:'krR'},
   lvp:    {op:'=', label:'Listenverkaufspreis (netto)',  hi:true},
   // backward extras
-  sk_given:{op:'−',label:'Selbstkosten (gegeben)',       given:true,hi:true},
+  sk_given:{op:'',label:'Selbstkosten (gegeben)',       given:true,hi:true},
   gewinnR: {op:'', label:'Tatsächliche Gewinnrate',      special:'pct_out'},
   fazit:   {op:'', label:'Fazit: Kann geliefert werden?',special:'text_out'},
   minGewinn:{op:'+',label:'Mindestgewinn (auf SK)',       pct:true,pctKey:'gR'},
@@ -1272,15 +1270,15 @@ const FIELD_DEFS={
   hk_diff:        {op:'+', label:'Handlungskosten',                    pct:true, pctKey:'hkR'},
   sk_diff:        {op:'=', label:'Selbstkosten (SK)',                   hi:true},
   // Verkaufsseite
-  lvp_brutto_diff:{op:'',  label:'Listenverkaufspreis (LVP) brutto',   hi:true, given:true},
-  ust_vk_diff:    {op:'-', label:'- Umsatzsteuer (Im Hundert)',         pct:true, pctKey:'ustR_vk'},
+  lvp_brutto_diff:{op:'=',  label:'Listenverkaufspreis (LVP) brutto',   hi:true, given:true},
+  ust_vk_diff:    {op:'+', label:'+ Umsatzsteuer (Im Hundert)',         pct:true, pctKey:'ustR_vk'},
   nvp_diff:       {op:'=', label:'Nettoverkaufspreis (NVP)',             hi:true},
-  kr_diff:        {op:'−', label:'Kundenrabatt (Im Hundert)',            pct:true, pctKey:'krR'},
+  kr_diff:        {op:'+', label:'Kundenrabatt (Im Hundert)',            pct:true, pctKey:'krR'},
   zvp_diff:       {op:'=', label:'Zielverkaufspreis (ZVP)',              hi:true},
-  ks_diff:        {op:'−', label:'Kundenskonto (Im Hundert)',             pct:true, pctKey:'ksR'},
+  ks_diff:        {op:'+', label:'Kundenskonto (Im Hundert)',             pct:true, pctKey:'ksR'},
   bvp_diff:       {op:'=', label:'Barverkaufspreis (BVP)',               hi:true},
   // Ergebnis
-  gewinn_diff:    {op:'',  label:'Gewinn / Verlust (€)',                special:'gewinn_diff_out'},
+  gewinn_diff:    {op:'+',  label:'Gewinn / Verlust (€)',                special:'gewinn_diff_out'},
   gewinnR_diff:   {op:'',  label:'Gewinn- / Verlustrate (%)',           special:'pct_out'},
 };
 
