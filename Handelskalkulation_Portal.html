@@ -434,8 +434,9 @@ Bitte berechnen Sie unseren maximalen Listeneinkaufspreis pro Stück.
 Mit freundlichen Grüßen
 Michael Wagner, Einkauf`,
  params:{lvp:250,krR:10,ksR:2,gR:25,hkR:20,bk:7,skoR:2,rabR:8},
+ notGiven:['lep'],
  sol:{},
- schema:['lvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep'],
+ schema:['lep','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','lvp'],
  sampleEmail:`Sehr geehrter Herr Wagner,
 
 vielen Dank für Ihre Anfrage zum Bluetooth-Lautsprecher „SoundMax 500“.
@@ -470,8 +471,9 @@ Berechnen Sie bitte: Zu welchem Listeneinkaufspreis dürfen wir die Schuhe höch
 Mit freundlichen Grüßen
 Julia Fischer, Geschäftsführerin`,
  params:{lvp:550,krR:10,ksR:2,gR:20,hkR:25,bk:10,skoR:2,rabR:10},
+ notGiven:['lep'],
  sol:{},
- schema:['lvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep'],
+ schema:['lep','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','lvp'],
  sampleEmail:`Sehr geehrte Frau Fischer,
 
 vielen Dank für Ihre Anfrage. Wir haben die Rückwärtskalkulation auf Basis Ihrer Angaben durchgeführt.
@@ -517,7 +519,7 @@ Mit freundlichen Grüßen
 [Ihr Name]`
 },
 {id:6,type:'diff_skonto',
- from:'Anna Konrad <kundenbetreuung@moebel-max.de>',
+ from:'Anna Kowalski <kundenbetreuung@moebel-max.de>',
  name:'Möbel MAX GmbH',fromShort:'Möbel MAX GmbH',
  subject:'Wie viel Skonto können wir gewähren? – Büroregale „OfficeLine Pro"',date:'Samstag, 19. Juni 2026',
  badge:'bD',badgeText:'Differenz',
@@ -530,11 +532,11 @@ Unsere Selbstkosten für diese Lieferung betragen 4.800,00 €. Wir möchten dab
 Bitte berechnen Sie: Wie viel Prozent Kundenskonto können wir diesem Kunden maximal gewähren?
 
 Mit freundlichen Grüßen
-Anna Konrad, Kundenbetreuung`,
+Anna Kowalski, Kundenbetreuung`,
  params:{lvp:8400,krR:25,sk:4800,gR:18},
  sol:{},
  schema:['lvp','kr','zvp','sk_given','minGewinn','minBvp','maxKs','maxKsR'],
- sampleEmail:`Sehr geehrte Frau Konrad,
+ sampleEmail:`Sehr geehrte Frau Kowalski,
 
 vielen Dank für Ihre Anfrage bezüglich der Büroregale „OfficeLine Pro".
 
@@ -612,8 +614,9 @@ Mit freundlichen Grüßen
 Lena Hartmann, Buchhaltung`,
  params:{brutto_vkp:1190,ustR_vk:19,krR:5,ksR:2,gR:25,hkR:50,bk:6.53,skoR:2,rabR:20,ustR_ein:19},
  givenFields:['brutto_vkp'],
+ notGiven:['lep_brutto'],
  sol:{},
- schema:['brutto_vkp','ust_vk','nvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep_netto','ust_ein','lep_brutto'],
+ schema:['lep_brutto','ust_ein','lep_netto','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','nvp','ust_vk','brutto_vkp'],
  sampleEmail:`Sehr geehrte Frau Hartmann,
 
 vielen Dank für Ihre Anfrage zum Computer "ProDesk 500".
@@ -772,8 +775,9 @@ Mit freundlichen Grüßen
 Heinrich Müller, Einkauf`,
  params:{brutto_vkp:250,ustR_vk:19,krR:1.5,ksR:3,gR:5,hkR:60,bk:8,skoR:3,rabR:12,ustR_ein:19},
  givenFields:['brutto_vkp'],
+ notGiven:['lep_brutto'],
  sol:{},
- schema:['brutto_vkp','ust_vk','nvp','kr','zvp','ks','bvp','sk','gewinn','bp','hk','bep','bk','skonto','zep','rabatt','lep_netto','ust_ein','lep_brutto'],
+ schema:['lep_brutto','ust_ein','lep_netto','rabatt','zep','skonto','bep','bk','bp','hk','sk','gewinn','bvp','ks','zvp','kr','nvp','ust_vk','brutto_vkp'],
  sampleEmail:`Sehr geehrter Herr Müller,
 
 vielen Dank für Ihre Anfrage zum Bluetooth-Lautsprecher "SoundPro".
