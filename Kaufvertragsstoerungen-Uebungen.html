@@ -993,18 +993,17 @@ Fahrradhaus Velozia GmbH`
   from:'Wareneingang Grünwerk (intern)', fromAddr:'wareneingang@gruenwerk.de', date:'12.06.2026',
   subject:'Pflanzkübel nicht eingetroffen – Bestellung vom 01.06.2026',
   toAddr:'vertrieb@pflanzprofi.de',
-  situation:`<p>Hallo Einkauf,</p><p>unsere <b>200 Terracotta-Pflanzkübel</b> (Bestellung B-2026-188 vom 01.06.2026, 6,00 €/Stück = 1.200,00 € netto) sind bis heute (<b>12.06.2026</b>) nicht eingetroffen. Vereinbart war ein Lieferdatum am <b>10.06.2026</b> – ein normaler Termin, <b>kein garantierter Fixtermin</b>. Der Lieferant PflanzProfi hat sich nicht gemeldet.</p><p>Bitte kümmere dich darum.</p>`,
+  situation:`<p>Hallo Einkauf,</p><p>unsere <b>200 Terracotta-Pflanzkübel</b> (Bestellung B-2026-188 vom 01.06.2026, 6,00 €/Stück = 1.200,00 € netto) sind bis heute (<b>12.06.2026</b>) nicht eingetroffen. Vereinbart war ein Lieferdatum am <b>10.06.2026</b> . Der Lieferant PflanzProfi hat sich nicht gemeldet.</p><p>Bitte kümmere dich darum.</p>`,
   context:`Du bist Einkäufer/in der <b>Gartencenter Grünwerk GmbH</b>. Die Kübel werden fürs Sommergeschäft gebraucht. Ein anderer Lieferant wurde <b>noch nicht</b> beauftragt.`,
-  aufgabe:`Schreibe die E-Mail an PflanzProfi. <b>Achtung:</b> Ohne Fixkauf darfst du nicht sofort zurücktreten – du musst zuerst eine angemessene Nachfrist setzen.`,
+  aufgabe:`Schreibe die E-Mail an PflanzProfi.`,
   theory:[
     {q:'Was bedeutet Lieferverzug?', o:['Der Lieferant liefert nicht oder zu spät, obwohl fällig und möglich.','Der Käufer zahlt zu spät.','Die Ware ist beschädigt.'], c:0},
     {q:'Es war KEIN Fixtermin vereinbart. Was musst du tun, bevor du zurücktreten darfst?', o:['Sofort zurücktreten.','Eine angemessene Nachfrist setzen.','Sofort Schadensersatz verlangen.'], c:1}
   ],
-  required:['p286','p323'], ok:['p271','p281','p280'],
+  required:['p286','p323', 'p376'], ok:['p271','p281','p280'],
   checklist:[
     {l:'Bezug zur Bestellung / Betreff', any:['betreff','01.06','pflanzkübel','kübel']},
     {l:'Lieferverzug benannt (Termin 10.06. überschritten)', any:['verzug','10.06','termin']},
-    {l:'Angemessene Nachfrist mit Datum gesetzt', any:['nachfrist','frist','19.06','bis zum']},
     {l:'§ 323 BGB zitiert', any:['323']},
     {l:'Rechte nach Fristablauf angekündigt (Rücktritt/SE)', any:['rücktritt','schadensersatz','nach ablauf','danach']},
     {l:'Grußformel', any:['freundlich','grüßen']}
@@ -1015,9 +1014,7 @@ Sehr geehrte Damen und Herren,
 
 der vereinbarte Liefertermin für unsere 200 Terracotta-Pflanzkübel war der 10.06.2026. Bis heute (12.06.2026) ist die Lieferung nicht eingegangen. Damit befinden Sie sich im Lieferverzug (§ 286 BGB).
 
-Da kein Fixtermin vereinbart wurde, setzen wir Ihnen hiermit eine angemessene Nachfrist zur Lieferung bis zum 19.06.2026 (§ 323 Abs. 1 BGB).
-
-Sollte die Lieferung bis dahin nicht erfolgen, behalten wir uns vor, nach Ablauf der Frist vom Kaufvertrag zurückzutreten und Schadensersatz geltend zu machen.
+Sollte die Lieferung bis dahin nicht erfolgen, behalten wir uns vor, nach Ablauf der Frist vom Kaufvertrag zurückzutreten und Schadensersatz geltend zu machen (§§323, 281 BGB und §376 HGB).
 
 Mit freundlichen Grüßen
 Gartencenter Grünwerk GmbH`
