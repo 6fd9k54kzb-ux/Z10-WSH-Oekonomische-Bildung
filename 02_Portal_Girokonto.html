@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernportal 2 – Das Girokonto</title>
+<style>
+:root{
+  --teal:#1a6b5e;--teal2:#2ecc71;--teal3:#16a085;--teal-light:#e8f5f2;
+  --blue:#1a3a5c;--blue2:#2980b9;--light:#ecf0f1;--white:#fff;
+  --border:#bdc3c7;--dark:#2c3e50;--red:#c0392b;--green:#27ae60;
+  --orange:#e67e22;--yellow:#f1c40f;--shadow:rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark);font-size:15px;line-height:1.65;}
+.nav{background:var(--teal);color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.nav-sub{font-size:.72rem;opacity:.8;}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:white;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:.8rem;transition:.2s;white-space:nowrap;}
+.nbtn:hover,.nbtn.active{background:rgba(255,255,255,.3);font-weight:700;}
+.screen{display:none;animation:fadeIn .25s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(135deg,var(--teal) 0%,var(--teal3) 60%,#1abc9c 100%);color:white;padding:52px 24px 44px;text-align:center;}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:4px 14px;font-size:.78rem;margin-bottom:14px;}
+.hero h2{font-size:2rem;margin-bottom:10px;}
+.hero p{font-size:1rem;opacity:.9;max-width:620px;margin:0 auto 28px;}
+.hero-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.hero-card{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:14px 18px;min-width:140px;cursor:pointer;transition:.2s;text-align:center;}
+.hero-card:hover{background:rgba(255,255,255,.28);transform:translateY(-3px);}
+.hero-card .hc-icon{font-size:1.8rem;margin-bottom:6px;}
+.hero-card .hc-title{font-size:.85rem;font-weight:700;}
+.hero-card .hc-sub{font-size:.7rem;opacity:.8;margin-top:2px;}
+.wrap{max-width:900px;margin:0 auto;padding:24px 18px;}
+.section-title{color:var(--teal);font-size:1.1rem;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid var(--teal-light);}
+.card{background:white;border-radius:12px;padding:24px;box-shadow:0 4px 18px var(--shadow);margin-bottom:20px;}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--teal-light);}
+.card-icon{font-size:1.5rem;}
+.card h3{color:var(--teal);font-size:1rem;font-weight:700;}
+.card p,.card li{font-size:.92rem;line-height:1.7;}
+.card ul,.card ol{padding-left:22px;margin-top:6px;}
+.card li{margin-bottom:4px;}
+.info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:.9rem;}
+.info-box.law{background:#e3f4ef;border-left:4px solid var(--teal);color:#1a4a3a;}
+.info-box.tip{background:#fff8e1;border-left:4px solid var(--yellow);color:#5a4000;}
+.info-box.warn{background:#fdebd0;border-left:4px solid var(--orange);color:#6e3200;}
+.info-box.correct{background:#eafaf1;border-left:4px solid var(--green);}
+.info-box strong{display:block;margin-bottom:4px;}
+.btn{background:var(--teal);color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:.92rem;font-weight:600;transition:.2s;display:inline-block;}
+.btn:hover{background:var(--teal3);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--teal);border:2px solid var(--teal);}
+.btn-outline:hover{background:var(--teal);color:white;}
+.btn-sm{padding:6px 14px;font-size:.82rem;}
+.mc-question{background:white;border-radius:10px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px var(--shadow);}
+.mc-q-text{font-weight:600;margin-bottom:12px;font-size:.95rem;}
+.mc-option{display:flex;align-items:center;gap:10px;padding:9px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:7px;transition:.2s;font-size:.9rem;}
+.mc-option:hover{border-color:var(--teal);background:var(--teal-light);}
+.mc-option.correct{border-color:var(--green);background:#eafaf1;font-weight:600;}
+.mc-option.wrong{border-color:var(--red);background:#fdedec;}
+.mc-option input[type=radio]{accent-color:var(--teal);width:16px;height:16px;}
+.mc-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none;}
+.mc-feedback.show{display:block;}
+.mc-feedback.ok{background:#eafaf1;border:1px solid var(--green);color:#1e8449;}
+.mc-feedback.err{background:#fdedec;border:1px solid var(--red);color:#a93226;}
+.case-card{border:2px solid var(--teal-light);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.case-header{background:var(--teal);color:white;padding:10px 18px;font-weight:700;font-size:.88rem;}
+.case-body{padding:16px 18px;}
+.case-body p{font-size:.9rem;margin-bottom:10px;}
+.case-hint{background:#f5fbf9;border-top:1px solid var(--teal-light);padding:12px 18px;}
+.case-hint-toggle{cursor:pointer;color:var(--teal);font-size:.88rem;font-weight:600;}
+.case-hint-body{display:none;margin-top:10px;font-size:.88rem;line-height:1.7;}
+.case-hint-body.show{display:block;}
+.selftest-wrap{background:linear-gradient(135deg,var(--teal-light),#fff);border:2px solid var(--teal);border-radius:12px;padding:22px;}
+.selftest-wrap h4{color:var(--teal);margin-bottom:14px;font-size:1rem;}
+.selftest-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding:8px;border-radius:8px;cursor:pointer;transition:.2s;}
+.selftest-item:hover{background:rgba(26,107,94,.05);}
+.selftest-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem;transition:.2s;}
+.selftest-check.done{background:var(--green);border-color:var(--green);color:white;}
+.selftest-text{font-size:.88rem;line-height:1.6;}
+.selftest-progress{height:6px;background:var(--border);border-radius:3px;margin-top:14px;overflow:hidden;}
+.selftest-bar{height:100%;background:var(--teal2);width:0%;transition:.4s;}
+.teacher-note{background:#fffde7;border:1px dashed #f9a825;border-radius:10px;padding:14px 18px;margin-bottom:18px;}
+.teacher-note-label{font-size:.72rem;font-weight:700;color:#e65100;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.teacher-note-text{font-size:.85rem;color:#555;line-height:1.6;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.kalkbox{background:#f5f9ff;border:2px solid #a9c4dc;border-radius:10px;padding:18px;margin-bottom:14px;}
+.kalkbox h4{color:var(--blue);margin-bottom:12px;font-size:.95rem;}
+.kalkrow{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:.9rem;}
+.kalkrow label{min-width:180px;font-weight:500;}
+.kalkrow input{width:120px;padding:7px 10px;border:2px solid var(--border);border-radius:6px;font-size:.95rem;text-align:right;}
+.kalkrow .unit{color:#666;font-size:.85rem;}
+.kalk-result{background:var(--teal);color:white;border-radius:8px;padding:12px 16px;font-weight:700;margin-top:10px;display:none;}
+.bk-chip{background:var(--teal);color:white;padding:7px 14px;border-radius:20px;cursor:grab;font-size:.84rem;font-weight:600;user-select:none;transition:.2s;}
+.bk-chip:active{opacity:.7;}
+.bk-chip.bk-correct{background:var(--green)!important;}
+.bk-chip.bk-wrong{background:var(--red)!important;}
+@media(max-width:600px){.nav-links{display:none;}.hero h2{font-size:1.4rem;}.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:1.5rem;">🏦</span>
+    <div><div style="font-size:.95rem;font-weight:700;">Lernportal 2 · Das Girokonto</div><div class="nav-sub">Zahlungsverkehr · Stunde 1 · 10a ÖB</div></div>
+  </div>
+  <div class="nav-links">
+    <button class="nbtn active" onclick="show('home')">🏠 Start</button>
+    <button class="nbtn" onclick="show('girokonto')">🏦 Girokonto</button>
+    <button class="nbtn" onclick="show('pkonto')">🛡️ P-Konto</button>
+    <button class="nbtn" onclick="show('basiskonto')">📋 Basiskonto</button>
+    <button class="nbtn" onclick="show('dispo')">📉 Dispozinsen</button>
+    <button class="nbtn" onclick="show('test')">🎯 Selbsttest</button>
+  </div>
+</nav>
+
+<div id="home" class="screen active">
+  <div class="hero">
+    <div class="hero-badge">📚 Stunde 1 · Zahlungsverkehr</div>
+    <h2>🏦 Das Girokonto</h2>
+    <p>Lerne alles über das Girokonto, den Kontopfändungsschutz, das Basiskonto und wie Dispozinsen berechnet werden.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="show('girokonto')"><div class="hc-icon">🏦</div><div class="hc-title">Girokonto</div><div class="hc-sub">Grundlagen</div></div>
+      <div class="hero-card" onclick="show('pkonto')"><div class="hc-icon">🛡️</div><div class="hc-title">P-Konto</div><div class="hc-sub">§ 850k ZPO</div></div>
+      <div class="hero-card" onclick="show('basiskonto')"><div class="hc-icon">📋</div><div class="hc-title">Basiskonto</div><div class="hc-sub">Rechtsanspruch</div></div>
+      <div class="hero-card" onclick="show('dispo')"><div class="hc-icon">📉</div><div class="hc-title">Dispozinsen</div><div class="hc-sub">Rechner</div></div>
+      <div class="hero-card" onclick="show('test')"><div class="hc-icon">🎯</div><div class="hc-title">Selbsttest</div><div class="hc-sub">Wissen prüfen</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="section-title">📋 Lernziele dieser Einheit</div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🎯</span><h3>Was lerne ich hier?</h3></div>
+      <ul>
+        <li>Du kannst erklären, was ein Girokonto ist und welche Funktionen es hat.</li>
+        <li>Du weißt, was ein P-Konto (Pfändungsschutzkonto) ist und welchen Schutz es bietet (§ 850k ZPO).</li>
+        <li>Du kannst erläutern, was ein Basiskonto ist und wer Anspruch darauf hat.</li>
+        <li>Du kannst Dispozinsen mit einer einfachen Formel berechnen.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="girokonto" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🏦 Modul 1</div><h2 style="font-size:1.5rem;">Das Girokonto</h2><p style="font-size:.9rem;">Das wichtigste Konto im Zahlungsverkehr</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🏦</span><h3>Was ist ein Girokonto?</h3></div>
+      <p>Das <strong>Girokonto</strong> (von ital. „giro" = Kreislauf) ist ein laufendes Konto bei einer Bank oder Sparkasse. Es dient dem täglichen Zahlungsverkehr und ist für die meisten Menschen in Deutschland unverzichtbar.</p>
+      <br>
+      <div class="info-box law"><strong>💳 Hauptfunktionen des Girokontos</strong>
+        <ul style="padding-left:20px;margin-top:6px;">
+          <li>Gehalts-/Lohnzahlungen empfangen</li>
+          <li>Überweisungen und Lastschriften ausführen</li>
+          <li>Daueraufträge einrichten</li>
+          <li>Geldabheben am Automaten (mit Girocard)</li>
+          <li>Onlinebanking und mobiles Bezahlen</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📊</span><h3>Kontoauszug verstehen</h3></div>
+      <p>Der <strong>Kontoauszug</strong> zeigt alle Buchungen auf dem Konto. Wähle für jede Buchung, ob es sich um <strong>H (Haben)</strong> oder <strong>S (Soll)</strong> handelt!</p>
+      <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:12px;">
+        <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+          <thead><tr style="background:var(--teal);color:white;">
+            <th style="padding:8px 12px;text-align:left;">Datum</th>
+            <th style="padding:8px 12px;text-align:left;">Buchungstext</th>
+            <th style="padding:8px 12px;text-align:right;">Betrag</th>
+            <th style="padding:8px 12px;text-align:center;width:80px;">H / S</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #eee;" id="hs-row-1">
+              <td style="padding:7px 12px;">01.06.26</td>
+              <td style="padding:7px 12px;">Gehalt Musterfirma GmbH</td>
+              <td style="padding:7px 12px;text-align:right;color:var(--green);font-weight:700;">+2.100,00 €</td>
+              <td style="padding:6px 12px;text-align:center;" id="hs-cell-1">
+                <select id="hs-sel-1" style="padding:4px 6px;border:2px solid var(--border);border-radius:6px;font-size:.9rem;font-weight:700;cursor:pointer;">
+                  <option value="">–</option><option value="H">H</option><option value="S">S</option>
+                </select>
+              </td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee;background:#fafafa;" id="hs-row-2">
+              <td style="padding:7px 12px;">03.06.26</td>
+              <td style="padding:7px 12px;">Miete Juni – SEPA-Lastschrift</td>
+              <td style="padding:7px 12px;text-align:right;color:var(--red);">−750,00 €</td>
+              <td style="padding:6px 12px;text-align:center;" id="hs-cell-2">
+                <select id="hs-sel-2" style="padding:4px 6px;border:2px solid var(--border);border-radius:6px;font-size:.9rem;font-weight:700;cursor:pointer;">
+                  <option value="">–</option><option value="H">H</option><option value="S">S</option>
+                </select>
+              </td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee;" id="hs-row-3">
+              <td style="padding:7px 12px;">05.06.26</td>
+              <td style="padding:7px 12px;">Überweisung: Stromrechnung</td>
+              <td style="padding:7px 12px;text-align:right;color:var(--red);">−89,00 €</td>
+              <td style="padding:6px 12px;text-align:center;" id="hs-cell-3">
+                <select id="hs-sel-3" style="padding:4px 6px;border:2px solid var(--border);border-radius:6px;font-size:.9rem;font-weight:700;cursor:pointer;">
+                  <option value="">–</option><option value="H">H</option><option value="S">S</option>
+                </select>
+              </td>
+            </tr>
+            <tr id="hs-row-4">
+              <td style="padding:7px 12px;">10.06.26</td>
+              <td style="padding:7px 12px;">Abhebung Geldautomat</td>
+              <td style="padding:7px 12px;text-align:right;color:var(--red);">−200,00 €</td>
+              <td style="padding:6px 12px;text-align:center;" id="hs-cell-4">
+                <select id="hs-sel-4" style="padding:4px 6px;border:2px solid var(--border);border-radius:6px;font-size:.9rem;font-weight:700;cursor:pointer;">
+                  <option value="">–</option><option value="H">H</option><option value="S">S</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-sm" onclick="checkHabenSoll()">Auswahl prüfen</button>
+        <button class="btn btn-sm btn-outline" onclick="resetHabenSoll()">Zurücksetzen</button>
+        <span id="hs-feedback" style="font-size:.88rem;font-weight:600;"></span>
+      </div>
+      <div class="info-box tip" style="margin-top:12px;"><strong>💡 Wichtige Begriffe:</strong><br>
+        <strong>Haben</strong> = Geld geht ein (positiver Betrag) · <strong>Soll</strong> = Geld geht ab (negativer Betrag) · <strong>Saldo</strong> = aktueller Kontostand
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: Girokonto</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was bezeichnet der Begriff „Saldo" auf dem Kontoauszug?</div>
+        <label class="mc-option"><input type="radio" name="mc1" value="a"> <span>a) Den monatlichen Kontogebühr-Betrag</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="b"> <span>b) Den aktuellen Kontostand nach allen Ein- und Ausgängen</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="c"> <span>c) Den Dispokreditrahmen</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="d"> <span>d) Den Betrag einer Überweisung</span></label>
+        <div class="mc-feedback" id="mc1-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc1','b','mc1-fb','Richtig! Der Saldo ist der aktuelle Kontostand – also das Ergebnis aller Haben-Buchungen minus aller Soll-Buchungen.')">Prüfen</button>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('pkonto')">Weiter: P-Konto →</button></div>
+  </div>
+</div>
+
+<div id="pkonto" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🛡️ Modul 2</div><h2 style="font-size:1.5rem;">Pfändungsschutzkonto (P-Konto)</h2><p style="font-size:.9rem;">Schutz vor Kontopfändung – § 850k ZPO</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⚖️</span><h3>Was ist ein P-Konto?</h3></div>
+      <p>Ein <strong>P-Konto</strong> (Pfändungsschutzkonto) ist ein ganz normales Girokonto, das durch eine besondere Schutzfunktion ergänzt wird. Es schützt einen Grundbetrag auf dem Konto vor dem Zugriff von Gläubigern bei einer gerichtlichen Pfändung.</p>
+      <br>
+      <div class="info-box law"><strong>⚖️ § 850k ZPO – Schutzbeträge (Stand 2024)</strong>
+        <ul style="padding-left:20px;margin-top:6px;">
+          <li>Grundfreibetrag: <strong>1.590,00 €</strong> pro Monat (wird regelmäßig angepasst)</li>
+          <li>Erhöhung bei Unterhaltspflichten und anderen Umständen möglich</li>
+          <li>Auf Antrag kann die Pfändungsfreigrenze angehoben werden</li>
+        </ul>
+      </div>
+      <div class="info-box tip"><strong>💡 Wie funktioniert der Schutz?</strong> Selbst wenn ein Gläubiger eine Kontopfändung erwirkt, darf er maximal auf den Betrag zugreifen, der den Freibetrag übersteigt. Der geschützte Betrag bleibt dem Kontoinhaber für den Lebensunterhalt erhalten.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔄</span><h3>Wie wird ein Konto zum P-Konto?</h3></div>
+      <p>Jeder Kontoinhaber kann bei seiner Bank beantragen, dass sein Girokonto in ein P-Konto umgewandelt wird. Das gilt für <strong>jedes bestehende Girokonto</strong>.</p>
+      <div class="info-box warn"><strong>⚠️ Wichtige Regeln:</strong>
+        <ul style="padding-left:20px;margin-top:6px;">
+          <li>Jede Person darf nur <strong>ein P-Konto</strong> führen</li>
+          <li>Die Bank ist verpflichtet, die Umwandlung durchzuführen</li>
+          <li>Es entstehen keine zusätzlichen Gebühren für die Umwandlung</li>
+          <li>Beim P-Konto keine Überziehung (kein Dispo) möglich</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: P-Konto</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was schützt das P-Konto (§ 850k ZPO)?</div>
+        <label class="mc-option"><input type="radio" name="mc2" value="a"> <span>a) Das gesamte Guthaben vor jeder Pfändung</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="b"> <span>b) Einen Grundfreibetrag auf dem Konto vor dem Zugriff von Gläubigern bei Pfändung</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="c"> <span>c) Das Konto vor Kontogebühren</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="d"> <span>d) Die Bank vor Verlusten durch Überschuldung</span></label>
+        <div class="mc-feedback" id="mc2-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc2','b','mc2-fb','Richtig! Das P-Konto schützt einen Grundfreibetrag (ca. 1.590 €/Monat) vor dem Zugriff von Gläubigern. Der darüber liegende Betrag kann gepfändet werden.')">Prüfen</button>
+      </div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was gilt für die Anzahl der P-Konten pro Person?</div>
+        <label class="mc-option"><input type="radio" name="mc3" value="a"> <span>a) Man kann so viele P-Konten führen wie man möchte</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="b"> <span>b) Höchstens zwei P-Konten sind erlaubt</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="c"> <span>c) Jede Person darf nur ein P-Konto führen</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="d"> <span>d) P-Konten sind nur für Unternehmen erlaubt</span></label>
+        <div class="mc-feedback" id="mc3-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc3','c','mc3-fb','Richtig! Jede Person darf nur ein einziges P-Konto führen, um Missbrauch zu verhindern.')">Prüfen</button>
+      </div>
+    </div>
+    <div class="section-title">📖 Fallbeispiel</div>
+    <div class="case-card">
+      <div class="case-header">💼 Fall: Tim und die Kontopfändung</div>
+      <div class="case-body"><p>Tim hat Schulden und ein Gläubiger hat eine <strong>Kontopfändung</strong> erwirkt. Auf Tims Girokonto befinden sich 1.800 €. Tim hat kein P-Konto. Jetzt möchte er ein P-Konto beantragen.</p><p><strong>Aufgabe:</strong> Welcher Betrag ist nach der Umwandlung zum P-Konto geschützt? Kann der Gläubiger trotzdem etwas pfänden?</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('hp1')">💡 Lösungshinweis anzeigen ▼</div>
+      <div class="case-hint-body" id="hp1">Nach § 850k ZPO ist ein Grundfreibetrag von ca. <strong>1.590 €</strong> geschützt. Da Tim 1.800 € hat, kann der Gläubiger auf den Differenzbetrag (1.800 − 1.590 = <strong>210 €</strong>) zugreifen. Die Umwandlung in ein P-Konto schützt Tim den Grundbetrag für seinen Lebensunterhalt.</div></div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('basiskonto')">Weiter: Basiskonto →</button></div>
+  </div>
+</div>
+
+<div id="basiskonto" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">📋 Modul 3</div><h2 style="font-size:1.5rem;">Das Basiskonto</h2><p style="font-size:.9rem;">Bankzugang als Grundrecht</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📋</span><h3>Was ist das Basiskonto?</h3></div>
+      <p>Das <strong>Basiskonto</strong> (auch: Jedermann-Konto) ist ein Girokonto mit eingeschränkten Funktionen, das jede in der EU ansässige Person bei einer deutschen Bank beanspruchen kann – <strong>unabhängig von Einkommen, Bonität oder Wohnsitz</strong>.</p>
+      <br>
+      <div class="info-box law"><strong>⚖️ Rechtsgrundlage: Zahlungskontengesetz (ZKG)</strong>Seit dem 18. Juni 2016 haben alle in der EU ansässigen Personen einen <strong>Rechtsanspruch</strong> auf ein Basiskonto. Banken dürfen die Kontoeröffnung nur in wenigen Ausnahmefällen verweigern (z. B. bei bereits bestehendem Konto bei derselben Bank).</div>
+      <div class="info-box tip"><strong>💡 Für wen ist das Basiskonto gedacht?</strong><br>
+        Obdachlose, Asylsuchende, Menschen mit Schufa-Einträgen, Personen ohne feste Adresse – alle, die bisher kein normales Konto erhalten haben.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⚖️</span><h3>Was kann das Basiskonto? Was nicht?</h3></div>
+      <p style="margin-bottom:10px;font-size:.9rem;color:#555;">Ziehe jeden Begriff in die richtige Kategorie!</p>
+      <div id="bk-pool" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;min-height:52px;padding:8px;border:2px dashed var(--border);border-radius:10px;background:#fafafa;">
+        <div class="bk-chip" draggable="true" data-cat="moeglich">Geld einzahlen &amp; abheben</div>
+        <div class="bk-chip" draggable="true" data-cat="nicht">Überziehungskredit (Dispo)</div>
+        <div class="bk-chip" draggable="true" data-cat="moeglich">SEPA-Überweisungen</div>
+        <div class="bk-chip" draggable="true" data-cat="nicht">Schecks</div>
+        <div class="bk-chip" draggable="true" data-cat="moeglich">SEPA-Lastschriften</div>
+        <div class="bk-chip" draggable="true" data-cat="nicht">Kreditkarte</div>
+        <div class="bk-chip" draggable="true" data-cat="moeglich">Daueraufträge</div>
+        <div class="bk-chip" draggable="true" data-cat="moeglich">Debitkarte (Girocard)</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:10px;min-height:90px;transition:.2s;" id="bk-zone-moeglich">
+          <div style="font-weight:700;font-size:.82rem;margin-bottom:6px;color:var(--green);">✅ Möglich mit Basiskonto</div>
+          <div id="bk-inner-moeglich" style="min-height:50px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
+        <div style="border:2px dashed var(--border);border-radius:10px;padding:10px;min-height:90px;transition:.2s;" id="bk-zone-nicht">
+          <div style="font-weight:700;font-size:.82rem;margin-bottom:6px;color:var(--orange);">⚠️ Nicht möglich</div>
+          <div id="bk-inner-nicht" style="min-height:50px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-sm" onclick="checkBkSort()">Zuordnung prüfen</button>
+        <button class="btn btn-sm btn-outline" onclick="resetBkSort()">Zurücksetzen</button>
+      </div>
+      <div id="bk-feedback" style="margin-top:8px;font-size:.88rem;font-weight:600;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: Basiskonto</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Wer hat Anspruch auf ein Basiskonto?</div>
+        <label class="mc-option"><input type="radio" name="mc4" value="a"> <span>a) Nur EU-Bürger mit deutschem Pass</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="b"> <span>b) Nur Personen mit positivem Schufa-Score</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="c"> <span>c) Alle in der EU ansässigen Personen, unabhängig von Einkommen oder Bonität</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="d"> <span>d) Nur Sozialhilfeempfänger</span></label>
+        <div class="mc-feedback" id="mc4-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc4','c','mc4-fb','Richtig! Alle in der EU ansässigen Personen haben nach dem Zahlungskontengesetz (ZKG) einen Rechtsanspruch auf ein Basiskonto.')">Prüfen</button>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('dispo')">Weiter: Dispozinsen →</button></div>
+  </div>
+</div>
+
+<div id="dispo" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">📉 Modul 4</div><h2 style="font-size:1.5rem;">Dispozinsen berechnen</h2><p style="font-size:.9rem;">Was kostet es, im Minus zu sein?</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📉</span><h3>Was sind Dispozinsen?</h3></div>
+      <p>Der <strong>Dispokredit</strong> (Dispositionskredit) ist eine kurzfristige Überziehungsmöglichkeit des Girokontos, die die Bank einräumt. Wenn man das Konto überzieht, fallen <strong>Dispozinsen</strong> an – oft deutlich höher als normale Kreditzinsen.</p>
+      <div class="info-box warn"><strong>⚠️ Dispozinsen sind teuer!</strong>Während ein normaler Kredit vielleicht 4–6% Zinsen pro Jahr kostet, liegen Dispozinsen häufig zwischen <strong>8% und 15% p.a.</strong> (per annum = pro Jahr).</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🧮</span><h3>Formel: Dispozinsen berechnen</h3></div>
+      <div style="background:var(--teal-light);border:2px solid var(--teal);border-radius:10px;padding:20px;margin-bottom:14px;text-align:center;">
+        <div style="font-size:1.05rem;font-weight:700;color:var(--teal);display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;">
+          <span>Zinsen =</span>
+          <div style="display:inline-block;text-align:center;line-height:1.5;">
+            <div style="padding:2px 16px 5px;border-bottom:2px solid var(--teal);">Überziehungsbetrag × Zinssatz (%) × Tage</div>
+            <div style="padding:5px 16px 2px;">100 × 360</div>
+          </div>
+        </div>
+      </div>
+      <div class="info-box tip"><strong>💡 Beispiel:</strong> Überziehung: 500 € · Zinssatz: 12% p.a. · Dauer: 30 Tage<br>Zinsen = (500 × 12 × 30) / (100 × 360) = 180.000 / 36.000 = <strong>5,00 €</strong></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🧮</span><h3>Interaktiver Dispo-Rechner</h3></div>
+      <div class="kalkbox">
+        <h4>Berechne deine Dispozinsen:</h4>
+        <div class="kalkrow"><label>Überziehungsbetrag:</label><input type="number" id="kBetrag" placeholder="z.B. 500" min="0"> <span class="unit">€</span></div>
+        <div class="kalkrow"><label>Dispozinssatz:</label><input type="number" id="kZins" placeholder="z.B. 12" step="0.1" min="0"> <span class="unit">% p.a.</span></div>
+        <div class="kalkrow"><label>Anzahl Tage im Minus:</label><input type="number" id="kTage" placeholder="z.B. 30" min="1"> <span class="unit">Tage</span></div>
+        <button class="btn btn-sm" style="margin-top:10px;" onclick="calcDispo()">Zinsen berechnen</button>
+        <div class="kalk-result" id="kResult"></div>
+      </div>
+    </div>
+    <div class="section-title">📖 Fallbeispiele</div>
+    <div class="case-card">
+      <div class="case-header">📉 Fall 1: Anna im Minus</div>
+      <div class="case-body">
+        <p>Annas Girokonto ist für <strong>45 Tage</strong> um <strong>380 €</strong> überzogen. Der Dispozinssatz beträgt <strong>12% p.a.</strong></p>
+        <p><strong>Aufgabe:</strong> Wie viel Dispozinsen muss Anna zahlen?</p>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <input type="number" id="fall1-inp" placeholder="Ergebnis in €" step="0.01" min="0"
+            style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:.95rem;width:160px;"
+            oninput="resetFall1()">
+          <span style="font-size:.88rem;color:#666;">€</span>
+          <button class="btn btn-sm" onclick="checkFall1()">Prüfen</button>
+        </div>
+        <div id="fall1-fb" style="margin-top:8px;font-size:.88rem;font-weight:600;display:none;padding:8px 12px;border-radius:8px;"></div>
+      </div>
+    </div>
+    <div class="case-card" id="fall2-card" style="opacity:.45;pointer-events:none;transition:.3s;">
+      <div class="case-header">📉 Fall 2: Wie lange kann man im Minus bleiben?</div>
+      <div class="case-body">
+        <p>Max überzieht sein Konto um <strong>1.200 €</strong> mit einem Zinssatz von <strong>12,5% p.a.</strong> Er möchte, dass die Dispozinsen nicht mehr als <strong>20 €</strong> betragen.</p>
+        <p><strong>Aufgabe:</strong> Wie viele Tage darf Max höchstens im Minus sein?</p>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <input type="number" id="fall2-inp" placeholder="Ergebnis in Tagen" step="1" min="0"
+            style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:.95rem;width:180px;"
+            oninput="resetFall2()">
+          <span style="font-size:.88rem;color:#666;">Tage</span>
+          <button class="btn btn-sm" onclick="checkFall2()">Prüfen</button>
+        </div>
+        <div id="fall2-fb" style="margin-top:8px;font-size:.88rem;font-weight:600;display:none;padding:8px 12px;border-radius:8px;"></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn" id="dispo-weiter-btn" style="opacity:.4;pointer-events:none;transition:.3s;" onclick="show('test')">Weiter: Selbsttest →</button>
+      <div id="dispo-weiter-hint" style="font-size:.82rem;color:#999;margin-top:8px;">🔒 Löse beide Aufgaben richtig, um weiterzukommen.</div>
+    </div>
+  </div>
+</div>
+
+<div id="test" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🎯 Abschluss</div><h2 style="font-size:1.5rem;">Selbsttest</h2><p style="font-size:.9rem;">Klicke auf jedes Lernziel, das du sicher beherrschst!</p></div>
+  <div class="wrap">
+    <div class="selftest-wrap">
+      <h4>🎯 Was kann ich jetzt?</h4>
+      <div class="selftest-item" onclick="toggleSelf(1)"><div class="selftest-check" id="stc1">✓</div><div class="selftest-text">Ich kann erklären, was ein Girokonto ist und welche Hauptfunktionen es hat.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(2)"><div class="selftest-check" id="stc2">✓</div><div class="selftest-text">Ich weiß, was ein P-Konto ist, was § 850k ZPO regelt und welchen Freibetrag es gibt.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(3)"><div class="selftest-check" id="stc3">✓</div><div class="selftest-text">Ich kann erläutern, wer Anspruch auf ein Basiskonto hat und was das ZKG regelt.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(4)"><div class="selftest-check" id="stc4">✓</div><div class="selftest-text">Ich kann Dispozinsen mit der Formel (Betrag × Zinssatz × Tage) / (100 × 360) berechnen.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(5)"><div class="selftest-check" id="stc5">✓</div><div class="selftest-text">Ich kann einen Kontoauszug lesen und Begriffe wie Saldo, Haben und Soll erklären.</div></div>
+      <div class="selftest-progress"><div class="selftest-bar" id="st-bar"></div></div>
+      <div id="st-count" style="font-size:.8rem;color:#666;margin-top:6px;text-align:right;">0 / 5 Lernziele erreicht</div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header"><span class="card-icon">📚</span><h3>Quellen</h3></div>
+      <ul style="padding-left:20px;font-size:.88rem;">
+        <li>§ 850k ZPO (P-Konto): <a href="https://www.gesetze-im-internet.de/zpo/__850k.html" target="_blank" style="color:var(--teal);">gesetze-im-internet.de</a></li>
+        <li>Basiskonto (ZKG): <a href="https://www.bafin.de" target="_blank" style="color:var(--teal);">bafin.de</a></li>
+        <li>BMJV – P-Konto-Info: <a href="https://www.bmjv.de" target="_blank" style="color:var(--teal);">bmjv.de</a></li>
+        <li>Sparkasse Schulservice: <a href="https://www.sparkasse-schulservice.de" target="_blank" style="color:var(--teal);">sparkasse-schulservice.de</a></li>
+      </ul>
+    </div>
+    <div style="text-align:center;"><button class="btn-outline btn" onclick="show('home')">← Zurück zur Startseite</button></div>
+  </div>
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nbtn').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('active');});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function checkMC(name,correct,fbId,explanation){
+  const sel=document.querySelector('input[name="'+name+'"]:checked');
+  const fb=document.getElementById(fbId);
+  if(!sel){fb.className='mc-feedback show err';fb.textContent='Bitte wähle eine Antwort aus!';return;}
+  document.querySelectorAll('input[name="'+name+'"]').forEach(inp=>{
+    inp.parentElement.classList.remove('selected','correct','wrong');
+    if(inp.value===correct)inp.parentElement.classList.add('correct');
+    else if(inp===sel&&inp.value!==correct)inp.parentElement.classList.add('wrong');
+  });
+  fb.className='mc-feedback show '+(sel.value===correct?'ok':'err');
+  fb.innerHTML=(sel.value===correct?'✅ Richtig! ':'❌ Leider falsch. ')+explanation;
+}
+function toggleHint(id){
+  const el=document.getElementById(id);el.classList.toggle('show');
+  const t=el.previousElementSibling;
+  t.textContent=el.classList.contains('show')?t.textContent.replace('▼','▲'):t.textContent.replace('▲','▼');
+}
+function calcDispo(){
+  const b=parseFloat(document.getElementById('kBetrag').value)||0;
+  const z=parseFloat(document.getElementById('kZins').value)||0;
+  const t=parseFloat(document.getElementById('kTage').value)||0;
+  const res=document.getElementById('kResult');
+  if(b<=0||z<=0||t<=0){res.style.display='block';res.innerHTML='⚠️ Bitte alle Felder ausfüllen!';res.style.background='#fdebd0';return;}
+  const zinsen=(b*z*t/(100*360)).toFixed(2);
+  res.style.display='block';res.style.background='';
+  res.innerHTML='💰 Dispozinsen: <strong>'+zinsen.replace('.',',')+ ' €</strong><br><small>('+b.toFixed(2).replace('.',',')+' × '+z+' × '+t+') / (100 × 360)</small>';
+}
+// --- H/S Kontoauszug ---
+const hsAnswers={1:'H',2:'S',3:'S',4:'S'};
+function checkHabenSoll(){
+  let correct=0,allFilled=true;
+  for(let i=1;i<=4;i++){
+    const sel=document.getElementById('hs-sel-'+i);
+    const cell=document.getElementById('hs-cell-'+i);
+    if(!sel||!sel.value){allFilled=false;if(cell)cell.style.background='';continue;}
+    if(sel.value===hsAnswers[i]){
+      cell.style.background='#eafaf1';sel.style.borderColor='var(--green)';correct++;
+    }else{
+      cell.style.background='#fdedec';sel.style.borderColor='var(--red)';
+    }
+  }
+  const fb=document.getElementById('hs-feedback');
+  if(!allFilled){fb.style.color='#c0550a';fb.textContent='⚠️ Bitte alle Zeilen ausfüllen!';return;}
+  if(correct===4){fb.style.color='var(--green)';fb.textContent='✅ Alle 4 Buchungen richtig zugeordnet!';}
+  else{fb.style.color='var(--red)';fb.textContent=correct+' / 4 richtig – überprüfe die roten Felder.';}
+}
+function resetHabenSoll(){
+  for(let i=1;i<=4;i++){
+    const sel=document.getElementById('hs-sel-'+i);
+    const cell=document.getElementById('hs-cell-'+i);
+    if(sel){sel.value='';sel.style.borderColor='var(--border)';}
+    if(cell)cell.style.background='';
+  }
+  const fb=document.getElementById('hs-feedback');
+  if(fb)fb.textContent='';
+}
+// --- Basiskonto Zuordnung ---
+(function(){
+  let bkDrag=null;
+  function bkInit(){
+    document.querySelectorAll('.bk-chip').forEach(function(chip){
+      chip.addEventListener('dragstart',function(){bkDrag=chip;chip.style.opacity='.5';});
+      chip.addEventListener('dragend',function(){chip.style.opacity='1';});
+    });
+    ['bk-pool','bk-inner-moeglich','bk-inner-nicht'].forEach(function(zid){
+      const z=document.getElementById(zid);
+      if(!z)return;
+      z.addEventListener('dragover',function(e){e.preventDefault();z.style.background='rgba(26,107,94,.08)';});
+      z.addEventListener('dragleave',function(){z.style.background='';});
+      z.addEventListener('drop',function(e){e.preventDefault();z.style.background='';if(bkDrag)z.appendChild(bkDrag);});
+    });
+  }
+  window.checkBkSort=function(){
+    let ok=0,total=0;
+    document.querySelectorAll('.bk-chip').forEach(function(chip){
+      total++;
+      const inner=chip.closest('[id^="bk-inner-"]');
+      if(!inner){chip.classList.remove('bk-correct','bk-wrong');return;}
+      const cat=inner.id.replace('bk-inner-','');
+      if(chip.dataset.cat===cat){chip.classList.add('bk-correct');chip.classList.remove('bk-wrong');ok++;}
+      else{chip.classList.add('bk-wrong');chip.classList.remove('bk-correct');}
+    });
+    const fb=document.getElementById('bk-feedback');
+    if(ok===total){fb.style.color='var(--green)';fb.textContent='✅ Alle '+total+' Begriffe richtig zugeordnet!';}
+    else{fb.style.color='var(--red)';fb.textContent=ok+' / '+total+' richtig – überprüfe die roten Begriffe.';}
+  };
+  window.resetBkSort=function(){
+    const pool=document.getElementById('bk-pool');
+    document.querySelectorAll('.bk-chip').forEach(function(chip){
+      chip.classList.remove('bk-correct','bk-wrong');
+      pool.appendChild(chip);
+    });
+    const fb=document.getElementById('bk-feedback');
+    if(fb)fb.textContent='';
+  };
+  bkInit();
+})();
+// --- Dispo Fallbeispiele ---
+let fall1Solved=false,fall2Solved=false;
+function checkFall1(){
+  const raw=document.getElementById('fall1-inp').value.replace(',','.');
+  const val=parseFloat(raw);
+  const fb=document.getElementById('fall1-fb');
+  fb.style.display='block';
+  if(isNaN(val)){fb.style.background='#fdebd0';fb.style.color='#6e3200';fb.textContent='⚠️ Bitte eine Zahl eingeben.';return;}
+  // (380 × 12 × 45) / (100 × 360) = 5.70
+  if(Math.abs(val-5.70)<0.06){
+    fb.style.background='#eafaf1';fb.style.color='var(--green)';
+    fb.innerHTML='✅ Richtig! (380 × 12 × 45) / (100 × 360) = <strong>5,70 €</strong>';
+    fall1Solved=true;
+    const f2=document.getElementById('fall2-card');
+    if(f2){f2.style.opacity='1';f2.style.pointerEvents='auto';}
+    checkDispoWeiter();
+  }else{
+    fb.style.background='#fdedec';fb.style.color='var(--red)';
+    fb.textContent='❌ Nicht ganz. Nutze: (380 × 12 × 45) / (100 × 360)';
+    fall1Solved=false;checkDispoWeiter();
+  }
+}
+function resetFall1(){
+  fall1Solved=false;
+  const fb=document.getElementById('fall1-fb');
+  if(fb)fb.style.display='none';
+  checkDispoWeiter();
+}
+function checkFall2(){
+  const val=parseInt(document.getElementById('fall2-inp').value);
+  const fb=document.getElementById('fall2-fb');
+  fb.style.display='block';
+  if(isNaN(val)){fb.style.background='#fdebd0';fb.style.color='#6e3200';fb.textContent='⚠️ Bitte eine Zahl eingeben.';return;}
+  // Tage = (20 × 100 × 360) / (1200 × 12.5) = 48
+  if(val===48){
+    fb.style.background='#eafaf1';fb.style.color='var(--green)';
+    fb.innerHTML='✅ Richtig! Tage = (20 × 100 × 360) / (1.200 × 12,5) = <strong>48 Tage</strong>';
+    fall2Solved=true;checkDispoWeiter();
+  }else{
+    fb.style.background='#fdedec';fb.style.color='var(--red)';
+    fb.textContent='❌ Nicht ganz. Forme um: Tage = (Zinsen × 100 × 360) / (Betrag × Zinssatz)';
+    fall2Solved=false;checkDispoWeiter();
+  }
+}
+function resetFall2(){
+  fall2Solved=false;
+  const fb=document.getElementById('fall2-fb');
+  if(fb)fb.style.display='none';
+  checkDispoWeiter();
+}
+function checkDispoWeiter(){
+  const btn=document.getElementById('dispo-weiter-btn');
+  const hint=document.getElementById('dispo-weiter-hint');
+  if(fall1Solved&&fall2Solved){
+    if(btn){btn.style.opacity='1';btn.style.pointerEvents='auto';}
+    if(hint)hint.style.display='none';
+  }else{
+    if(btn){btn.style.opacity='.4';btn.style.pointerEvents='none';}
+    if(hint)hint.style.display='block';
+  }
+}
+let stDone={};
+function toggleSelf(n){
+  const c=document.getElementById('stc'+n);
+  if(stDone[n]){delete stDone[n];c.classList.remove('done');}else{stDone[n]=true;c.classList.add('done');}
+  const cnt=Object.keys(stDone).length;
+  document.getElementById('st-bar').style.width=(cnt/5*100)+'%';
+  document.getElementById('st-count').textContent=cnt+' / 5 Lernziele erreicht';
+}
+</script>
+</body>
+</html>
