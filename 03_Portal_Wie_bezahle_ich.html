@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernportal 3 – Wie bezahle ich?</title>
+<style>
+:root{
+  --orange:#c0550a;--orange2:#e67e22;--orange3:#f39c12;--orange-light:#fef3e2;
+  --blue:#1a3a5c;--blue2:#2980b9;--light:#ecf0f1;--white:#fff;
+  --border:#bdc3c7;--dark:#2c3e50;--red:#c0392b;--green:#27ae60;
+  --teal:#16a085;--shadow:rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark);font-size:15px;line-height:1.65;}
+.nav{background:var(--orange);color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.nav-sub{font-size:.72rem;opacity:.8;}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:white;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:.8rem;transition:.2s;white-space:nowrap;}
+.nbtn:hover,.nbtn.active{background:rgba(255,255,255,.3);font-weight:700;}
+.screen{display:none;animation:fadeIn .25s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(135deg,var(--orange) 0%,var(--orange2) 60%,var(--orange3) 100%);color:white;padding:52px 24px 44px;text-align:center;}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:4px 14px;font-size:.78rem;margin-bottom:14px;}
+.hero h2{font-size:2rem;margin-bottom:10px;}
+.hero p{font-size:1rem;opacity:.9;max-width:620px;margin:0 auto 28px;}
+.hero-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.hero-card{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:14px 18px;min-width:140px;cursor:pointer;transition:.2s;text-align:center;}
+.hero-card:hover{background:rgba(255,255,255,.28);transform:translateY(-3px);}
+.hero-card .hc-icon{font-size:1.8rem;margin-bottom:6px;}
+.hero-card .hc-title{font-size:.85rem;font-weight:700;}
+.hero-card .hc-sub{font-size:.7rem;opacity:.8;margin-top:2px;}
+.wrap{max-width:900px;margin:0 auto;padding:24px 18px;}
+.section-title{color:var(--orange);font-size:1.1rem;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid var(--orange-light);}
+.card{background:white;border-radius:12px;padding:24px;box-shadow:0 4px 18px var(--shadow);margin-bottom:20px;}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--orange-light);}
+.card-icon{font-size:1.5rem;}
+.card h3{color:var(--orange);font-size:1rem;font-weight:700;}
+.card p,.card li{font-size:.92rem;line-height:1.7;}
+.card ul,.card ol{padding-left:22px;margin-top:6px;}
+.card li{margin-bottom:4px;}
+.info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:.9rem;}
+.info-box.law{background:#fef3e2;border-left:4px solid var(--orange);color:#6e3200;}
+.info-box.tip{background:#e8f5f2;border-left:4px solid var(--teal);color:#1a4a3a;}
+.info-box.warn{background:#fdebd0;border-left:4px solid var(--orange2);color:#6e3200;}
+.info-box.correct{background:#eafaf1;border-left:4px solid var(--green);}
+.info-box strong{display:block;margin-bottom:4px;}
+.btn{background:var(--orange);color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:.92rem;font-weight:600;transition:.2s;display:inline-block;}
+.btn:hover{background:var(--orange2);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--orange);border:2px solid var(--orange);}
+.btn-outline:hover{background:var(--orange);color:white;}
+.btn-sm{padding:6px 14px;font-size:.82rem;}
+.mc-question{background:white;border-radius:10px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px var(--shadow);}
+.mc-q-text{font-weight:600;margin-bottom:12px;font-size:.95rem;}
+.mc-option{display:flex;align-items:center;gap:10px;padding:9px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:7px;transition:.2s;font-size:.9rem;}
+.mc-option:hover{border-color:var(--orange);background:var(--orange-light);}
+.mc-option.correct{border-color:var(--green);background:#eafaf1;font-weight:600;}
+.mc-option.wrong{border-color:var(--red);background:#fdedec;}
+.mc-option input[type=radio]{accent-color:var(--orange);width:16px;height:16px;}
+.mc-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none;}
+.mc-feedback.show{display:block;}
+.mc-feedback.ok{background:#eafaf1;border:1px solid var(--green);color:#1e8449;}
+.mc-feedback.err{background:#fdedec;border:1px solid var(--red);color:#a93226;}
+.case-card{border:2px solid var(--orange-light);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.case-header{background:var(--orange);color:white;padding:10px 18px;font-weight:700;font-size:.88rem;}
+.case-body{padding:16px 18px;}
+.case-body p{font-size:.9rem;margin-bottom:10px;}
+.case-hint{background:#fffaf5;border-top:1px solid var(--orange-light);padding:12px 18px;}
+.case-hint-toggle{cursor:pointer;color:var(--orange);font-size:.88rem;font-weight:600;}
+.case-hint-body{display:none;margin-top:10px;font-size:.88rem;line-height:1.7;}
+.case-hint-body.show{display:block;}
+.selftest-wrap{background:linear-gradient(135deg,var(--orange-light),#fff);border:2px solid var(--orange);border-radius:12px;padding:22px;}
+.selftest-wrap h4{color:var(--orange);margin-bottom:14px;font-size:1rem;}
+.selftest-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding:8px;border-radius:8px;cursor:pointer;transition:.2s;}
+.selftest-item:hover{background:rgba(192,85,10,.05);}
+.selftest-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem;transition:.2s;}
+.selftest-check.done{background:var(--green);border-color:var(--green);color:white;}
+.selftest-text{font-size:.88rem;line-height:1.6;}
+.selftest-progress{height:6px;background:var(--border);border-radius:3px;margin-top:14px;overflow:hidden;}
+.selftest-bar{height:100%;background:var(--orange3);width:0%;transition:.4s;}
+.teacher-note{background:#fffde7;border:1px dashed #f9a825;border-radius:10px;padding:14px 18px;margin-bottom:18px;}
+.teacher-note-label{font-size:.72rem;font-weight:700;color:#e65100;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.teacher-note-text{font-size:.85rem;color:#555;line-height:1.6;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.iban-box{background:#f0f4ff;border:2px solid var(--blue2);border-radius:10px;padding:16px;margin-bottom:14px;}
+.iban-digit{display:inline-block;width:34px;height:34px;border:2px solid var(--blue2);border-radius:6px;text-align:center;line-height:30px;font-weight:700;font-size:.9rem;margin:2px;}
+.iban-digit.group1{background:#d6eaf8;color:var(--blue);}
+.iban-digit.group2{background:#d5f5e3;color:#1e8449;}
+.iban-digit.group3{background:#fdebd0;color:#784212;}
+.iban-digit.group4{background:#f9ebff;color:#6c3483;}
+.iban-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:.8rem;}
+.iban-legend-item{display:flex;align-items:center;gap:4px;}
+.iban-legend-dot{width:14px;height:14px;border-radius:3px;}
+.sort-game{margin-bottom:14px;}
+.sort-item{background:white;border:2px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:7px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:.9rem;transition:.2s;}
+.sort-item:hover{border-color:var(--orange);}
+.sort-item.correct{border-color:var(--green);background:#eafaf1;}
+.sort-item.wrong{border-color:var(--red);background:#fdedec;}
+.country-grid{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 10px;}
+.country-btn{padding:6px 13px;border:2px solid var(--border);border-radius:20px;cursor:pointer;font-size:.82rem;transition:.2s;background:white;color:var(--dark);}
+.country-btn:hover{border-color:var(--orange);}
+.country-btn.selected{background:var(--orange);color:white;border-color:var(--orange);}
+.country-btn.correct-pick{background:var(--green)!important;border-color:var(--green)!important;color:white!important;}
+.country-btn.wrong-pick{background:var(--red)!important;border-color:var(--red)!important;color:white!important;}
+.country-btn.missed{border-color:var(--orange3)!important;background:var(--orange-light)!important;color:var(--dark)!important;}
+.seq-list{list-style:none;padding:0;margin-bottom:10px;}
+.seq-item{background:white;border:2px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:grab;display:flex;align-items:center;gap:10px;font-size:.88rem;transition:.15s;user-select:none;}
+.seq-item:hover{border-color:var(--orange);}
+.seq-item.drag-over{border-color:var(--orange2);background:var(--orange-light);}
+.seq-item.seq-correct{border-color:var(--green)!important;background:#eafaf1!important;}
+.seq-item.seq-wrong{border-color:var(--red)!important;background:#fdedec!important;}
+.seq-handle{color:#bbb;font-size:1rem;flex-shrink:0;}
+@media(max-width:600px){.nav-links{display:none;}.hero h2{font-size:1.4rem;}.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:1.5rem;">💸</span>
+    <div><div style="font-size:.95rem;font-weight:700;">Lernportal 3 · Wie bezahle ich?</div><div class="nav-sub">Zahlungsverkehr · Stunde 2 · 10a ÖB</div></div>
+  </div>
+  <div class="nav-links">
+    <button class="nbtn active" onclick="show('home')">🏠 Start</button>
+    <button class="nbtn" onclick="show('ueberweisung')">📤 Überweisung</button>
+    <button class="nbtn" onclick="show('iban')">🔢 IBAN</button>
+    <button class="nbtn" onclick="show('lastschrift')">📥 Lastschrift</button>
+    <button class="nbtn" onclick="show('test')">🎯 Selbsttest</button>
+  </div>
+</nav>
+
+<div id="home" class="screen active">
+  <div class="hero">
+    <div class="hero-badge">📚 Stunde 2 · Zahlungsverkehr</div>
+    <h2>💸 Wie bezahle ich?</h2>
+    <p>Lerne SEPA-Überweisung, IBAN-Aufbau, Überweisungsrückruf und SEPA-Lastschrift mit Mandat kennen.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="show('ueberweisung')"><div class="hc-icon">📤</div><div class="hc-title">SEPA-Überweisung</div><div class="hc-sub">Geld senden</div></div>
+      <div class="hero-card" onclick="show('iban')"><div class="hc-icon">🔢</div><div class="hc-title">IBAN</div><div class="hc-sub">Kontonummer EU</div></div>
+      <div class="hero-card" onclick="show('lastschrift')"><div class="hc-icon">📥</div><div class="hc-title">Lastschrift</div><div class="hc-sub">SEPA-Mandat</div></div>
+      <div class="hero-card" onclick="show('test')"><div class="hc-icon">🎯</div><div class="hc-title">Selbsttest</div><div class="hc-sub">Wissen prüfen</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🎯</span><h3>Lernziele dieser Einheit</h3></div>
+      <ul>
+        <li>Du kannst erklären, wie eine SEPA-Überweisung funktioniert und was SEPA bedeutet.</li>
+        <li>Du kannst den Aufbau einer deutschen IBAN erläutern.</li>
+        <li>Du weißt, unter welchen Bedingungen ein Überweisungsrückruf möglich ist.</li>
+        <li>Du kannst erklären, was eine SEPA-Lastschrift ist und was ein Mandat ist.</li>
+        <li>Du kennst die Widerspruchsmöglichkeiten bei Lastschriften.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="ueberweisung" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">📤 Modul 1</div><h2 style="font-size:1.5rem;">SEPA-Überweisung</h2><p style="font-size:.9rem;">Geld sicher und europaweit überweisen</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🌍</span><h3>Was ist SEPA?</h3></div>
+      <p><strong>SEPA</strong> = Single Euro Payments Area (Einheitlicher Euro-Zahlungsverkehrsraum). SEPA umfasst <strong>36 Länder</strong> in Europa, darunter alle EU-Staaten sowie Norwegen, Island, Liechtenstein und die Schweiz.</p>
+      <div style="margin:14px 0 6px;font-size:.9rem;font-weight:700;color:var(--orange);">🎮 Aufgabe: Welche Länder gehören zum SEPA-Raum? Wähle alle 36 aus!</div>
+      <div class="info-box tip" style="margin-bottom:10px;padding:10px 14px;font-size:.82rem;"><strong>💡 Hinweis:</strong> Klicke alle Länder an, die zum SEPA-Raum gehören. Nicht alle in der Liste sind dabei!</div>
+      <div class="country-grid">
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Andorra</button>
+        <button class="country-btn" data-correct="0" onclick="toggleCountry(this)">Australien</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Belgien</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Bulgarien</button>
+        <button class="country-btn" data-correct="0" onclick="toggleCountry(this)">China</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Dänemark</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Deutschland</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Estland</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Finnland</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Frankreich</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Griechenland</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Irland</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Island</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Italien</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Kroatien</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Lettland</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Liechtenstein</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Litauen</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Luxemburg</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Malta</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Monaco</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Niederlande</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Norwegen</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Österreich</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Polen</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Portugal</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Rumänien</button>
+        <button class="country-btn" data-correct="0" onclick="toggleCountry(this)">Russland</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">San Marino</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Schweden</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Schweiz</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Slowakei</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Slowenien</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Spanien</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Tschechien</button>
+        <button class="country-btn" data-correct="0" onclick="toggleCountry(this)">Türkei</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Ungarn</button>
+        <button class="country-btn" data-correct="0" onclick="toggleCountry(this)">USA</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Vatikanstadt</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Vereinigtes Königreich</button>
+        <button class="country-btn" data-correct="1" onclick="toggleCountry(this)">Zypern</button>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn btn-sm" onclick="checkCountries()">Auswahl prüfen</button>
+        <button class="btn btn-sm btn-outline" onclick="resetCountries()">Zurücksetzen</button>
+        <span id="country-fb" style="font-size:.88rem;font-weight:600;"></span>
+      </div>
+      <br>
+      <div class="info-box law"><strong>🌍 Ziel von SEPA</strong>Einheitliche Standards für den bargeldlosen Zahlungsverkehr in Europa. Eine Überweisung nach Frankreich funktioniert genauso wie eine Überweisung innerhalb Deutschlands – gleiche Konditionen, gleiche Bearbeitungszeit.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📤</span><h3>Wie funktioniert eine SEPA-Überweisung?</h3></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;">
+        <div style="background:var(--orange-light);border:2px solid var(--orange);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:100px;"><div style="font-size:1.4rem;">👤</div><div style="font-size:.8rem;font-weight:700;color:var(--orange);">Auftraggeber</div><div style="font-size:.72rem;">gibt IBAN und Betrag an</div></div>
+        <div style="font-size:1.3rem;color:var(--orange);">→</div>
+        <div style="background:var(--orange-light);border:2px solid var(--orange);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:100px;"><div style="font-size:1.4rem;">🏦</div><div style="font-size:.8rem;font-weight:700;color:var(--orange);">Auftraggeber-Bank</div><div style="font-size:.72rem;">prüft und sendet</div></div>
+        <div style="font-size:1.3rem;color:var(--orange);">→</div>
+        <div style="background:var(--orange-light);border:2px solid var(--orange);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:100px;"><div style="font-size:1.4rem;">🏦</div><div style="font-size:.8rem;font-weight:700;color:var(--orange);">Empfänger-Bank</div><div style="font-size:.72rem;">gutschreibt</div></div>
+        <div style="font-size:1.3rem;color:var(--orange);">→</div>
+        <div style="background:#eafaf1;border:2px solid var(--green);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:100px;"><div style="font-size:1.4rem;">👤</div><div style="font-size:.8rem;font-weight:700;color:var(--green);">Empfänger</div><div style="font-size:.72rem;">erhält Geld</div></div>
+      </div>
+      <p><strong>Bearbeitungszeit:</strong> In der Regel <strong>1 Bankarbeitstag</strong> (bei SEPA-Echtzeitüberweisung: innerhalb von Sekunden).</p>
+      <br>
+      <div class="info-box tip"><strong>📋 Pflichtangaben für eine Überweisung</strong>
+        <ul style="padding-left:18px;margin-top:6px;">
+          <li>IBAN des Empfängers (und ggf. BIC für Ausland)</li>
+          <li>Name des Empfängers</li>
+          <li>Betrag und Währung (€)</li>
+          <li>Verwendungszweck (optional, aber empfehlenswert)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔀</span><h3>Ablauf einer SEPA-Überweisung – Reihenfolge sortieren</h3></div>
+      <p style="font-size:.9rem;margin-bottom:10px;">Ziehe die 4 Schritte in die richtige Reihenfolge! (Bildquelle: konto.org)</p>
+      <ul class="seq-list" id="seq-ueb">
+        <li class="seq-item" draggable="true" data-correct="3"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
+        <li class="seq-item" draggable="true" data-correct="1"><span class="seq-handle">☰</span><span>Übergabe von Waren / Erbringung von Dienstleistungen gegen Zahlung</span></li>
+        <li class="seq-item" draggable="true" data-correct="4"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers stellt den <strong>Überweisungsbetrag bereit</strong> (Gutschrift)</span></li>
+        <li class="seq-item" draggable="true" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt seiner Bank den <strong>Zahlungsauftrag</strong> (mit IBAN und Betrag)</span></li>
+      </ul>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-sm" onclick="checkSeq('seq-ueb','seq-ueb-fb')">Reihenfolge prüfen</button>
+        <button class="btn btn-sm btn-outline" onclick="resetSeq('seq-ueb','seq-ueb-fb')">Mischen</button>
+      </div>
+      <div id="seq-ueb-fb" style="margin-top:8px;font-size:.88rem;font-weight:600;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">↩️</span><h3>Überweisungsrückruf</h3></div>
+      <p>Was passiert, wenn man versehentlich an die falsche IBAN überwiesen hat oder zu viel überwiesen hat?</p>
+      <br>
+      <div class="info-box warn"><strong>⚠️ Überweisungsrückruf – so funktioniert es:</strong>
+        <ul style="padding-left:18px;margin-top:6px;">
+          <li>Sofort die eigene Bank kontaktieren und Rückruf beauftragen</li>
+          <li>Die Bank des Empfängers wird um Rückbuchung gebeten</li>
+          <li><strong>Kein Rechtsanspruch</strong> auf Rückbuchung – Empfänger muss zustimmen</li>
+          <li>Bei falscher IBAN: Empfängerbank muss helfen, Geld zurückzuleiten</li>
+          <li>Zivilrechtliche Rückforderung bei ungerechtfertigter Bereicherung (§ 812 BGB) möglich</li>
+        </ul>
+      </div>
+      <div class="info-box warn"><strong>🆕 Verification of Payee (VoP) – neu ab Oktober 2025</strong>
+        Seit dem <strong>9. Oktober 2025</strong> sind alle Banken (EU-Verordnung) verpflichtet, den <strong>Namen des Zahlungsempfängers mit der IBAN abzugleichen</strong>, bevor eine SEPA-Überweisung freigegeben wird.
+        <ul style="padding-left:18px;margin-top:6px;">
+          <li>Betroffen: <strong>alle</strong> Unternehmen und Privatpersonen bei SEPA-Überweisungen</li>
+          <li>Die Prüfung erfolgt automatisch innerhalb von Sekunden</li>
+          <li>Der Zahler entscheidet: Zahlung freigeben oder stornieren</li>
+          <li>Wichtig: Stets den <strong>korrekten Kontoinhabernamen</strong> beim Empfänger erfragen und verwenden!</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: SEPA-Überweisung</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Welche Angabe ist bei einer SEPA-Überweisung zwingend erforderlich?</div>
+        <label class="mc-option"><input type="radio" name="mc1" value="a"> <span>a) Telefonnummer des Empfängers</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="b"> <span>b) IBAN des Empfängers</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="c"> <span>c) Kontonummer und Bankleitzahl (alt)</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="d"> <span>d) Personalausweis-Nummer</span></label>
+        <div class="mc-feedback" id="mc1-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc1','b','mc1-fb','Richtig! Die IBAN ist die zentrale Angabe bei jeder SEPA-Überweisung. Seit 2014 ersetzt die IBAN die alte Kontonummer + Bankleitzahl komplett.')">Prüfen</button>
+      </div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was gilt beim Überweisungsrückruf?</div>
+        <label class="mc-option"><input type="radio" name="mc2" value="a"> <span>a) Die Bank muss das Geld immer zurückbuchen.</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="b"> <span>b) Es gibt einen gesetzlichen Anspruch auf sofortige Rückbuchung.</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="c"> <span>c) Es gibt keinen direkten Rechtsanspruch – der Empfänger muss einer Rückbuchung zustimmen.</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="d"> <span>d) Überweisungen können nicht zurückgerufen werden.</span></label>
+        <div class="mc-feedback" id="mc2-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc2','c','mc2-fb','Richtig! Es gibt keinen direkten Rechtsanspruch auf Rückbuchung. Die Bank kann nur anfragen – stimmt der Empfänger nicht zu, bleibt nur der zivilrechtliche Weg (§ 812 BGB).')">Prüfen</button>
+      </div>
+    </div>
+    <div class="section-title">📖 Fallbeispiel</div>
+    <div class="case-card">
+      <div class="case-header">💸 Fall: Falsche IBAN</div>
+      <div class="case-body"><p>Karin möchte ihrer Freundin 200 € überweisen. Sie vertippt sich bei der IBAN und überweist an einen Unbekannten. Die Bank hat die Überweisung bereits ausgeführt.</p><p><strong>Aufgabe:</strong> Was kann Karin jetzt tun?</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('hu1')">💡 Lösungshinweis anzeigen ▼</div>
+      <div class="case-hint-body" id="hu1">Karin sollte <strong>sofort</strong> ihre Bank kontaktieren und einen <strong>Überweisungsrückruf</strong> beantragen. Die Bank wendet sich an die Empfängerbank. Hat der Empfänger noch keine Verfügung getroffen und stimmt er zu, wird das Geld zurückgebucht. Verweigert er die Rückzahlung, kann Karin zivilrechtlich nach § 812 BGB (ungerechtfertigte Bereicherung) vorgehen.</div></div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('iban')">Weiter: IBAN →</button></div>
+  </div>
+</div>
+
+<div id="iban" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🔢 Modul 2</div><h2 style="font-size:1.5rem;">Die IBAN</h2><p style="font-size:.9rem;">Internationale Bankkontonummer – so ist sie aufgebaut</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔢</span><h3>Was ist die IBAN?</h3></div>
+      <p><strong>IBAN</strong> = International Bank Account Number (Internationale Bankkontonummer). Sie identifiziert weltweit eindeutig ein Bankkonto und ist seit 2014 im SEPA-Raum Pflicht.</p>
+      <br>
+      <div class="iban-box">
+        <div style="font-size:.82rem;font-weight:700;margin-bottom:10px;color:var(--blue);">Aufbau einer deutschen IBAN (22 Stellen):</div>
+        <div style="margin-bottom:8px;">
+          <span class="iban-digit group1">D</span><span class="iban-digit group1">E</span>
+          <span class="iban-digit group2">4</span><span class="iban-digit group2">4</span>
+          <span class="iban-digit group3">2</span><span class="iban-digit group3">0</span><span class="iban-digit group3">0</span><span class="iban-digit group3">4</span><span class="iban-digit group3">0</span><span class="iban-digit group3">0</span><span class="iban-digit group3">5</span><span class="iban-digit group3">0</span>
+          <span class="iban-digit group4">0</span><span class="iban-digit group4">1</span><span class="iban-digit group4">2</span><span class="iban-digit group4">3</span><span class="iban-digit group4">4</span><span class="iban-digit group4">5</span><span class="iban-digit group4">6</span><span class="iban-digit group4">7</span><span class="iban-digit group4">8</span><span class="iban-digit group4">9</span>
+        </div>
+        <div class="iban-legend">
+          <div class="iban-legend-item"><div class="iban-legend-dot" style="background:#d6eaf8;border:1px solid var(--blue2);"></div><span><strong>DE</strong> = Ländercode</span></div>
+          <div class="iban-legend-item"><div class="iban-legend-dot" style="background:#d5f5e3;border:1px solid var(--green);"></div><span><strong>44</strong> = Prüfziffer</span></div>
+          <div class="iban-legend-item"><div class="iban-legend-dot" style="background:#fdebd0;border:1px solid var(--orange2);"></div><span><strong>20040005</strong> = Bankleitzahl (8-stellig)</span></div>
+          <div class="iban-legend-item"><div class="iban-legend-dot" style="background:#f9ebff;border:1px solid #9b59b6;"></div><span><strong>0123456789</strong> = Kontonummer (10-stellig)</span></div>
+        </div>
+      </div>
+      <div class="info-box tip"><strong>💡 Länge je nach Land:</strong>Deutsche IBAN: 22 Stellen · Österreich: 20 · Frankreich: 27 · Schweiz: 21</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🎮</span><h3>IBAN-Quiz: Was bedeutet welche Stelle?</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was zeigen die ersten zwei Buchstaben einer IBAN an?</div>
+        <label class="mc-option"><input type="radio" name="mc3" value="a"> <span>a) Den Namen der Bank</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="b"> <span>b) Den Ländercode des Kontolandes</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="c"> <span>c) Die Kontonummer</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="d"> <span>d) Die Währung</span></label>
+        <div class="mc-feedback" id="mc3-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc3','b','mc3-fb','Richtig! Die ersten zwei Buchstaben sind der ISO-Ländercode: DE = Deutschland, AT = Österreich, FR = Frankreich usw.')">Prüfen</button>
+      </div>
+      <div class="mc-question">
+        <div class="mc-q-text">Wie viele Stellen hat eine deutsche IBAN?</div>
+        <label class="mc-option"><input type="radio" name="mc4" value="a"> <span>a) 16 Stellen</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="b"> <span>b) 18 Stellen</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="c"> <span>c) 22 Stellen</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="d"> <span>d) 27 Stellen</span></label>
+        <div class="mc-feedback" id="mc4-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc4','c','mc4-fb','Richtig! Eine deutsche IBAN hat genau 22 Stellen: 2 Ländercode + 2 Prüfziffern + 8 Bankleitzahl + 10 Kontonummer.')">Prüfen</button>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('lastschrift')">Weiter: Lastschrift →</button></div>
+  </div>
+</div>
+
+<div id="lastschrift" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">📥 Modul 3</div><h2 style="font-size:1.5rem;">SEPA-Lastschrift</h2><p style="font-size:.9rem;">Geld einziehen mit Mandat</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📥</span><h3>Was ist eine SEPA-Lastschrift?</h3></div>
+      <p>Bei der <strong>SEPA-Lastschrift</strong> zieht der Gläubiger (Empfänger) Geld vom Konto des Schuldners (Zahler) ein – im Gegensatz zur Überweisung, bei der der Zahler aktiv Geld sendet.</p>
+      <br>
+      <div class="info-box law"><strong>📋 Zwei Arten der SEPA-Lastschrift</strong>
+        <div class="grid2" style="margin-top:8px;">
+          <div><strong>SEPA-Basislastschrift</strong><br>Für Privatkunden. Widerspruch bis zu 8 Wochen nach Buchung möglich.</div>
+          <div><strong>SEPA-Firmenlastschrift</strong><br>Nur zwischen Unternehmen (B2B). <strong>Keine Widerrufsfrist</strong> nach Ausführung – der Zahler leitet das Mandat zusätzlich an seine eigene Bank weiter.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⚖️</span><h3>Basis- vs. Firmenlastschrift im Vergleich</h3></div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:.86rem;">
+          <thead>
+            <tr style="background:var(--orange);color:white;">
+              <th style="padding:9px 12px;text-align:left;">Merkmal</th>
+              <th style="padding:9px 12px;text-align:left;">SEPA-Basislastschrift</th>
+              <th style="padding:9px 12px;text-align:left;">SEPA-Firmenlastschrift</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #eee;">
+              <td style="padding:8px 12px;font-weight:600;">Zielgruppe</td>
+              <td style="padding:8px 12px;">Privatkunden (B2C)</td>
+              <td style="padding:8px 12px;">Nur Unternehmen (B2B)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee;background:#fafafa;">
+              <td style="padding:8px 12px;font-weight:600;">Mandat</td>
+              <td style="padding:8px 12px;">Zahler → Gläubiger</td>
+              <td style="padding:8px 12px;">Zahler → Gläubiger <em>und</em> eigene Bank</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee;">
+              <td style="padding:8px 12px;font-weight:600;">Widerrufsfrist</td>
+              <td style="padding:8px 12px;color:var(--green);font-weight:600;">8 Wochen (ohne Grund)<br>13 Monate (kein gültiges Mandat)</td>
+              <td style="padding:8px 12px;color:var(--red);font-weight:600;">❌ Keine Widerrufsfrist</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee;background:#fafafa;">
+              <td style="padding:8px 12px;font-weight:600;">Mandatsprüfung</td>
+              <td style="padding:8px 12px;">Beim Gläubiger</td>
+              <td style="padding:8px 12px;">Bei der Bank des Zahlers</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px;font-weight:600;">Typische Nutzung</td>
+              <td style="padding:8px 12px;">Streaming, Strom, Miete</td>
+              <td style="padding:8px 12px;">B2B-Lieferantenrechnungen</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📜</span><h3>Das SEPA-Lastschrift-Mandat</h3></div>
+      <p>Vor jeder Lastschrift muss der Zahler ein <strong>SEPA-Lastschrift-Mandat</strong> erteilen. Das ist die schriftliche Genehmigung, die dem Gläubiger erlaubt, Geld vom Konto einzuziehen.</p>
+      <br>
+      <div class="info-box tip"><strong>📜 Das Mandat muss enthalten:</strong>
+        <ul style="padding-left:18px;margin-top:6px;">
+          <li>Name und Anschrift des Zahlers</li>
+          <li>IBAN des Zahlers</li>
+          <li>Name und Gläubiger-ID des Empfängers</li>
+          <li>Mandatsreferenz (eindeutige Nummer)</li>
+          <li>Unterschrift des Zahlers</li>
+          <li>Datum der Unterschrift</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔀</span><h3>Ablauf einer SEPA-Basislastschrift – Reihenfolge sortieren</h3></div>
+      <p style="font-size:.9rem;margin-bottom:10px;">Ziehe die 7 Schritte in die richtige Reihenfolge! (Bildquelle: sparkasse.de)</p>
+      <ul class="seq-list" id="seq-basis">
+        <li class="seq-item" draggable="true" data-correct="3"><span class="seq-handle">☰</span><span>Zahlungsempfänger leitet <strong>Zahlungs- und Mandatsdaten</strong> an seine Bank weiter</span></li>
+        <li class="seq-item" draggable="true" data-correct="7"><span class="seq-handle">☰</span><span>Zahlungsempfänger erhält <strong>Gutschrift</strong> des Lastschriftbetrags</span></li>
+        <li class="seq-item" draggable="true" data-correct="1"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt dem Zahlungsempfänger ein <strong>Lastschrift-Mandat</strong></span></li>
+        <li class="seq-item" draggable="true" data-correct="5"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Belastungsbuchung</strong> durch</span></li>
+        <li class="seq-item" draggable="true" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungsempfänger sendet dem Zahlungspflichtigen <strong>Vorabinformationen</strong> (Pre-Notification)</span></li>
+        <li class="seq-item" draggable="true" data-correct="6"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
+        <li class="seq-item" draggable="true" data-correct="4"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers leitet <strong>Zahlungsdaten</strong> an Bank des Zahlungspflichtigen weiter</span></li>
+      </ul>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-sm" onclick="checkSeq('seq-basis','seq-basis-fb')">Reihenfolge prüfen</button>
+        <button class="btn btn-sm btn-outline" onclick="resetSeq('seq-basis','seq-basis-fb')">Mischen</button>
+      </div>
+      <div id="seq-basis-fb" style="margin-top:8px;font-size:.88rem;font-weight:600;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔀</span><h3>Ablauf einer SEPA-Firmenlastschrift – Reihenfolge sortieren</h3></div>
+      <p style="font-size:.9rem;margin-bottom:10px;">Ziehe die 9 Schritte in die richtige Reihenfolge! (Bildquelle: konto.org)</p>
+      <ul class="seq-list" id="seq-firma">
+        <li class="seq-item" draggable="true" data-correct="4"><span class="seq-handle">☰</span><span>Zahlungsempfänger gibt <strong>Zahlungs- und Mandatsdaten</strong> an seine Bank weiter</span></li>
+        <li class="seq-item" draggable="true" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungspflichtiger leitet das <strong>Mandat</strong> an seine eigene Bank weiter</span></li>
+        <li class="seq-item" draggable="true" data-correct="7"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Belastungsbuchung</strong> durch</span></li>
+        <li class="seq-item" draggable="true" data-correct="5"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers leitet <strong>Zahlungsdaten</strong> an Bank des Zahlungspflichtigen weiter</span></li>
+        <li class="seq-item" draggable="true" data-correct="1"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt dem Zahlungsempfänger ein <strong>Mandat</strong></span></li>
+        <li class="seq-item" draggable="true" data-correct="9"><span class="seq-handle">☰</span><span>Zahlungsempfänger erhält <strong>Gutschrift</strong> des Lastschriftbetrags</span></li>
+        <li class="seq-item" draggable="true" data-correct="3"><span class="seq-handle">☰</span><span>Zahlungsempfänger sendet dem Zahlungspflichtigen <strong>Vorabinformationen</strong></span></li>
+        <li class="seq-item" draggable="true" data-correct="6"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Mandatsprüfung</strong> durch</span></li>
+        <li class="seq-item" draggable="true" data-correct="8"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
+      </ul>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-sm" onclick="checkSeq('seq-firma','seq-firma-fb')">Reihenfolge prüfen</button>
+        <button class="btn btn-sm btn-outline" onclick="resetSeq('seq-firma','seq-firma-fb')">Mischen</button>
+      </div>
+      <div id="seq-firma-fb" style="margin-top:8px;font-size:.88rem;font-weight:600;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">↩️</span><h3>Widerspruch gegen Lastschriften</h3></div>
+      <div class="info-box correct"><strong>✅ Widerspruchsrecht (SEPA-Basislastschrift)</strong>
+        <ul style="padding-left:18px;margin-top:6px;">
+          <li><strong>Ohne Angabe von Gründen</strong> innerhalb von <strong>8 Wochen</strong> nach der Belastung</li>
+          <li>Bei <strong>unberechtigter</strong> Lastschrift (kein gültiges Mandat): bis zu <strong>13 Monate</strong></li>
+          <li>Widerspruch bei der eigenen Bank einlegen → Rückbuchung</li>
+        </ul>
+      </div>
+      <div class="info-box warn"><strong>⚠️ Wichtig:</strong>Das Widerspruchsrecht entbindet nicht von der Zahlungspflicht! Wenn man berechtigt belastet wurde (gültiges Mandat, geschuldeter Betrag), muss man trotzdem zahlen.</div>
+      <div class="info-box tip"><strong>🔒 Zukunftsschutz: Weitere Abbuchungen stoppen</strong>
+        Um künftige Abbuchungen durch denselben Einreicher zu verhindern, können Sie bei Ihrer Bank eine <strong>Lastschriftsperre</strong> für den entsprechenden Gläubiger einrichten. So werden zukünftige Einzüge automatisch zurückgewiesen.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: Lastschrift</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was ist das SEPA-Lastschrift-Mandat?</div>
+        <label class="mc-option"><input type="radio" name="mc5" value="a"> <span>a) Eine Bestätigung der Bank, dass das Konto gedeckt ist</span></label>
+        <label class="mc-option"><input type="radio" name="mc5" value="b"> <span>b) Die schriftliche Genehmigung des Zahlers, dass Geld vom Konto eingezogen werden darf</span></label>
+        <label class="mc-option"><input type="radio" name="mc5" value="c"> <span>c) Ein Dokument, das die Bank ausstellt</span></label>
+        <label class="mc-option"><input type="radio" name="mc5" value="d"> <span>d) Ein Antrag auf Kontoüberziehung</span></label>
+        <div class="mc-feedback" id="mc5-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc5','b','mc5-fb','Richtig! Das Mandat ist die Genehmigung des Zahlers (Schuldners), die dem Gläubiger erlaubt, Geld vom Konto einzuziehen.')">Prüfen</button>
+      </div>
+      <div class="mc-question">
+        <div class="mc-q-text">Wie lange kann man einer SEPA-Basislastschrift ohne Angabe von Gründen widersprechen?</div>
+        <label class="mc-option"><input type="radio" name="mc6" value="a"> <span>a) 3 Tage</span></label>
+        <label class="mc-option"><input type="radio" name="mc6" value="b"> <span>b) 4 Wochen</span></label>
+        <label class="mc-option"><input type="radio" name="mc6" value="c"> <span>c) 8 Wochen</span></label>
+        <label class="mc-option"><input type="radio" name="mc6" value="d"> <span>d) 13 Monate</span></label>
+        <div class="mc-feedback" id="mc6-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc6','c','mc6-fb','Richtig! 8 Wochen ohne Begründung. Nur bei unberechtigter Lastschrift (ohne gültiges Mandat) gilt die längere Frist von 13 Monaten.')">Prüfen</button>
+      </div>
+    </div>
+    <div class="section-title">📖 Fallbeispiele</div>
+    <div class="case-card">
+      <div class="case-header">📱 Fall 1: Abo-Kündigung und Lastschrift</div>
+      <div class="case-body"><p>Sara hat ein Streaming-Abo gekündigt, aber der Anbieter hat trotzdem noch <strong>14,99 €</strong> per Lastschrift eingezogen. Die Buchung war gestern.</p><p><strong>Aufgabe:</strong> Was kann Sara tun? Welche Frist gilt?</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('hl1')">💡 Lösungshinweis anzeigen ▼</div>
+      <div class="case-hint-body" id="hl1">Sara kann der Lastschrift <strong>widersprechen</strong>. Da kein gültiges Mandat mehr bestand (Abo wurde gekündigt), handelt es sich um eine <strong>unberechtigte</strong> Lastschrift. Die Frist beträgt hier bis zu <strong>13 Monate</strong>. Sara wendet sich an ihre Bank und beantragt die Rückbuchung.</div></div>
+    </div>
+    <div class="case-card">
+      <div class="case-header">🏋️ Fall 2: Fitnessstudio-Lastschrift</div>
+      <div class="case-body"><p>Ben hat beim Fitnessstudio ein Mandat für die monatliche Mitgliedsbeitrags-Lastschrift von <strong>29,90 €</strong> erteilt. Er möchte die Lastschrift vom letzten Monat aus persönlichen Gründen zurückbuchen lassen.</p><p><strong>Aufgabe:</strong> Kann Ben der Lastschrift widersprechen? Ist er von der Zahlungspflicht befreit?</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('hl2')">💡 Lösungshinweis anzeigen ▼</div>
+      <div class="case-hint-body" id="hl2">Ja, Ben kann der Lastschrift innerhalb von <strong>8 Wochen</strong> ohne Begründung widersprechen und die Rückbuchung verlangen. Aber: Er ist damit <strong>nicht von seiner Zahlungspflicht</strong> befreit. Er schuldet dem Fitnessstudio weiterhin den Monatsbeitrag – der Beitrag muss anders beglichen werden (z. B. Überweisung).</div></div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('test')">Weiter: Selbsttest →</button></div>
+  </div>
+</div>
+
+<div id="test" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🎯 Abschluss</div><h2 style="font-size:1.5rem;">Selbsttest</h2><p style="font-size:.9rem;">Klicke auf jedes Lernziel, das du sicher beherrschst!</p></div>
+  <div class="wrap">
+    <div class="selftest-wrap">
+      <h4>🎯 Was kann ich jetzt?</h4>
+      <div class="selftest-item" onclick="toggleSelf(1)"><div class="selftest-check" id="stc1">✓</div><div class="selftest-text">Ich kann erklären, was SEPA bedeutet und wie eine SEPA-Überweisung abläuft.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(2)"><div class="selftest-check" id="stc2">✓</div><div class="selftest-text">Ich kann den Aufbau einer deutschen IBAN (22 Stellen) erklären.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(3)"><div class="selftest-check" id="stc3">✓</div><div class="selftest-text">Ich weiß, was beim Überweisungsrückruf gilt und welche Rechte ich habe.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(4)"><div class="selftest-check" id="stc4">✓</div><div class="selftest-text">Ich kann erklären, was eine SEPA-Lastschrift ist und worin sie sich von der Überweisung unterscheidet.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(5)"><div class="selftest-check" id="stc5">✓</div><div class="selftest-text">Ich weiß, was ein Lastschrift-Mandat ist und welche Widerspruchsfristen gelten (8 Wochen / 13 Monate).</div></div>
+      <div class="selftest-progress"><div class="selftest-bar" id="st-bar"></div></div>
+      <div id="st-count" style="font-size:.8rem;color:#666;margin-top:6px;text-align:right;">0 / 5 Lernziele erreicht</div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header"><span class="card-icon">📚</span><h3>Quellen</h3></div>
+      <ul style="padding-left:20px;font-size:.88rem;">
+        <li>IBAN / SEPA: <a href="https://www.bundesbank.de" target="_blank" style="color:var(--orange);">bundesbank.de</a></li>
+        <li>SEPA-Überweisung Infos: <a href="https://www.sparkasse-schulservice.de" target="_blank" style="color:var(--orange);">sparkasse-schulservice.de</a></li>
+        <li>§ 812 BGB (ungerechtfertigte Bereicherung): <a href="https://www.gesetze-im-internet.de/bgb/__812.html" target="_blank" style="color:var(--orange);">gesetze-im-internet.de</a></li>
+        <li>VR-Bank Schulservice: <a href="https://www.vr.de" target="_blank" style="color:var(--orange);">vr.de</a></li>
+      </ul>
+    </div>
+    <div style="text-align:center;"><button class="btn-outline btn" onclick="show('home')">← Zurück zur Startseite</button></div>
+  </div>
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nbtn').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('active');});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function checkMC(name,correct,fbId,explanation){
+  const sel=document.querySelector('input[name="'+name+'"]:checked');
+  const fb=document.getElementById(fbId);
+  if(!sel){fb.className='mc-feedback show err';fb.textContent='Bitte wähle eine Antwort aus!';return;}
+  document.querySelectorAll('input[name="'+name+'"]').forEach(inp=>{
+    inp.parentElement.classList.remove('selected','correct','wrong');
+    if(inp.value===correct)inp.parentElement.classList.add('correct');
+    else if(inp===sel&&inp.value!==correct)inp.parentElement.classList.add('wrong');
+  });
+  fb.className='mc-feedback show '+(sel.value===correct?'ok':'err');
+  fb.innerHTML=(sel.value===correct?'✅ Richtig! ':'❌ Leider falsch. ')+explanation;
+}
+function toggleHint(id){
+  const el=document.getElementById(id);el.classList.toggle('show');
+  const t=el.previousElementSibling;
+  t.textContent=el.classList.contains('show')?t.textContent.replace('▼','▲'):t.textContent.replace('▲','▼');
+}
+// --- Country selection game ---
+function toggleCountry(el){el.classList.toggle('selected');}
+function checkCountries(){
+  var right=0,wrong=0,missed=0;
+  document.querySelectorAll('.country-btn').forEach(function(btn){
+    var isOk=btn.dataset.correct==='1';
+    var isSel=btn.classList.contains('selected');
+    btn.classList.remove('selected','correct-pick','wrong-pick','missed');
+    if(isSel&&isOk){btn.classList.add('correct-pick');right++;}
+    else if(isSel&&!isOk){btn.classList.add('wrong-pick');wrong++;}
+    else if(!isSel&&isOk){btn.classList.add('missed');missed++;}
+  });
+  var fb=document.getElementById('country-fb');
+  if(wrong===0&&missed===0){
+    fb.style.color='var(--green)';
+    fb.textContent='✅ Perfekt! Alle 36 SEPA-Länder richtig ausgewählt!';
+  } else {
+    fb.style.color='var(--red)';
+    var msg=right+' richtig';
+    if(wrong)msg+=' · '+wrong+' falsch gewählt';
+    if(missed)msg+=' · '+missed+' vergessen';
+    fb.textContent=msg+'.';
+  }
+}
+function resetCountries(){
+  document.querySelectorAll('.country-btn').forEach(function(b){
+    b.classList.remove('selected','correct-pick','wrong-pick','missed');
+  });
+  var fb=document.getElementById('country-fb');if(fb)fb.textContent='';
+}
+// --- Sequence drag-and-drop games ---
+function initSeqGame(listId){
+  var list=document.getElementById(listId);
+  if(!list)return;
+  var dragSrc=null;
+  list.querySelectorAll('.seq-item').forEach(function(item){
+    item.addEventListener('dragstart',function(){
+      dragSrc=item;
+      setTimeout(function(){item.style.opacity='.4';},0);
+    });
+    item.addEventListener('dragend',function(){
+      item.style.opacity='1';
+      list.querySelectorAll('.seq-item').forEach(function(i){i.classList.remove('drag-over');});
+    });
+    item.addEventListener('dragover',function(e){
+      e.preventDefault();
+      item.classList.add('drag-over');
+    });
+    item.addEventListener('dragleave',function(){
+      item.classList.remove('drag-over');
+    });
+    item.addEventListener('drop',function(e){
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      if(dragSrc&&dragSrc!==item){
+        var items=[].slice.call(list.querySelectorAll('.seq-item'));
+        var si=items.indexOf(dragSrc),ti=items.indexOf(item);
+        if(si<ti)item.after(dragSrc);else item.before(dragSrc);
+      }
+    });
+  });
+}
+function checkSeq(listId,fbId){
+  var list=document.getElementById(listId);if(!list)return;
+  var items=list.querySelectorAll('.seq-item');
+  var correct=0,total=items.length;
+  items.forEach(function(item,idx){
+    item.classList.remove('seq-correct','seq-wrong');
+    if(parseInt(item.dataset.correct)===idx+1){item.classList.add('seq-correct');correct++;}
+    else{item.classList.add('seq-wrong');}
+  });
+  var fb=document.getElementById(fbId);
+  if(correct===total){
+    fb.style.color='var(--green)';
+    fb.textContent='✅ Perfekt! Alle '+total+' Schritte in der richtigen Reihenfolge!';
+  } else {
+    fb.style.color='var(--red)';
+    fb.textContent=correct+' / '+total+' Schritte richtig – rote Felder verschieben.';
+  }
+}
+function resetSeq(listId,fbId){
+  var list=document.getElementById(listId);if(!list)return;
+  var items=[].slice.call(list.querySelectorAll('.seq-item'));
+  items.forEach(function(i){i.classList.remove('seq-correct','seq-wrong');});
+  for(var i=items.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=items[i];items[i]=items[j];items[j]=t;
+  }
+  items.forEach(function(i){list.appendChild(i);});
+  var fb=document.getElementById(fbId);if(fb)fb.textContent='';
+}
+document.addEventListener('DOMContentLoaded',function(){
+  ['seq-ueb','seq-basis','seq-firma'].forEach(function(id){initSeqGame(id);});
+});
+let stDone={};
+function toggleSelf(n){
+  const c=document.getElementById('stc'+n);
+  if(stDone[n]){delete stDone[n];c.classList.remove('done');}else{stDone[n]=true;c.classList.add('done');}
+  const cnt=Object.keys(stDone).length;
+  document.getElementById('st-bar').style.width=(cnt/5*100)+'%';
+  document.getElementById('st-count').textContent=cnt+' / 5 Lernziele erreicht';
+}
+</script>
+</body>
+</html>
