@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernportal 1 – Die Bargeldzentrale</title>
+<style>
+:root{
+  --teal:#1a6b5e;--teal2:#2ecc71;--teal3:#16a085;--teal-light:#e8f5f2;
+  --blue:#1a3a5c;--blue2:#2980b9;--light:#ecf0f1;--white:#fff;
+  --border:#bdc3c7;--dark:#2c3e50;--red:#c0392b;--green:#27ae60;
+  --orange:#e67e22;--yellow:#f1c40f;--shadow:rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark);font-size:15px;line-height:1.65;}
+.nav{background:var(--teal);color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav h1{font-size:.95rem;font-weight:700;}
+.nav-sub{font-size:.72rem;opacity:.8;}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:white;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:.8rem;transition:.2s;white-space:nowrap;}
+.nbtn:hover,.nbtn.active{background:rgba(255,255,255,.3);font-weight:700;}
+.screen{display:none;animation:fadeIn .25s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(135deg,var(--teal) 0%,var(--teal3) 60%,#1abc9c 100%);color:white;padding:52px 24px 44px;text-align:center;}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:4px 14px;font-size:.78rem;margin-bottom:14px;}
+.hero h2{font-size:2rem;margin-bottom:10px;}
+.hero p{font-size:1rem;opacity:.9;max-width:620px;margin:0 auto 28px;}
+.hero-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+.hero-card{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:14px 20px;min-width:155px;cursor:pointer;transition:.2s;text-align:center;}
+.hero-card:hover{background:rgba(255,255,255,.28);transform:translateY(-3px);}
+.hero-card .hc-icon{font-size:1.8rem;margin-bottom:6px;}
+.hero-card .hc-title{font-size:.88rem;font-weight:700;}
+.hero-card .hc-sub{font-size:.72rem;opacity:.8;margin-top:2px;}
+.wrap{max-width:900px;margin:0 auto;padding:24px 18px;}
+.section-title{color:var(--teal);font-size:1.1rem;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid var(--teal-light);}
+.card{background:white;border-radius:12px;padding:24px;box-shadow:0 4px 18px var(--shadow);margin-bottom:20px;}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--teal-light);}
+.card-icon{font-size:1.5rem;}
+.card h3{color:var(--teal);font-size:1rem;font-weight:700;}
+.card p,.card li{font-size:.92rem;line-height:1.7;}
+.card ul,.card ol{padding-left:22px;margin-top:6px;}
+.card li{margin-bottom:4px;}
+.info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:.9rem;}
+.info-box.law{background:#e3f4ef;border-left:4px solid var(--teal);color:#1a4a3a;}
+.info-box.tip{background:#fff8e1;border-left:4px solid var(--yellow);color:#5a4000;}
+.info-box.warn{background:#fdebd0;border-left:4px solid var(--orange);color:#6e3200;}
+.info-box.correct{background:#eafaf1;border-left:4px solid var(--green);}
+.info-box strong{display:block;margin-bottom:4px;}
+.btn{background:var(--teal);color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:.92rem;font-weight:600;transition:.2s;display:inline-block;}
+.btn:hover{background:var(--teal3);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--teal);border:2px solid var(--teal);}
+.btn-outline:hover{background:var(--teal);color:white;}
+.btn-sm{padding:6px 14px;font-size:.82rem;}
+.mc-question{background:white;border-radius:10px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px var(--shadow);}
+.mc-q-text{font-weight:600;margin-bottom:12px;font-size:.95rem;}
+.mc-option{display:flex;align-items:center;gap:10px;padding:9px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:7px;transition:.2s;font-size:.9rem;}
+.mc-option:hover{border-color:var(--teal);background:var(--teal-light);}
+.mc-option.correct{border-color:var(--green);background:#eafaf1;font-weight:600;}
+.mc-option.wrong{border-color:var(--red);background:#fdedec;}
+.mc-option input[type=radio]{accent-color:var(--teal);width:16px;height:16px;}
+.mc-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none;}
+.mc-feedback.show{display:block;}
+.mc-feedback.ok{background:#eafaf1;border:1px solid var(--green);color:#1e8449;}
+.mc-feedback.err{background:#fdedec;border:1px solid var(--red);color:#a93226;}
+.drag-area{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.drag-item{background:var(--teal);color:white;padding:8px 14px;border-radius:20px;cursor:grab;font-size:.85rem;font-weight:600;user-select:none;transition:.2s;}
+.drag-item:hover{background:var(--teal3);}
+.drag-item.dragging{opacity:.5;}
+.drop-zone{border:2px dashed var(--border);border-radius:10px;min-height:56px;padding:10px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fafafa;transition:.2s;}
+.drop-zone.over{border-color:var(--teal);background:var(--teal-light);}
+.drop-label{font-size:.8rem;color:#999;pointer-events:none;}
+.case-card{border:2px solid var(--teal-light);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.case-header{background:var(--teal);color:white;padding:10px 18px;font-weight:700;font-size:.88rem;}
+.case-body{padding:16px 18px;}
+.case-body p{font-size:.9rem;margin-bottom:10px;}
+.case-hint{background:#f5fbf9;border-top:1px solid var(--teal-light);padding:12px 18px;}
+.case-hint-toggle{cursor:pointer;color:var(--teal);font-size:.88rem;font-weight:600;}
+.case-hint-body{display:none;margin-top:10px;font-size:.88rem;line-height:1.7;}
+.case-hint-body.show{display:block;}
+.selftest-wrap{background:linear-gradient(135deg,var(--teal-light),#fff);border:2px solid var(--teal);border-radius:12px;padding:22px;}
+.selftest-wrap h4{color:var(--teal);margin-bottom:14px;font-size:1rem;}
+.selftest-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding:8px;border-radius:8px;cursor:pointer;transition:.2s;}
+.selftest-item:hover{background:rgba(26,107,94,.05);}
+.selftest-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem;transition:.2s;}
+.selftest-check.done{background:var(--green);border-color:var(--green);color:white;}
+.selftest-text{font-size:.88rem;line-height:1.6;}
+.selftest-progress{height:6px;background:var(--border);border-radius:3px;margin-top:14px;overflow:hidden;}
+.selftest-bar{height:100%;background:var(--teal2);width:0%;transition:.4s;}
+.teacher-note{background:#fffde7;border:1px dashed #f9a825;border-radius:10px;padding:14px 18px;margin-bottom:18px;}
+.teacher-note-label{font-size:.72rem;font-weight:700;color:#e65100;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.teacher-note-text{font-size:.85rem;color:#555;line-height:1.6;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.sort-pool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;min-height:50px;padding:8px;border:2px dashed var(--border);border-radius:10px;background:#fafafa;transition:.2s;}
+.sort-pool.over{border-color:var(--teal);background:var(--teal-light);}
+.sort-chip{background:var(--teal);color:white;padding:7px 14px;border-radius:20px;cursor:grab;font-size:.84rem;font-weight:600;user-select:none;transition:.2s;}
+.sort-chip:hover{background:var(--teal3);transform:scale(1.04);}
+.sort-chip.dragging{opacity:.45;}
+.sort-zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;}
+.sort-zone{border:2px dashed var(--border);border-radius:10px;padding:10px;min-height:90px;transition:.2s;}
+.sort-zone.over{border-color:var(--teal);background:var(--teal-light);}
+.sort-zone-label{font-weight:700;font-size:.82rem;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.sort-zone-label.vt{color:var(--green);}
+.sort-zone-label.nt{color:var(--orange);}
+.sort-zone-inner{display:flex;flex-wrap:wrap;gap:6px;min-height:40px;}
+.sort-chip.correct-sort{background:var(--green)!important;}
+.sort-chip.wrong-sort{background:var(--red)!important;}
+@media(max-width:600px){.nav-links{display:none;}.hero h2{font-size:1.4rem;}.grid2{grid-template-columns:1fr;}.sort-zones{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand">
+    <span style="font-size:1.5rem;">💰</span>
+    <div>
+      <div style="font-size:.95rem;font-weight:700;">Lernportal 1 · Die Bargeldzentrale</div>
+      <div class="nav-sub">Zahlungsverkehr · Stunde 1 · 10a ÖB</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <button class="nbtn active" onclick="show('home')">🏠 Start</button>
+    <button class="nbtn" onclick="show('barzahlung')">💵 Barzahlung</button>
+    <button class="nbtn" onclick="show('quittung')">🧾 Quittung</button>
+    <button class="nbtn" onclick="show('erfuellung')">✅ Erfüllung</button>
+    <button class="nbtn" onclick="show('test')">🎯 Selbsttest</button>
+  </div>
+</nav>
+
+<div id="home" class="screen active">
+  <div class="hero">
+    <div class="hero-badge">📚 Stunde 1 · Zahlungsverkehr</div>
+    <h2>💰 Die Bargeldzentrale</h2>
+    <p>Entdecke, wie Barzahlung funktioniert, was eine Quittung nach Gesetz enthalten muss und was Erfüllung bedeutet.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="show('barzahlung')"><div class="hc-icon">💵</div><div class="hc-title">Barzahlung</div><div class="hc-sub">Münzen &amp; Scheine</div></div>
+      <div class="hero-card" onclick="show('quittung')"><div class="hc-icon">🧾</div><div class="hc-title">Quittung</div><div class="hc-sub">§ 368 BGB</div></div>
+      <div class="hero-card" onclick="show('erfuellung')"><div class="hc-icon">✅</div><div class="hc-title">Erfüllung</div><div class="hc-sub">§ 362 BGB</div></div>
+      <div class="hero-card" onclick="show('test')"><div class="hc-icon">🎯</div><div class="hc-title">Selbsttest</div><div class="hc-sub">Wissen prüfen</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="section-title">📋 Was erwartet dich?</div>
+    <div class="grid2">
+      <div class="card" style="margin:0"><div class="card-header"><span class="card-icon">🎯</span><h3>Lernziele</h3></div>
+        <ul><li>Du kannst erklären, was Bargeld ist und wie es als Zahlungsmittel funktioniert.</li><li>Du weißt, welche Angaben eine Quittung nach § 368 BGB enthalten muss.</li><li>Du kannst erläutern, wann ein Schuldverhältnis durch Erfüllung (§ 362 BGB) erlischt.</li></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="barzahlung" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">💵 Modul 1</div><h2 style="font-size:1.5rem;">Barzahlung</h2><p style="font-size:.9rem;">Das älteste Zahlungsmittel – und noch immer wichtig!</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🏦</span><h3>Was ist Barzahlung?</h3></div>
+      <p>Bei der <strong>Barzahlung</strong> übergibt der Käufer dem Verkäufer physisches Geld – Münzen oder Geldscheine. In Deutschland sind Euro-Münzen und -Scheine <strong>gesetzliche Zahlungsmittel</strong>. Ein Gläubiger ist grundsätzlich verpflichtet, Bargeld anzunehmen.</p>
+      <br>
+      <div class="info-box law"><strong>⚖️ Rechtlicher Hintergrund</strong>Euro-Banknoten sind nach Art. 128 Abs. 1 AEUV gesetzliche Zahlungsmittel. Die Deutsche Bundesbank regelt den Bargeldumlauf in Deutschland.</div>
+      <p>Obwohl immer mehr bargeldlos gezahlt wird, bleibt Bargeld im Alltag bedeutsam – besonders bei kleinen Beträgen, auf Märkten oder wenn keine Kartenterminals vorhanden sind.</p>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🎮</span><h3>Zuordnungsaufgabe: Vor- und Nachteile der Barzahlung</h3></div>
+      <p style="margin-bottom:10px;font-size:.9rem;">Ziehe jede Aussage in die richtige Spalte – <strong>Vorteil</strong> oder <strong>Nachteil</strong>!</p>
+      <div class="sort-pool" id="sort-pool">
+        <div class="sort-chip" draggable="true" data-cat="vorteil">Sofort und anonym</div>
+        <div class="sort-chip" draggable="true" data-cat="nachteil">Diebstahlrisiko</div>
+        <div class="sort-chip" draggable="true" data-cat="vorteil">Kein Internetzugang nötig</div>
+        <div class="sort-chip" draggable="true" data-cat="nachteil">Kein automatischer Zahlungsnachweis</div>
+        <div class="sort-chip" draggable="true" data-cat="vorteil">Kein Bankkonto erforderlich</div>
+        <div class="sort-chip" draggable="true" data-cat="nachteil">Unpraktisch bei großen Beträgen</div>
+        <div class="sort-chip" draggable="true" data-cat="vorteil">Keine Bankgebühren</div>
+        <div class="sort-chip" draggable="true" data-cat="nachteil">Kein Käuferschutz</div>
+        <div class="sort-chip" draggable="true" data-cat="vorteil">Volle Kostenkontrolle</div>
+      </div>
+      <div class="sort-zones">
+        <div class="sort-zone" id="zone-vorteil">
+          <div class="sort-zone-label vt">✅ Vorteile</div>
+          <div class="sort-zone-inner" id="inner-vorteil"></div>
+        </div>
+        <div class="sort-zone" id="zone-nachteil">
+          <div class="sort-zone-label nt">⚠️ Nachteile</div>
+          <div class="sort-zone-inner" id="inner-nachteil"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm" onclick="checkSort()">Auswertung anzeigen</button>
+        <button class="btn btn-sm" style="background:#888;" onclick="resetSort()">Zurücksetzen</button>
+      </div>
+      <div id="sort-result" style="margin-top:10px;font-size:.88rem;display:none;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">1. Welche Aussage zur Barzahlung ist korrekt?</div>
+        <label class="mc-option"><input type="radio" name="mc1" value="a"> <span>a) Händler dürfen Bargeld immer ablehnen.</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="b"> <span>b) Euro-Banknoten sind gesetzliche Zahlungsmittel und müssen grundsätzlich angenommen werden.</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="c"> <span>c) Barzahlung ist nur bis 50 Euro erlaubt.</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="d"> <span>d) Bargeld ist nur in Deutschland gültig.</span></label>
+        <div class="mc-feedback" id="mc1-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc1','b','mc1-fb','Richtig! Euro-Banknoten sind nach EU-Recht gesetzliche Zahlungsmittel. Händler können sie grundsätzlich nicht ablehnen.')">Prüfen</button>
+      </div>
+      <div class="mc-question">
+        <div class="mc-q-text">2. Was ist ein Nachteil der Barzahlung?</div>
+        <label class="mc-option"><input type="radio" name="mc2" value="a"> <span>a) Es entstehen Bankgebühren.</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="b"> <span>b) Man braucht immer ein Girokonto.</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="c"> <span>c) Bargeld kann gestohlen werden und es fehlt ein automatischer Zahlungsnachweis.</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="d"> <span>d) Barzahlung ist verboten bei Beträgen über 10 Euro.</span></label>
+        <div class="mc-feedback" id="mc2-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc2','c','mc2-fb','Richtig! Bargeld kann verloren gehen oder gestohlen werden. Ohne Quittung gibt es keinen Nachweis über die Zahlung.')">Prüfen</button>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('quittung')">Weiter: Quittung →</button></div>
+  </div>
+</div>
+
+<div id="quittung" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🧾 Modul 2</div><h2 style="font-size:1.5rem;">Die Quittung – § 368 BGB</h2><p style="font-size:.9rem;">Dein schriftlicher Beweis für eine erfolgte Zahlung</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⚖️</span><h3>§ 368 BGB – Was sagt das Gesetz?</h3></div>
+      <div class="info-box law"><strong>§ 368 BGB – Quittung (Wortlaut)</strong>„Der Gläubiger hat gegen Empfang der Leistung auf Verlangen des Schuldners eine Quittung zu erteilen."</div>
+      <p>In einfacher Sprache: Wer bezahlt hat (<strong>Schuldner</strong>), kann vom Empfänger (<strong>Gläubiger</strong>) eine Quittung verlangen. Der Gläubiger ist gesetzlich <strong>verpflichtet</strong>, eine Quittung auszustellen – die Quittung ist der <strong>Beweis</strong> für die Zahlung.</p>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📝</span><h3>Pflichtangaben einer Quittung</h3></div>
+      <div class="grid2">
+        <div class="info-box law" style="margin:0"><strong>1. Bezeichnung „Quittung"</strong>Klar erkennbar als Quittung</div>
+        <div class="info-box law" style="margin:0"><strong>2. Name des Zahlenden</strong>Wer hat gezahlt? (Schuldner)</div>
+        <div class="info-box law" style="margin:0"><strong>3. Betrag in Zahlen und Worten</strong>z. B. „50,00 € (fünfzig Euro)"</div>
+        <div class="info-box law" style="margin:0"><strong>4. Grund der Zahlung</strong>Wofür wurde gezahlt?</div>
+        <div class="info-box law" style="margin:0"><strong>5. Datum</strong>Wann wurde gezahlt?</div>
+        <div class="info-box law" style="margin:0"><strong>6. Unterschrift des Empfängers</strong>Wer bestätigt den Empfang?</div>
+      </div>
+      <div class="info-box tip" style="margin-top:12px;"><strong>💡 Merkhilfe:</strong> <em>N – B – G – D – U = Name, Betrag, Grund, Datum, Unterschrift</em></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🧾</span><h3>Beispiel: So sieht eine Quittung aus</h3></div>
+      <div style="border:2px solid var(--teal);border-radius:10px;padding:20px;font-family:Georgia,serif;background:#fff;">
+        <div style="text-align:center;font-size:1.3rem;font-weight:bold;border-bottom:2px solid var(--teal);padding-bottom:8px;margin-bottom:14px;color:var(--teal);">Q U I T T U N G</div>
+        <p style="margin-bottom:8px;">Hiermit bestätige ich den Empfang des Betrags von</p>
+        <p style="font-size:1.15rem;font-weight:bold;text-align:center;margin:12px 0;">50,00 € <span style="font-weight:normal;font-size:.9rem;">(fünfzig Euro)</span></p>
+        <p style="margin-bottom:6px;">von: <strong>Luisa Müller</strong></p>
+        <p style="margin-bottom:6px;">für: <strong>Nachhilfestunden Mathematik (April 2026)</strong></p>
+        <p style="margin-bottom:16px;">am: <strong>30.06.2026</strong></p>
+        <div style="display:flex;justify-content:flex-end;"><div style="border-top:1px solid var(--dark);padding-top:4px;text-align:center;min-width:200px;font-size:.85rem;">Thomas Weber<br><span style="font-size:.75rem;color:#666;">(Unterschrift des Empfängers)</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🎮</span><h3>Interaktiv: Pflichtangaben zuordnen</h3></div>
+      <p style="margin-bottom:12px;font-size:.9rem;">Ziehe alle <strong>richtigen Pflichtangaben</strong> in die grüne Ablage. Lass falsche Angaben weg!</p>
+      <div class="drag-area" id="drag-source">
+        <div class="drag-item" draggable="true" data-key="name">Name des Zahlenden</div>
+        <div class="drag-item" draggable="true" data-key="betrag">Betrag in Zahlen</div>
+        <div class="drag-item" draggable="true" data-key="datum">Datum</div>
+        <div class="drag-item" draggable="true" data-key="unterschrift">Unterschrift Empfänger</div>
+        <div class="drag-item" draggable="true" data-key="farbe">Lieblingsfarbe</div>
+        <div class="drag-item" draggable="true" data-key="grund">Grund der Zahlung</div>
+        <div class="drag-item" draggable="true" data-key="steuer">Steuernummer</div>
+        <div class="drag-item" draggable="true" data-key="bezeichnung">Bezeichnung „Quittung"</div>
+      </div>
+      <div style="font-size:.82rem;font-weight:700;color:var(--green);margin-bottom:4px;">✅ Pflichtangaben – hierhin ziehen:</div>
+      <div class="drop-zone" id="drop-correct"><span class="drop-label">Ziehe Pflichtangaben hierher...</span></div>
+      <button class="btn btn-sm" style="margin-top:12px;" onclick="checkDrag()">Auswertung anzeigen</button>
+      <div id="drag-result" style="margin-top:10px;font-size:.88rem;display:none;"></div>
+    </div>
+    <div class="section-title">📖 Fallbeispiele</div>
+    <div class="case-card">
+      <div class="case-header">🛍️ Fall 1: Luisa am Flohmarkt</div>
+      <div class="case-body"><p>Luisa kauft auf dem Flohmarkt eine Vintage-Handtasche für <strong>18 Euro</strong> in bar. Der Verkäufer gibt ihr kein Dokument. Luisa fragt: <em>„Darf ich eine Quittung verlangen?"</em></p><p><strong>Aufgabe:</strong> Beantworte die Frage und erkläre, was der Verkäufer tun muss.</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('h1')">💡 Lösungshinweis anzeigen ▼</div><div class="case-hint-body" id="h1"><strong>Ja!</strong> Luisa darf nach § 368 BGB eine Quittung verlangen. Der Verkäufer als <em>Gläubiger</em> ist gesetzlich verpflichtet, eine Quittung auszustellen. Die Quittung muss enthalten: Name der Zahlenden (Luisa), Betrag (18 €/achtzehn Euro), Kaufgegenstand (Handtasche), Datum und Unterschrift des Verkäufers.</div></div>
+    </div>
+    <div class="case-card">
+      <div class="case-header">🔧 Fall 2: Handwerker und Quittung</div>
+      <div class="case-body"><p>Ein Klempner repariert das Waschbecken für 230 Euro. Familie Schneider zahlt bar, erhält aber nur eine handgeschriebene Quittung <strong>ohne Unterschrift</strong> des Handwerkers.</p><p><strong>Aufgabe:</strong> Ist diese Quittung rechtswirksam? Was fehlt?</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('h2')">💡 Lösungshinweis anzeigen ▼</div><div class="case-hint-body" id="h2">Die Quittung ist <strong>nicht vollständig</strong>. Nach § 368 BGB muss der Gläubiger (Handwerker) die Quittung unterschreiben. Ohne Unterschrift kann Herr Schneider nicht beweisen, dass der Handwerker den Empfang bestätigt hat. Er sollte auf der Unterschrift bestehen.</div></div>
+    </div>
+    <div class="case-card">
+      <div class="case-header">💻 Fall 3: Unvollständige E-Mail-Bestätigung</div>
+      <div class="case-body"><p>Ein Online-Shop schickt nach einem Barkauf nur eine E-Mail ohne Betrag in Worten, ohne Unterschrift und ohne Bezeichnung „Quittung".</p><p><strong>Aufgabe:</strong> Welche drei Pflichtangaben fehlen?</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('h3')">💡 Lösungshinweis anzeigen ▼</div><div class="case-hint-body" id="h3">Es fehlen: (1) Bezeichnung „Quittung", (2) Betrag in Worten, (3) Unterschrift des Empfängers. Die E-Mail-Bestätigung kann die Quittung ergänzen, ersetzt sie aber nicht vollständig ohne die gesetzlichen Pflichtangaben nach § 368 BGB.</div></div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('erfuellung')">Weiter: Erfüllung →</button></div>
+  </div>
+</div>
+
+<div id="erfuellung" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">✅ Modul 3</div><h2 style="font-size:1.5rem;">Erfüllung – § 362 BGB</h2><p style="font-size:.9rem;">Wann erlischt ein Schuldverhältnis?</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⚖️</span><h3>§ 362 BGB – Erlöschen durch Leistung</h3></div>
+      <div class="info-box law"><strong>§ 362 BGB (vereinfacht)</strong>„Das Schuldverhältnis erlischt, wenn die geschuldete Leistung an den Gläubiger bewirkt wird."</div>
+      <p>In einfacher Sprache: Ein <strong>Schuldverhältnis</strong> (z. B. eine Kaufpreisschuld) endet durch <strong>Erfüllung</strong> – sobald der Käufer den vereinbarten Betrag vollständig bezahlt hat.</p><br>
+      <div class="info-box tip"><strong>💡 Beispiel</strong>Max kauft ein Fahrrad für 300 €. Seine Kaufpreisschuld besteht, bis er 300 € vollständig bezahlt hat. Nach der Zahlung erlischt das Schuldverhältnis durch Erfüllung.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔗</span><h3>Zusammenhang: Erfüllung und Quittung</h3></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;justify-content:center;">
+        <div style="background:var(--teal-light);border:2px solid var(--teal);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:110px;"><div style="font-size:1.4rem;">📦</div><div style="font-size:.82rem;font-weight:700;color:var(--teal);">Kaufvertrag</div><div style="font-size:.72rem;">Schuld entsteht</div></div>
+        <div style="font-size:1.3rem;color:var(--teal);">→</div>
+        <div style="background:var(--teal-light);border:2px solid var(--teal);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:110px;"><div style="font-size:1.4rem;">💰</div><div style="font-size:.82rem;font-weight:700;color:var(--teal);">Zahlung</div><div style="font-size:.72rem;">Leistung erbracht</div></div>
+        <div style="font-size:1.3rem;color:var(--teal);">→</div>
+        <div style="background:#eafaf1;border:2px solid var(--green);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:110px;"><div style="font-size:1.4rem;">✅</div><div style="font-size:.82rem;font-weight:700;color:var(--green);">Erfüllung</div><div style="font-size:.72rem;">§ 362 BGB</div></div>
+        <div style="font-size:1.3rem;color:var(--teal);">→</div>
+        <div style="background:#fff8e1;border:2px solid var(--yellow);border-radius:10px;padding:12px 14px;text-align:center;flex:1;min-width:110px;"><div style="font-size:1.4rem;">🧾</div><div style="font-size:.82rem;font-weight:700;color:#7d5a00;">Quittung</div><div style="font-size:.72rem;">§ 368 BGB</div></div>
+      </div>
+      <p style="font-size:.9rem;">Die Quittung ist der <strong>schriftliche Nachweis</strong> der Erfüllung. Sie belegt, dass das Schuldverhältnis erloschen ist.</p>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: Erfüllung</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Wann erlischt ein Schuldverhältnis durch Erfüllung nach § 362 BGB?</div>
+        <label class="mc-option"><input type="radio" name="mc3" value="a"> <span>a) Wenn der Käufer eine Quittung ausstellt.</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="b"> <span>b) Wenn die geschuldete Leistung vollständig an den Gläubiger erbracht wurde.</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="c"> <span>c) Wenn der Kaufvertrag unterzeichnet wird.</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="d"> <span>d) Wenn der Gläubiger auf die Schuld verzichtet.</span></label>
+        <div class="mc-feedback" id="mc3-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc3','b','mc3-fb','Richtig! § 362 BGB: Das Schuldverhältnis erlischt, wenn die geschuldete Leistung vollständig bewirkt wurde.')">Prüfen</button>
+      </div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was ist die Funktion der Quittung im Zusammenhang mit Erfüllung?</div>
+        <label class="mc-option"><input type="radio" name="mc4" value="a"> <span>a) Die Quittung ist Voraussetzung für die Erfüllung.</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="b"> <span>b) Die Quittung ist der schriftliche Nachweis, dass die Erfüllung stattgefunden hat.</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="c"> <span>c) Ohne Quittung ist die Zahlung ungültig.</span></label>
+        <label class="mc-option"><input type="radio" name="mc4" value="d"> <span>d) Die Quittung ersetzt den Kaufvertrag.</span></label>
+        <div class="mc-feedback" id="mc4-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc4','b','mc4-fb','Die Quittung ist kein Bestandteil der Erfüllung selbst, sondern ihr Nachweis. Erfüllung tritt ein, wenn die Leistung erbracht wird – unabhängig von der Quittung.')">Prüfen</button>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('test')">Weiter: Selbsttest →</button></div>
+  </div>
+</div>
+
+<div id="test" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🎯 Abschluss</div><h2 style="font-size:1.5rem;">Selbsttest</h2><p style="font-size:.9rem;">Klicke auf jedes Lernziel, das du sicher beherrschst!</p></div>
+  <div class="wrap">
+    <div class="selftest-wrap">
+      <h4>🎯 Was kann ich jetzt?</h4>
+      <div class="selftest-item" onclick="toggleSelf(1)"><div class="selftest-check" id="stc1">✓</div><div class="selftest-text">Ich kann erklären, was Barzahlung bedeutet und welche Vor- und Nachteile sie hat.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(2)"><div class="selftest-check" id="stc2">✓</div><div class="selftest-text">Ich weiß, was eine Quittung ist und welche 6 Pflichtangaben nach § 368 BGB enthalten sein müssen.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(3)"><div class="selftest-check" id="stc3">✓</div><div class="selftest-text">Ich kann erläutern, wann ein Schuldverhältnis durch Erfüllung nach § 362 BGB erlischt.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(4)"><div class="selftest-check" id="stc4">✓</div><div class="selftest-text">Ich kann den Zusammenhang zwischen Erfüllung (§ 362) und Quittung (§ 368 BGB) erklären.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(5)"><div class="selftest-check" id="stc5">✓</div><div class="selftest-text">Ich kann an einem Fallbeispiel prüfen, ob eine Quittung vollständig ist oder was fehlt.</div></div>
+      <div class="selftest-progress"><div class="selftest-bar" id="st-bar"></div></div>
+      <div id="st-count" style="font-size:.8rem;color:#666;margin-top:6px;text-align:right;">0 / 5 Lernziele erreicht</div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header"><span class="card-icon">📚</span><h3>Quellen</h3></div>
+      <ul style="padding-left:20px;font-size:.88rem;">
+        <li>§ 368 BGB: <a href="https://www.gesetze-im-internet.de/bgb/__368.html" target="_blank" style="color:var(--teal);">gesetze-im-internet.de</a></li>
+        <li>§ 362 BGB: <a href="https://www.gesetze-im-internet.de/bgb/__362.html" target="_blank" style="color:var(--teal);">gesetze-im-internet.de</a></li>
+        <li>Verbraucherbildung: <a href="https://www.verbraucherbildung.de" target="_blank" style="color:var(--teal);">verbraucherbildung.de</a></li>
+        <li>Sparkasse Schulservice: <a href="https://www.sparkasse-schulservice.de" target="_blank" style="color:var(--teal);">sparkasse-schulservice.de</a></li>
+      </ul>
+    </div>
+    <a href="https://www.bundesbank.de/static/dokumentation/bargeld/index.htm" target="_blank" style="display:block;text-decoration:none;margin-bottom:18px;">
+      <div style="background:linear-gradient(135deg,#003b6f 0%,#005aa0 100%);color:white;border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 14px rgba(0,59,111,.25);transition:.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        <div style="font-size:2.4rem;flex-shrink:0;">🏦</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.98rem;margin-bottom:3px;">Bundesbank-Schulung: Falschgeld erkennen</div>
+          <div style="font-size:.82rem;opacity:.85;">Lerne interaktiv, wie echte Euronoten aussehen und wie du Fälschungen erkennst – das offizielle Online-Training der Deutschen Bundesbank.</div>
+        </div>
+        <div style="font-size:1.2rem;opacity:.8;flex-shrink:0;">→</div>
+      </div>
+    </a>
+    <div style="text-align:center;"><button class="btn-outline btn" onclick="show('home')">← Zurück zur Startseite</button></div>
+  </div>
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nbtn').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('active');});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function checkMC(name,correct,fbId,explanation){
+  const sel=document.querySelector('input[name="'+name+'"]:checked');
+  const fb=document.getElementById(fbId);
+  if(!sel){fb.className='mc-feedback show err';fb.textContent='Bitte wähle eine Antwort aus!';return;}
+  document.querySelectorAll('input[name="'+name+'"]').forEach(inp=>{
+    inp.parentElement.classList.remove('selected','correct','wrong');
+    if(inp.value===correct)inp.parentElement.classList.add('correct');
+    else if(inp===sel&&inp.value!==correct)inp.parentElement.classList.add('wrong');
+  });
+  fb.className='mc-feedback show '+(sel.value===correct?'ok':'err');
+  fb.innerHTML=(sel.value===correct?'✅ Richtig! ':'❌ Leider falsch. ')+explanation;
+}
+function toggleHint(id){
+  const el=document.getElementById(id);el.classList.toggle('show');
+  const t=el.previousElementSibling;
+  t.textContent=el.classList.contains('show')?t.textContent.replace('▼','▲'):t.textContent.replace('▲','▼');
+}
+const correctKeys=['name','betrag','datum','unterschrift','grund','bezeichnung'];
+let draggedItem=null;
+document.querySelectorAll('.drag-item').forEach(item=>{
+  item.addEventListener('dragstart',()=>{draggedItem=item;item.classList.add('dragging');});
+  item.addEventListener('dragend',()=>item.classList.remove('dragging'));
+});
+const dz=document.getElementById('drop-correct');
+if(dz){
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(draggedItem){const lbl=dz.querySelector('.drop-label');if(lbl)lbl.remove();dz.appendChild(draggedItem);}});
+}
+function checkDrag(){
+  const inZone=[...document.querySelectorAll('#drop-correct .drag-item')];
+  const inZoneKeys=inZone.map(i=>i.dataset.key);
+  const correct=inZoneKeys.filter(k=>correctKeys.includes(k)).length;
+  const wrong=inZoneKeys.filter(k=>!correctKeys.includes(k)).length;
+  const missing=correctKeys.filter(k=>!inZoneKeys.includes(k)).length;
+  const r=document.getElementById('drag-result');r.style.display='block';
+  if(wrong===0&&missing===0){r.innerHTML='<div class="info-box correct">✅ Perfekt! Alle 6 Pflichtangaben korrekt, keine falschen Angaben!</div>';}
+  else{r.innerHTML='<div class="info-box warn">'+correct+' von 6 richtig.'+( wrong>0?' '+wrong+' falsche Angabe(n).':'')+( missing>0?' '+missing+' fehlen noch.':'')+'</div>';}
+}
+// ── SORT GAME ──
+(function(){
+  let dragChip=null;
+  function initSort(){
+    document.querySelectorAll('.sort-chip').forEach(chip=>{
+      chip.addEventListener('dragstart',()=>{dragChip=chip;chip.classList.add('dragging');});
+      chip.addEventListener('dragend',()=>chip.classList.remove('dragging'));
+    });
+    const targets=[document.getElementById('sort-pool'),document.getElementById('inner-vorteil'),document.getElementById('inner-nachteil')];
+    targets.forEach(t=>{
+      if(!t)return;
+      const zone=t.closest('.sort-zone')||t;
+      t.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+      t.addEventListener('dragleave',()=>zone.classList.remove('over'));
+      t.addEventListener('drop',e=>{
+        e.preventDefault();zone.classList.remove('over');
+        if(dragChip)t.appendChild(dragChip);
+      });
+    });
+  }
+  initSort();
+  window.checkSort=function(){
+    let ok=0,bad=0;
+    ['vorteil','nachteil'].forEach(cat=>{
+      document.querySelectorAll('#inner-'+cat+' .sort-chip').forEach(c=>{
+        c.classList.remove('correct-sort','wrong-sort');
+        if(c.dataset.cat===cat){c.classList.add('correct-sort');ok++;}
+        else{c.classList.add('wrong-sort');bad++;}
+      });
+    });
+    const total=document.querySelectorAll('.sort-chip').length;
+    const inPool=document.querySelectorAll('#sort-pool .sort-chip').length;
+    const r=document.getElementById('sort-result');r.style.display='block';
+    if(bad===0&&inPool===0){r.innerHTML='<div class="info-box correct">✅ Perfekt! Alle '+ok+' Begriffe richtig zugeordnet!</div>';}
+    else{r.innerHTML='<div class="info-box warn">'+ok+' von '+(total-inPool)+' richtig.'+( bad>0?' '+bad+' falsch zugeordnet.':'')+( inPool>0?' '+inPool+' noch nicht zugeordnet.':'')+'</div>';}
+  };
+  window.resetSort=function(){
+    const pool=document.getElementById('sort-pool');
+    document.querySelectorAll('.sort-chip').forEach(c=>{
+      c.classList.remove('correct-sort','wrong-sort','dragging');
+      pool.appendChild(c);
+    });
+    document.getElementById('sort-result').style.display='none';
+  };
+})();
+
+let stDone={};
+function toggleSelf(n){
+  const c=document.getElementById('stc'+n);
+  if(stDone[n]){delete stDone[n];c.classList.remove('done');}else{stDone[n]=true;c.classList.add('done');}
+  const cnt=Object.keys(stDone).length;
+  document.getElementById('st-bar').style.width=(cnt/5*100)+'%';
+  document.getElementById('st-count').textContent=cnt+' / 5 Lernziele erreicht';
+}
+</script>
+</body>
+</html>
