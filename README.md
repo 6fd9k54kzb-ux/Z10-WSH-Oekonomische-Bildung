@@ -29,3 +29,14 @@ Hier findest du die Lernportale, Editoren und Übungsseiten für den Unterricht.
 
 Die Lernbereiche dienen zur Vorbereitung auf die 3. Schulaufgabe.  
 Bearbeite zuerst die Grundlagen, anschließend die Übungsportale.
+
+## 3. Zahlungsformen
+
+| Bereich | Thema | Zugang |
+|---|---|---|
+| A | Bargeld | [Info öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Oekonomische-Bildung/01_Portal_Bargeldzentrale.html)  |
+| B | Girokonto | [Info öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Oekonomische-Bildung/02_Portal_Girokonto.html) |
+| C | weitere Zahlungsformen | [Info öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Oekonomische-Bildung/03_Portal_Wie_bezahle_ich.html) |
+| D | Vergleich Funktionsweisen | [Übung öffnen](https://6fd9k54kzb-ux.github.io/Z10-WSH-Oekonomische-Bildung/03_Portal_Wie_bezahle_ich.html) |
+
+---
