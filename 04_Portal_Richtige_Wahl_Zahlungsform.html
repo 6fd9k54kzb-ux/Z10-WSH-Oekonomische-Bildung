@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernportal 4 – Die richtige Wahl der Zahlungsform</title>
+<style>
+:root{
+  --orange:#c0550a;--orange2:#e67e22;--orange3:#f39c12;--orange-light:#fef3e2;
+  --blue:#1a3a5c;--blue2:#2980b9;--border:#bdc3c7;--dark:#2c3e50;
+  --red:#c0392b;--green:#27ae60;--teal:#16a085;--purple:#8e44ad;
+  --shadow:rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark);font-size:15px;line-height:1.65;}
+.nav{background:var(--orange);color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.nav-sub{font-size:.72rem;opacity:.8;}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:white;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:.8rem;transition:.2s;white-space:nowrap;}
+.nbtn:hover,.nbtn.active{background:rgba(255,255,255,.3);font-weight:700;}
+.screen{display:none;animation:fadeIn .25s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(135deg,var(--orange) 0%,var(--orange2) 60%,var(--orange3) 100%);color:white;padding:52px 24px 44px;text-align:center;}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:4px 14px;font-size:.78rem;margin-bottom:14px;}
+.hero h2{font-size:2rem;margin-bottom:10px;}
+.hero p{font-size:1rem;opacity:.9;max-width:660px;margin:0 auto 28px;}
+.hero-cards{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.hero-card{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:12px 16px;min-width:130px;cursor:pointer;transition:.2s;text-align:center;}
+.hero-card:hover{background:rgba(255,255,255,.28);transform:translateY(-3px);}
+.hero-card .hc-icon{font-size:1.6rem;margin-bottom:5px;}
+.hero-card .hc-title{font-size:.82rem;font-weight:700;}
+.wrap{max-width:920px;margin:0 auto;padding:24px 18px;}
+.section-title{color:var(--orange);font-size:1.1rem;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid var(--orange-light);}
+.card{background:white;border-radius:12px;padding:24px;box-shadow:0 4px 18px var(--shadow);margin-bottom:20px;}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--orange-light);}
+.card-icon{font-size:1.5rem;}
+.card h3{color:var(--orange);font-size:1rem;font-weight:700;}
+.card p,.card li{font-size:.92rem;line-height:1.7;}
+.card ul,.card ol{padding-left:22px;margin-top:6px;}
+.card li{margin-bottom:4px;}
+.info-box{border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:.9rem;}
+.info-box.law{background:#fef3e2;border-left:4px solid var(--orange);color:#6e3200;}
+.info-box.tip{background:#e8f5f2;border-left:4px solid var(--teal);color:#1a4a3a;}
+.info-box.warn{background:#fdebd0;border-left:4px solid var(--orange2);color:#6e3200;}
+.info-box.correct{background:#eafaf1;border-left:4px solid var(--green);}
+.info-box strong{display:block;margin-bottom:4px;}
+.btn{background:var(--orange);color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:.92rem;font-weight:600;transition:.2s;display:inline-block;}
+.btn:hover{background:var(--orange2);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--orange);border:2px solid var(--orange);}
+.btn-outline:hover{background:var(--orange);color:white;}
+.btn-sm{padding:6px 14px;font-size:.82rem;}
+.mc-question{background:white;border-radius:10px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px var(--shadow);}
+.mc-q-text{font-weight:600;margin-bottom:12px;font-size:.95rem;}
+.mc-option{display:flex;align-items:center;gap:10px;padding:9px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:7px;transition:.2s;font-size:.9rem;}
+.mc-option:hover{border-color:var(--orange);background:var(--orange-light);}
+.mc-option.correct{border-color:var(--green);background:#eafaf1;font-weight:600;}
+.mc-option.wrong{border-color:var(--red);background:#fdedec;}
+.mc-option input[type=radio]{accent-color:var(--orange);width:16px;height:16px;}
+.mc-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none;}
+.mc-feedback.show{display:block;}
+.mc-feedback.ok{background:#eafaf1;border:1px solid var(--green);color:#1e8449;}
+.mc-feedback.err{background:#fdedec;border:1px solid var(--red);color:#a93226;}
+.case-card{border:2px solid var(--orange-light);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.case-header{background:var(--orange);color:white;padding:10px 18px;font-weight:700;font-size:.88rem;}
+.case-body{padding:16px 18px;}
+.case-body p{font-size:.9rem;margin-bottom:10px;}
+.case-hint{background:#fffaf5;border-top:1px solid var(--orange-light);padding:12px 18px;}
+.case-hint-toggle{cursor:pointer;color:var(--orange);font-size:.88rem;font-weight:600;}
+.case-hint-body{display:none;margin-top:10px;font-size:.88rem;line-height:1.7;}
+.case-hint-body.show{display:block;}
+.selftest-wrap{background:linear-gradient(135deg,var(--orange-light),#fff);border:2px solid var(--orange);border-radius:12px;padding:22px;}
+.selftest-wrap h4{color:var(--orange);margin-bottom:14px;font-size:1rem;}
+.selftest-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding:8px;border-radius:8px;cursor:pointer;transition:.2s;}
+.selftest-item:hover{background:rgba(192,85,10,.05);}
+.selftest-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem;transition:.2s;}
+.selftest-check.done{background:var(--green);border-color:var(--green);color:white;}
+.selftest-text{font-size:.88rem;line-height:1.6;}
+.selftest-progress{height:6px;background:var(--border);border-radius:3px;margin-top:14px;overflow:hidden;}
+.selftest-bar{height:100%;background:var(--orange3);width:0%;transition:.4s;}
+.teacher-note{background:#fffde7;border:1px dashed #f9a825;border-radius:10px;padding:14px 18px;margin-bottom:18px;}
+.teacher-note-label{font-size:.72rem;font-weight:700;color:#e65100;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.teacher-note-text{font-size:.85rem;color:#555;line-height:1.6;}
+.compare-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:10px;}
+.compare-table th{background:var(--orange);color:white;padding:10px 12px;text-align:left;}
+.compare-table td{padding:8px 12px;border-bottom:1px solid #f0e8d8;vertical-align:top;}
+.compare-table tr:nth-child(even) td{background:#fdf8f3;}
+.compare-table .col-check{color:var(--green);font-weight:700;}
+.compare-table .col-x{color:var(--red);}
+.scenario-game{margin-bottom:14px;}
+.scenario-q{background:white;border:2px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px var(--shadow);}
+.scenario-q p{font-size:.9rem;margin-bottom:10px;font-weight:600;}
+.scenario-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.scen-opt{background:#f5f5f5;border:2px solid var(--border);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:.82rem;transition:.2s;}
+.scen-opt:hover{border-color:var(--orange);background:var(--orange-light);}
+.scen-opt.correct{border-color:var(--green);background:#eafaf1;font-weight:700;}
+.scen-opt.wrong{border-color:var(--red);background:#fdedec;}
+.scen-feedback{margin-top:8px;padding:8px 12px;border-radius:7px;font-size:.85rem;display:none;}
+.scen-feedback.show{display:block;}
+.scen-feedback.ok{background:#eafaf1;color:#1e8449;}
+.scen-feedback.err{background:#fdedec;color:#a93226;}
+@media(max-width:600px){.nav-links{display:none;}.hero h2{font-size:1.4rem;}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:1.5rem;">🏢</span>
+    <div><div style="font-size:.95rem;font-weight:700;">Lernportal 4 · Die richtige Wahl der Zahlungsform</div><div class="nav-sub">Zahlungsverkehr · Stunde 2 · 10a ÖB</div></div>
+  </div>
+  <div class="nav-links">
+    <button class="nbtn active" onclick="show('home')">🏠 Start</button>
+    <button class="nbtn" onclick="show('formen')">💳 Zahlungsformen</button>
+    <button class="nbtn" onclick="show('vergleich')">⚖️ Vergleich</button>
+    <button class="nbtn" onclick="show('szenarien')">🎮 Szenarien</button>
+    <button class="nbtn" onclick="show('test')">🎯 Selbsttest</button>
+  </div>
+</nav>
+
+<div id="home" class="screen active">
+  <div class="hero">
+    <div class="hero-badge">📚 Stunde 2 · Zahlungsverkehr</div>
+    <h2>🏢 Die richtige Wahl der Zahlungsform</h2>
+    <p>Lerne Girocard, NFC, Onlinebezahldienste und SEPA kennen – und entscheide situationsgerecht, welche Zahlungsform am besten passt.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="show('formen')"><div class="hc-icon">💳</div><div class="hc-title">Zahlungsformen</div></div>
+      <div class="hero-card" onclick="show('vergleich')"><div class="hc-icon">⚖️</div><div class="hc-title">Vergleich</div></div>
+      <div class="hero-card" onclick="show('szenarien')"><div class="hc-icon">🎮</div><div class="hc-title">Szenarien</div></div>
+      <div class="hero-card" onclick="show('test')"><div class="hc-icon">🎯</div><div class="hc-title">Selbsttest</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="card"><div class="card-header"><span class="card-icon">🎯</span><h3>Lernziele</h3></div>
+      <ul>
+        <li>Du kennst die wichtigsten modernen Zahlungsformen: Girocard, NFC/kontaktlos, Onlinebezahldienste und SEPA-Überweisung/-Lastschrift.</li>
+        <li>Du kannst Vor- und Nachteile aus Käufer- und Verkäufersicht benennen.</li>
+        <li>Du kannst situationsgerecht die passende Zahlungsform für ein Unternehmen empfehlen und begründen.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="formen" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">💳 Modul 1</div><h2 style="font-size:1.5rem;">Moderne Zahlungsformen im Überblick</h2></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">💳</span><h3>Girocard (früher: EC-Karte)</h3></div>
+      <p>Die <strong>Girocard</strong> ist die am häufigsten genutzte Zahlungskarte in Deutschland. Sie ist direkt mit dem Girokonto verbunden – gezahlte Beträge werden sofort abgebucht.</p>
+      <div class="info-box tip"><strong>🔧 Wie funktioniert es?</strong>
+        <ul style="padding-left:18px;margin-top:4px;">
+          <li>Karte in das Terminal stecken</li>
+          <li>PIN eingeben (ab 25 € meist Pflicht)</li>
+          <li>Betrag wird direkt vom Konto abgebucht</li>
+          <li>Quittung/Kassenbon als Beleg</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📱</span><h3>NFC – Kontaktloses Bezahlen</h3></div>
+      <p><strong>NFC</strong> = Near Field Communication (Nahfeldkommunikation). Ermöglicht kontaktloses Bezahlen durch kurzes Halten der Karte oder des Smartphones ans Terminal.</p>
+      <div class="info-box tip"><strong>📱 NFC im Alltag:</strong>
+        <ul style="padding-left:18px;margin-top:4px;">
+          <li>Karte oder Smartphone (&lt;4 cm) ans Terminal halten</li>
+          <li>Bis 50 € oft ohne PIN möglich</li>
+          <li>Funktioniert über NFC-Chip in Karte oder Smartphone-Wallet (Apple Pay, Google Pay)</li>
+        </ul>
+      </div>
+      <div class="info-box warn"><strong>⚠️ Sicherheit:</strong>BSI (Bundesamt für Sicherheit in der Informationstechnik) empfiehlt, NFC nur für kleine Beträge zu nutzen und Transaktionen regelmäßig zu prüfen.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🌐</span><h3>Onlinebezahldienste</h3></div>
+      <p>Beim Onlinekauf gibt es spezielle Bezahldienste als Vermittler zwischen Käufer und Verkäufer:</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px;">
+        <div style="background:#f0f4ff;border:2px solid var(--blue2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:1.6rem;margin-bottom:6px;">🅿️</div>
+          <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;">PayPal</div>
+          <div style="font-size:.78rem;color:#555;">Käuferschutz, sofortige Zahlung, weit verbreitet. Gebühren für Händler.</div>
+        </div>
+        <div style="background:#f0fff4;border:2px solid var(--green);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:1.6rem;margin-bottom:6px;">🏦</div>
+          <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;">Klarna / Sofort</div>
+          <div style="font-size:.78rem;color:#555;">Kauf auf Rechnung, Ratenzahlung oder Sofortüberweisung.</div>
+        </div>
+        <div style="background:#fff8f0;border:2px solid var(--orange2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:1.6rem;margin-bottom:6px;">📱</div>
+          <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;">Apple/Google Pay</div>
+          <div style="font-size:.78rem;color:#555;">Smartphone-basiert, NFC, sicher durch Tokenisierung.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: Zahlungsformen</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Was bedeutet NFC im Zusammenhang mit dem Bezahlen?</div>
+        <label class="mc-option"><input type="radio" name="mc1" value="a"> <span>a) Neue Finanzkonzepte</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="b"> <span>b) Near Field Communication – kontaktlose Übertragung auf kurze Distanz</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="c"> <span>c) National Financial Code</span></label>
+        <label class="mc-option"><input type="radio" name="mc1" value="d"> <span>d) Normiertes Funkkennzeichen</span></label>
+        <div class="mc-feedback" id="mc1-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc1','b','mc1-fb','Richtig! NFC = Near Field Communication. Es ermöglicht die kontaktlose Datenübertragung auf kurze Distanz (unter 4 cm).')">Prüfen</button>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('vergleich')">Weiter: Vergleich →</button></div>
+  </div>
+</div>
+
+<div id="vergleich" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">⚖️ Modul 2</div><h2 style="font-size:1.5rem;">Vor- und Nachteile im Vergleich</h2><p style="font-size:.9rem;">Käufer- und Verkäufersicht</p></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⚖️</span><h3>Vergleichstabelle: Zahlungsformen</h3></div>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead><tr><th>Zahlungsform</th><th>Geschwindigkeit</th><th>Sicherheit Käufer</th><th>Kosten Verkäufer</th><th>Ohne Konto?</th><th>Ideal für</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bargeld</strong></td><td class="col-check">✅ Sofort</td><td>⚠️ Kein Käuferschutz</td><td class="col-check">✅ Keine Gebühren</td><td class="col-check">✅ Ja</td><td>Kleine Beträge, Märkte</td></tr>
+            <tr><td><strong>Girocard</strong></td><td class="col-check">✅ Sofort</td><td class="col-check">✅ PIN-geschützt</td><td>⚠️ Terminalgebühr</td><td class="col-x">❌ Nein</td><td>Stationärer Handel</td></tr>
+            <tr><td><strong>NFC/kontaktlos</strong></td><td class="col-check">✅ Sehr schnell</td><td class="col-check">✅ Tokenisierung</td><td>⚠️ Terminalgebühr</td><td class="col-x">❌ Nein</td><td>Schnelle Kleinzahlungen</td></tr>
+            <tr><td><strong>SEPA-Überweisung</strong></td><td>⏱️ 1 Bankarbeitstag</td><td class="col-check">✅ Hohe Sicherheit</td><td class="col-check">✅ Günstig</td><td class="col-x">❌ Nein</td><td>Rechnungen, B2B</td></tr>
+            <tr><td><strong>SEPA-Lastschrift</strong></td><td class="col-check">✅ Automatisch</td><td>⚠️ Mandat erforderlich</td><td class="col-check">✅ Günstig</td><td class="col-x">❌ Nein</td><td>Abos, Dauerleistungen</td></tr>
+            <tr><td><strong>PayPal/Online</strong></td><td class="col-check">✅ Sofort</td><td class="col-check">✅ Käuferschutz</td><td class="col-x">❌ Hohe Gebühren</td><td>⚠️ Teils</td><td>Online-Shop</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">👤</span><h3>Käufersicht vs. Verkäufersicht</h3></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:.95rem;">👤 Käufer will:</div>
+          <ul style="font-size:.88rem;padding-left:18px;">
+            <li>Einfache, schnelle Zahlung</li>
+            <li>Sicherheit (Käuferschutz)</li>
+            <li>Anonymität (Bargeld)</li>
+            <li>Widerrufsmöglichkeit</li>
+            <li>Kostengünstig (keine Zuschläge)</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700;color:var(--orange);margin-bottom:8px;font-size:.95rem;">🏪 Verkäufer will:</div>
+          <ul style="font-size:.88rem;padding-left:18px;">
+            <li>Sichere, schnelle Zahlung</li>
+            <li>Zahlungseingang garantiert</li>
+            <li>Geringe Zahlungskosten</li>
+            <li>Einfache Buchhaltung</li>
+            <li>Viele Zahlungsoptionen anbieten</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">❓</span><h3>Wissenscheck: Vergleich</h3></div>
+      <div class="mc-question">
+        <div class="mc-q-text">Welche Zahlungsform eignet sich am besten für ein Streaming-Abo (monatliche, automatische Zahlung)?</div>
+        <label class="mc-option"><input type="radio" name="mc2" value="a"> <span>a) Barzahlung</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="b"> <span>b) SEPA-Lastschrift</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="c"> <span>c) NFC-Zahlung</span></label>
+        <label class="mc-option"><input type="radio" name="mc2" value="d"> <span>d) SEPA-Echtzeitüberweisung</span></label>
+        <div class="mc-feedback" id="mc2-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc2','b','mc2-fb','Richtig! Die SEPA-Lastschrift ist ideal für regelmäßige, automatische Zahlungen wie Abos – einmal Mandat erteilen, dann läuft alles automatisch.')">Prüfen</button>
+      </div>
+      <div class="mc-question">
+        <div class="mc-q-text">Aus Verkäufersicht: Was ist ein Nachteil von PayPal für einen Online-Shop?</div>
+        <label class="mc-option"><input type="radio" name="mc3" value="a"> <span>a) PayPal ist zu langsam für Online-Shops</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="b"> <span>b) PayPal-Zahlungen werden nie garantiert</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="c"> <span>c) PayPal erhebt Transaktionsgebühren vom Händler, die die Marge reduzieren</span></label>
+        <label class="mc-option"><input type="radio" name="mc3" value="d"> <span>d) PayPal ist nicht für B2C-Geschäfte erlaubt</span></label>
+        <div class="mc-feedback" id="mc3-fb"></div>
+        <button class="btn btn-sm" style="margin-top:8px;" onclick="checkMC('mc3','c','mc3-fb','Richtig! PayPal berechnet dem Händler Gebühren pro Transaktion (ca. 2–3% + Fixbetrag). Das schmälert die Gewinnmarge, bietet aber dem Käufer Käuferschutz.')">Prüfen</button>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('szenarien')">Weiter: Szenarien →</button></div>
+  </div>
+</div>
+
+<div id="szenarien" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🎮 Modul 3</div><h2 style="font-size:1.5rem;">Praxisszenarien – Welche Zahlungsform passt?</h2><p style="font-size:.9rem;">Entscheide für verschiedene Situationen!</p></div>
+  <div class="wrap">
+    <div class="section-title">🎮 Szenario-Spiel: Welche Zahlungsform empfiehlst du?</div>
+
+    <div class="scenario-q">
+      <p>🛒 Szenario 1: Der Kiosk-Besitzer Herr Özdemir möchte seinen Kunden das kontaktlose Bezahlen ermöglichen, ohne hohe Terminalgebühren zu zahlen. Sein Umsatz besteht hauptsächlich aus Kleinstbeträgen unter 5 €.</p>
+      <div class="scenario-opts">
+        <div class="scen-opt" onclick="checkScen(this,'Bargeld','s1','Bargeld ist für Kleinstbeträge unter 5 € die günstigste Lösung: keine Gebühren, sofort, kein Terminal nötig. Nachteil: Verwechslungsgefahr, Wechselgeld.')">💵 Bargeld</div>
+        <div class="scen-opt" onclick="checkScen(this,'Girocard','s1','Girocard ist möglich, aber Terminalgebühren machen bei Kleinstbeträgen die Marge zunichte. Nicht ideal.')">💳 Girocard</div>
+        <div class="scen-opt" onclick="checkScen(this,'NFC','s1','NFC wäre schnell und modern, erfordert aber ein Terminal mit Gebühren. Bei sehr kleinen Beträgen problematisch.')">📱 NFC</div>
+        <div class="scen-opt" onclick="checkScen(this,'Lastschrift','s1','SEPA-Lastschrift eignet sich nicht für Ad-hoc-Einkäufe – zu aufwendig für Kleinstbeträge.')">📥 Lastschrift</div>
+      </div>
+      <div class="scen-feedback" id="s1"></div>
+    </div>
+
+    <div class="scenario-q">
+      <p>🏭 Szenario 2: Die Büroausstattung GmbH verkauft Bürombel an Geschäftskunden (B2B). Die Rechnungsbeträge liegen zwischen 2.000 € und 15.000 €. Sicherheit und Nachvollziehbarkeit sind wichtig.</p>
+      <div class="scenario-opts">
+        <div class="scen-opt" onclick="checkScen(this,'Barzahlung','s2','Bei diesen Beträgen ist Barzahlung unpraktisch, unsicher und nicht empfehlenswert.')">💵 Barzahlung</div>
+        <div class="scen-opt" onclick="checkScen(this,'SEPA-Überweisung','s2','Sehr gut! SEPA-Überweisung ist sicher, günstig, gut dokumentiert und für große Beträge im B2B-Bereich die Standardlösung. Klarer Zahlungsnachweis über IBAN.')">📤 SEPA-Überweisung ✓</div>
+        <div class="scen-opt" onclick="checkScen(this,'NFC','s2','NFC eignet sich nicht für diese Beträge – Limits liegen meist bei wenigen hundert Euro.')">📱 NFC</div>
+        <div class="scen-opt" onclick="checkScen(this,'PayPal','s2','PayPal ist für B2B bei solchen Beträgen nicht standard und mit hohen Gebühren verbunden.')">🅿️ PayPal</div>
+      </div>
+      <div class="scen-feedback" id="s2"></div>
+    </div>
+
+    <div class="scenario-q">
+      <p>🛍️ Szenario 3: Ein Online-Modeshop möchte möglichst viele Kunden ansprechen. Kunden sollen flexibel bezahlen können – inkl. Käuferschutz. Internationaler Versand ist geplant.</p>
+      <div class="scenario-opts">
+        <div class="scen-opt" onclick="checkScen(this,'Nur Überweisung','s3','Nur Überweisung ist zu eingeschränkt – keine sofortige Bestätigung, kein internationaler Käuferschutz.')">📤 Nur Überweisung</div>
+        <div class="scen-opt" onclick="checkScen(this,'Mix','s3','Sehr gut! Ein Mix aus PayPal (Käuferschutz, international), SEPA-Lastschrift (Stammkunden), Kreditkarte und Kauf auf Rechnung bietet maximale Flexibilität. Das erhöht die Conversion Rate des Shops.')">💡 Mix: PayPal + Lastschrift + Rechnung ✓</div>
+        <div class="scen-opt" onclick="checkScen(this,'Nur Bargeld','s3','Online-Shop + nur Bargeld – das geht natürlich nicht!')">💵 Nur Bargeld</div>
+        <div class="scen-opt" onclick="checkScen(this,'Nur Girocard','s3','Girocard funktioniert nicht im Online-Shop direkt und ist international nicht verfügbar.')">💳 Nur Girocard</div>
+      </div>
+      <div class="scen-feedback" id="s3"></div>
+    </div>
+
+    <div class="section-title">📖 Fallbeispiele</div>
+    <div class="case-card">
+      <div class="case-header">🏪 Fall: Supermarkt vs. Online-Shop</div>
+      <div class="case-body"><p>Diskutiere: Warum nutzt ein Supermarkt andere Zahlungsformen als ein Online-Shop? Nenne je 2 typische Zahlungsformen und erkläre die Unterschiede aus Käufer- und Verkäufersicht.</p></div>
+      <div class="case-hint"><div class="case-hint-toggle" onclick="toggleHint('hv1')">💡 Lösungshinweis anzeigen ▼</div>
+      <div class="case-hint-body" id="hv1">
+        <strong>Supermarkt:</strong> Bargeld (günstig, anonym, sofort) und Girocard/NFC (schnell, keine Wechselfehler) – stationärer Einkauf, sofortige Übergabe.<br><br>
+        <strong>Online-Shop:</strong> PayPal (Käuferschutz, sofortige Bestätigung), SEPA-Lastschrift (Stammkunden, Abo-Modelle), Kauf auf Rechnung (Vertrauen beim Erstkauf).<br><br>
+        <strong>Unterschied:</strong> Im Supermarkt findet die Zahlung gleichzeitig mit der Warenübergabe statt (Zug-um-Zug). Online muss entweder der Käufer vorleisten (Überweisung) oder der Verkäufer (Kauf auf Rechnung) – was unterschiedliche Risikoverteilungen bedeutet.
+      </div></div>
+    </div>
+    <div style="text-align:center;"><button class="btn" onclick="show('test')">Weiter: Selbsttest →</button></div>
+  </div>
+</div>
+
+<div id="test" class="screen">
+  <div class="hero" style="padding:30px 24px;"><div class="hero-badge">🎯 Abschluss</div><h2 style="font-size:1.5rem;">Selbsttest</h2><p style="font-size:.9rem;">Klicke auf jedes Lernziel, das du sicher beherrschst!</p></div>
+  <div class="wrap">
+    <div class="selftest-wrap">
+      <h4>🎯 Was kann ich jetzt?</h4>
+      <div class="selftest-item" onclick="toggleSelf(1)"><div class="selftest-check" id="stc1">✓</div><div class="selftest-text">Ich kann erklären, wie Girocard, NFC und Onlinebezahldienste funktionieren.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(2)"><div class="selftest-check" id="stc2">✓</div><div class="selftest-text">Ich kann Vor- und Nachteile verschiedener Zahlungsformen aus Käufer- und Verkäufersicht benennen.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(3)"><div class="selftest-check" id="stc3">✓</div><div class="selftest-text">Ich kann situationsgerecht die passende Zahlungsform für ein Unternehmen empfehlen und begründen.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(4)"><div class="selftest-check" id="stc4">✓</div><div class="selftest-text">Ich kann die Unterschiede zwischen stationärem und Online-Handel bei der Zahlungsformwahl erklären.</div></div>
+      <div class="selftest-item" onclick="toggleSelf(5)"><div class="selftest-check" id="stc5">✓</div><div class="selftest-text">Ich weiß, was NFC bedeutet und welche Sicherheitsaspekte das BSI empfiehlt.</div></div>
+      <div class="selftest-progress"><div class="selftest-bar" id="st-bar"></div></div>
+      <div id="st-count" style="font-size:.8rem;color:#666;margin-top:6px;text-align:right;">0 / 5 Lernziele erreicht</div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header"><span class="card-icon">📚</span><h3>Quellen</h3></div>
+      <ul style="padding-left:20px;font-size:.88rem;">
+        <li>BSI – Sicher Bezahlen: <a href="https://www.bsi.bund.de" target="_blank" style="color:var(--orange);">bsi.bund.de</a></li>
+        <li>Bundesbank – SEPA: <a href="https://www.bundesbank.de" target="_blank" style="color:var(--orange);">bundesbank.de</a></li>
+        <li>Verbraucherbildung: <a href="https://www.verbraucherbildung.de" target="_blank" style="color:var(--orange);">verbraucherbildung.de</a></li>
+        <li>Sparkasse Schulservice: <a href="https://www.sparkasse-schulservice.de" target="_blank" style="color:var(--orange);">sparkasse-schulservice.de</a></li>
+      </ul>
+    </div>
+    <div style="text-align:center;"><button class="btn-outline btn" onclick="show('home')">← Zurück zur Startseite</button></div>
+  </div>
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nbtn').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('active');});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function checkMC(name,correct,fbId,explanation){
+  const sel=document.querySelector('input[name="'+name+'"]:checked');
+  const fb=document.getElementById(fbId);
+  if(!sel){fb.className='mc-feedback show err';fb.textContent='Bitte wähle eine Antwort aus!';return;}
+  document.querySelectorAll('input[name="'+name+'"]').forEach(inp=>{
+    inp.parentElement.classList.remove('selected','correct','wrong');
+    if(inp.value===correct)inp.parentElement.classList.add('correct');
+    else if(inp===sel&&inp.value!==correct)inp.parentElement.classList.add('wrong');
+  });
+  fb.className='mc-feedback show '+(sel.value===correct?'ok':'err');
+  fb.innerHTML=(sel.value===correct?'✅ Richtig! ':'❌ Leider falsch. ')+explanation;
+}
+function checkScen(el,val,fbId,explanation){
+  const opts=el.parentElement.querySelectorAll('.scen-opt');
+  opts.forEach(o=>o.classList.remove('correct','wrong'));
+  const isCorrect=val.includes('✓')||val==='SEPA-Überweisung'||val==='Mix';
+  el.classList.add(isCorrect?'correct':'wrong');
+  const fb=document.getElementById(fbId);
+  fb.className='scen-feedback show '+(isCorrect?'ok':'err');
+  fb.innerHTML=(isCorrect?'✅ Gute Wahl! ':'💡 Nicht optimal. ')+explanation;
+}
+function toggleHint(id){
+  const el=document.getElementById(id);el.classList.toggle('show');
+  const t=el.previousElementSibling;
+  t.textContent=el.classList.contains('show')?t.textContent.replace('▼','▲'):t.textContent.replace('▲','▼');
+}
+let stDone={};
+function toggleSelf(n){
+  const c=document.getElementById('stc'+n);
+  if(stDone[n]){delete stDone[n];c.classList.remove('done');}else{stDone[n]=true;c.classList.add('done');}
+  const cnt=Object.keys(stDone).length;
+  document.getElementById('st-bar').style.width=(cnt/5*100)+'%';
+  document.getElementById('st-count').textContent=cnt+' / 5 Lernziele erreicht';
+}
+</script>
+</body>
+</html>
