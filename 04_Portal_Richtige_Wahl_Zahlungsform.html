@@ -103,7 +103,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark
 .ct-select.ct-correct{border-color:var(--green)!important;background:#eafaf1!important;color:#1e8449;}
 .ct-select.ct-wrong{border-color:var(--red)!important;background:#fdedec!important;color:#a93226;}
 .kv-pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#f8f8f8;border-radius:10px;border:2px dashed var(--border);min-height:54px;margin-bottom:12px;transition:.2s;}
-.kv-chip{background:var(--orange);color:white;padding:7px 13px;border-radius:20px;cursor:grab;font-size:.83rem;font-weight:600;user-select:none;transition:.2s;}
+.kv-chip{background:var(--orange);color:white;padding:7px 13px;border-radius:20px;cursor:grab;font-size:.83rem;font-weight:600;user-select:none;transition:.2s;touch-action:none;}
 .kv-chip:active{opacity:.7;}
 .kv-chip.kv-correct{background:var(--green)!important;}
 .kv-chip.kv-wrong{background:var(--red)!important;}
@@ -303,16 +303,16 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark
       <div class="card-header"><span class="card-icon">👤</span><h3>Zuordnung: Käufer- vs. Verkäufersicht</h3></div>
       <p style="font-size:.87rem;color:#666;margin-bottom:12px;">Ziehe jede Anforderung in die richtige Spalte – Käufer oder Verkäufer.</p>
       <div class="kv-pool" id="kv-pool">
-        <div class="kv-chip" draggable="true" data-cat="käufer">Einfache, schnelle Zahlung</div>
-        <div class="kv-chip" draggable="true" data-cat="verkäufer">Zahlungseingang garantiert</div>
-        <div class="kv-chip" draggable="true" data-cat="käufer">Sicherheit (Käuferschutz)</div>
-        <div class="kv-chip" draggable="true" data-cat="verkäufer">Geringe Zahlungskosten</div>
-        <div class="kv-chip" draggable="true" data-cat="käufer">Anonymität (Bargeld)</div>
-        <div class="kv-chip" draggable="true" data-cat="verkäufer">Einfache Buchhaltung</div>
-        <div class="kv-chip" draggable="true" data-cat="käufer">Widerrufsmöglichkeit</div>
-        <div class="kv-chip" draggable="true" data-cat="verkäufer">Viele Zahlungsoptionen anbieten</div>
-        <div class="kv-chip" draggable="true" data-cat="käufer">Kostengünstig (keine Zuschläge)</div>
-        <div class="kv-chip" draggable="true" data-cat="verkäufer">Sichere, schnelle Zahlung</div>
+        <div class="kv-chip" data-cat="käufer">Einfache, schnelle Zahlung</div>
+        <div class="kv-chip" data-cat="verkäufer">Zahlungseingang garantiert</div>
+        <div class="kv-chip" data-cat="käufer">Sicherheit (Käuferschutz)</div>
+        <div class="kv-chip" data-cat="verkäufer">Geringe Zahlungskosten</div>
+        <div class="kv-chip" data-cat="käufer">Anonymität (Bargeld)</div>
+        <div class="kv-chip" data-cat="verkäufer">Einfache Buchhaltung</div>
+        <div class="kv-chip" data-cat="käufer">Widerrufsmöglichkeit</div>
+        <div class="kv-chip" data-cat="verkäufer">Viele Zahlungsoptionen anbieten</div>
+        <div class="kv-chip" data-cat="käufer">Kostengünstig (keine Zuschläge)</div>
+        <div class="kv-chip" data-cat="verkäufer">Sichere, schnelle Zahlung</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
         <div class="kv-zone" id="kv-zone-käufer">
@@ -509,19 +509,56 @@ function saveTablePrint(){
 }
 // ---- Käufer/Verkäufer Drag-and-Drop ----
 (function(){
-  let dragged=null;
+  // Touch-/maus-fähiges Drag & Drop (Pointer Events statt HTML5-DnD, damit es auch auf iPad funktioniert)
+  let dragged=null,offX=0,offY=0,startParent=null,startNext=null,curZone=null;
+  const zonePairs=[];
   function attachChipEvents(chip){
-    chip.addEventListener('dragstart',()=>{dragged=chip;setTimeout(()=>chip.style.opacity='.4',0);});
-    chip.addEventListener('dragend',()=>{if(dragged)dragged.style.opacity='1';dragged=null;});
+    chip.addEventListener('pointerdown',onPointerDown);
+  }
+  function onPointerDown(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    const chip=e.currentTarget;
+    dragged=chip;
+    const rect=chip.getBoundingClientRect();
+    offX=e.clientX-rect.left;offY=e.clientY-rect.top;
+    startParent=chip.parentElement;startNext=chip.nextElementSibling;
+    chip.style.position='fixed';chip.style.zIndex='1000';chip.style.width=rect.width+'px';
+    chip.style.left=rect.left+'px';chip.style.top=rect.top+'px';chip.style.pointerEvents='none';
+    chip.style.opacity='.4';
+    document.body.appendChild(chip);
+    try{chip.setPointerCapture(e.pointerId);}catch(err){}
+    document.addEventListener('pointermove',onPointerMove);
+    document.addEventListener('pointerup',onPointerUp);
+    document.addEventListener('pointercancel',onPointerUp);
+    e.preventDefault();
+  }
+  function onPointerMove(e){
+    if(!dragged)return;
+    dragged.style.left=(e.clientX-offX)+'px';dragged.style.top=(e.clientY-offY)+'px';
+    const under=document.elementFromPoint(e.clientX,e.clientY);
+    let zone=null;
+    if(under){
+      for(const zp of zonePairs){if(zp.zoneEl.contains(under)){zone=zp;break;}}
+    }
+    if(curZone&&curZone!==zone)curZone.drop.classList.remove('drag-over');
+    if(zone)zone.drop.classList.add('drag-over');
+    curZone=zone;
+    e.preventDefault();
+  }
+  function onPointerUp(e){
+    if(!dragged)return;
+    document.removeEventListener('pointermove',onPointerMove);
+    document.removeEventListener('pointerup',onPointerUp);
+    document.removeEventListener('pointercancel',onPointerUp);
+    dragged.style.position='';dragged.style.zIndex='';dragged.style.width='';
+    dragged.style.left='';dragged.style.top='';dragged.style.pointerEvents='';dragged.style.opacity='1';
+    if(curZone){curZone.drop.classList.remove('drag-over');curZone.drop.appendChild(dragged);}
+    else if(startParent){if(startNext)startParent.insertBefore(dragged,startNext);else startParent.appendChild(dragged);}
+    dragged=null;curZone=null;
   }
   function attachZoneEvents(zoneEl,targetEl){
     const drop=targetEl||zoneEl;
-    zoneEl.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag-over');});
-    zoneEl.addEventListener('dragleave',e=>{if(!zoneEl.contains(e.relatedTarget))drop.classList.remove('drag-over');});
-    zoneEl.addEventListener('drop',e=>{
-      e.preventDefault();drop.classList.remove('drag-over');
-      if(dragged)drop.appendChild(dragged);
-    });
+    zonePairs.push({zoneEl:zoneEl,drop:drop});
   }
   function initKV(){
     document.querySelectorAll('.kv-chip').forEach(attachChipEvents);
