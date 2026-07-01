@@ -105,7 +105,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark
 .country-btn.wrong-pick{background:var(--red)!important;border-color:var(--red)!important;color:white!important;}
 .country-btn.missed{border-color:var(--orange3)!important;background:var(--orange-light)!important;color:var(--dark)!important;}
 .seq-list{list-style:none;padding:0;margin-bottom:10px;}
-.seq-item{background:white;border:2px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:grab;display:flex;align-items:center;gap:10px;font-size:.88rem;transition:.15s;user-select:none;}
+.seq-item{background:white;border:2px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:grab;display:flex;align-items:center;gap:10px;font-size:.88rem;transition:.15s;user-select:none;touch-action:none;}
+.seq-placeholder{border:2px dashed var(--orange2)!important;background:var(--orange-light)!important;}
 .seq-item:hover{border-color:var(--orange);}
 .seq-item.drag-over{border-color:var(--orange2);background:var(--orange-light);}
 .seq-item.seq-correct{border-color:var(--green)!important;background:#eafaf1!important;}
@@ -240,10 +241,10 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark
       <div class="card-header"><span class="card-icon">🔀</span><h3>Ablauf einer SEPA-Überweisung – Reihenfolge sortieren</h3></div>
       <p style="font-size:.9rem;margin-bottom:10px;">Ziehe die 4 Schritte in die richtige Reihenfolge! (Bildquelle: konto.org)</p>
       <ul class="seq-list" id="seq-ueb">
-        <li class="seq-item" draggable="true" data-correct="3"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
-        <li class="seq-item" draggable="true" data-correct="1"><span class="seq-handle">☰</span><span>Übergabe von Waren / Erbringung von Dienstleistungen gegen Zahlung</span></li>
-        <li class="seq-item" draggable="true" data-correct="4"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers stellt den <strong>Überweisungsbetrag bereit</strong> (Gutschrift)</span></li>
-        <li class="seq-item" draggable="true" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt seiner Bank den <strong>Zahlungsauftrag</strong> (mit IBAN und Betrag)</span></li>
+        <li class="seq-item" data-correct="3"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
+        <li class="seq-item" data-correct="1"><span class="seq-handle">☰</span><span>Übergabe von Waren / Erbringung von Dienstleistungen gegen Zahlung</span></li>
+        <li class="seq-item" data-correct="4"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers stellt den <strong>Überweisungsbetrag bereit</strong> (Gutschrift)</span></li>
+        <li class="seq-item" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt seiner Bank den <strong>Zahlungsauftrag</strong> (mit IBAN und Betrag)</span></li>
       </ul>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <button class="btn btn-sm" onclick="checkSeq('seq-ueb','seq-ueb-fb')">Reihenfolge prüfen</button>
@@ -429,13 +430,13 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark
       <div class="card-header"><span class="card-icon">🔀</span><h3>Ablauf einer SEPA-Basislastschrift – Reihenfolge sortieren</h3></div>
       <p style="font-size:.9rem;margin-bottom:10px;">Ziehe die 7 Schritte in die richtige Reihenfolge! (Bildquelle: sparkasse.de)</p>
       <ul class="seq-list" id="seq-basis">
-        <li class="seq-item" draggable="true" data-correct="3"><span class="seq-handle">☰</span><span>Zahlungsempfänger leitet <strong>Zahlungs- und Mandatsdaten</strong> an seine Bank weiter</span></li>
-        <li class="seq-item" draggable="true" data-correct="7"><span class="seq-handle">☰</span><span>Zahlungsempfänger erhält <strong>Gutschrift</strong> des Lastschriftbetrags</span></li>
-        <li class="seq-item" draggable="true" data-correct="1"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt dem Zahlungsempfänger ein <strong>Lastschrift-Mandat</strong></span></li>
-        <li class="seq-item" draggable="true" data-correct="5"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Belastungsbuchung</strong> durch</span></li>
-        <li class="seq-item" draggable="true" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungsempfänger sendet dem Zahlungspflichtigen <strong>Vorabinformationen</strong> (Pre-Notification)</span></li>
-        <li class="seq-item" draggable="true" data-correct="6"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
-        <li class="seq-item" draggable="true" data-correct="4"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers leitet <strong>Zahlungsdaten</strong> an Bank des Zahlungspflichtigen weiter</span></li>
+        <li class="seq-item" data-correct="3"><span class="seq-handle">☰</span><span>Zahlungsempfänger leitet <strong>Zahlungs- und Mandatsdaten</strong> an seine Bank weiter</span></li>
+        <li class="seq-item" data-correct="7"><span class="seq-handle">☰</span><span>Zahlungsempfänger erhält <strong>Gutschrift</strong> des Lastschriftbetrags</span></li>
+        <li class="seq-item" data-correct="1"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt dem Zahlungsempfänger ein <strong>Lastschrift-Mandat</strong></span></li>
+        <li class="seq-item" data-correct="5"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Belastungsbuchung</strong> durch</span></li>
+        <li class="seq-item" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungsempfänger sendet dem Zahlungspflichtigen <strong>Vorabinformationen</strong> (Pre-Notification)</span></li>
+        <li class="seq-item" data-correct="6"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
+        <li class="seq-item" data-correct="4"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers leitet <strong>Zahlungsdaten</strong> an Bank des Zahlungspflichtigen weiter</span></li>
       </ul>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <button class="btn btn-sm" onclick="checkSeq('seq-basis','seq-basis-fb')">Reihenfolge prüfen</button>
@@ -447,15 +448,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ee;color:var(--dark
       <div class="card-header"><span class="card-icon">🔀</span><h3>Ablauf einer SEPA-Firmenlastschrift – Reihenfolge sortieren</h3></div>
       <p style="font-size:.9rem;margin-bottom:10px;">Ziehe die 9 Schritte in die richtige Reihenfolge! (Bildquelle: konto.org)</p>
       <ul class="seq-list" id="seq-firma">
-        <li class="seq-item" draggable="true" data-correct="4"><span class="seq-handle">☰</span><span>Zahlungsempfänger gibt <strong>Zahlungs- und Mandatsdaten</strong> an seine Bank weiter</span></li>
-        <li class="seq-item" draggable="true" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungspflichtiger leitet das <strong>Mandat</strong> an seine eigene Bank weiter</span></li>
-        <li class="seq-item" draggable="true" data-correct="7"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Belastungsbuchung</strong> durch</span></li>
-        <li class="seq-item" draggable="true" data-correct="5"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers leitet <strong>Zahlungsdaten</strong> an Bank des Zahlungspflichtigen weiter</span></li>
-        <li class="seq-item" draggable="true" data-correct="1"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt dem Zahlungsempfänger ein <strong>Mandat</strong></span></li>
-        <li class="seq-item" draggable="true" data-correct="9"><span class="seq-handle">☰</span><span>Zahlungsempfänger erhält <strong>Gutschrift</strong> des Lastschriftbetrags</span></li>
-        <li class="seq-item" draggable="true" data-correct="3"><span class="seq-handle">☰</span><span>Zahlungsempfänger sendet dem Zahlungspflichtigen <strong>Vorabinformationen</strong></span></li>
-        <li class="seq-item" draggable="true" data-correct="6"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Mandatsprüfung</strong> durch</span></li>
-        <li class="seq-item" draggable="true" data-correct="8"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
+        <li class="seq-item" data-correct="4"><span class="seq-handle">☰</span><span>Zahlungsempfänger gibt <strong>Zahlungs- und Mandatsdaten</strong> an seine Bank weiter</span></li>
+        <li class="seq-item" data-correct="2"><span class="seq-handle">☰</span><span>Zahlungspflichtiger leitet das <strong>Mandat</strong> an seine eigene Bank weiter</span></li>
+        <li class="seq-item" data-correct="7"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Belastungsbuchung</strong> durch</span></li>
+        <li class="seq-item" data-correct="5"><span class="seq-handle">☰</span><span>Bank des Zahlungsempfängers leitet <strong>Zahlungsdaten</strong> an Bank des Zahlungspflichtigen weiter</span></li>
+        <li class="seq-item" data-correct="1"><span class="seq-handle">☰</span><span>Zahlungspflichtiger erteilt dem Zahlungsempfänger ein <strong>Mandat</strong></span></li>
+        <li class="seq-item" data-correct="9"><span class="seq-handle">☰</span><span>Zahlungsempfänger erhält <strong>Gutschrift</strong> des Lastschriftbetrags</span></li>
+        <li class="seq-item" data-correct="3"><span class="seq-handle">☰</span><span>Zahlungsempfänger sendet dem Zahlungspflichtigen <strong>Vorabinformationen</strong></span></li>
+        <li class="seq-item" data-correct="6"><span class="seq-handle">☰</span><span>Bank des Zahlungspflichtigen führt die <strong>Mandatsprüfung</strong> durch</span></li>
+        <li class="seq-item" data-correct="8"><span class="seq-handle">☰</span><span>Banken verrechnen die Zahlung über die <strong>Clearing-Stelle</strong></span></li>
       </ul>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <button class="btn btn-sm" onclick="checkSeq('seq-firma','seq-firma-fb')">Reihenfolge prüfen</button>
@@ -596,36 +597,61 @@ function resetCountries(){
   });
   var fb=document.getElementById('country-fb');if(fb)fb.textContent='';
 }
-// --- Sequence drag-and-drop games ---
+// --- Sequence drag-and-drop games (Pointer Events statt HTML5-DnD, damit es auch auf iPad funktioniert) ---
 function initSeqGame(listId){
   var list=document.getElementById(listId);
   if(!list)return;
-  var dragSrc=null;
+  var dragItem=null,offX=0,offY=0,placeholder=null;
+  function getAfterElement(y){
+    var items=[].slice.call(list.children).filter(function(el){
+      return el.classList.contains('seq-item')&&el!==placeholder;
+    });
+    for(var i=0;i<items.length;i++){
+      var box=items[i].getBoundingClientRect();
+      if(y<box.top+box.height/2)return items[i];
+    }
+    return null;
+  }
+  function onDown(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    var item=e.currentTarget;
+    dragItem=item;
+    var rect=item.getBoundingClientRect();
+    offX=e.clientX-rect.left;offY=e.clientY-rect.top;
+    placeholder=document.createElement('li');
+    placeholder.className='seq-item seq-placeholder';
+    placeholder.style.visibility='hidden';
+    placeholder.style.height=rect.height+'px';
+    list.insertBefore(placeholder,item);
+    item.style.position='fixed';item.style.zIndex='1000';item.style.width=rect.width+'px';
+    item.style.left=rect.left+'px';item.style.top=rect.top+'px';item.style.pointerEvents='none';
+    item.style.opacity='.85';
+    document.body.appendChild(item);
+    try{item.setPointerCapture(e.pointerId);}catch(err){}
+    document.addEventListener('pointermove',onMove);
+    document.addEventListener('pointerup',onUp);
+    document.addEventListener('pointercancel',onUp);
+    e.preventDefault();
+  }
+  function onMove(e){
+    if(!dragItem)return;
+    dragItem.style.left=(e.clientX-offX)+'px';dragItem.style.top=(e.clientY-offY)+'px';
+    var after=getAfterElement(e.clientY);
+    if(after==null)list.appendChild(placeholder);else list.insertBefore(placeholder,after);
+    e.preventDefault();
+  }
+  function onUp(e){
+    if(!dragItem)return;
+    document.removeEventListener('pointermove',onMove);
+    document.removeEventListener('pointerup',onUp);
+    document.removeEventListener('pointercancel',onUp);
+    dragItem.style.position='';dragItem.style.zIndex='';dragItem.style.width='';
+    dragItem.style.left='';dragItem.style.top='';dragItem.style.pointerEvents='';dragItem.style.opacity='1';
+    list.insertBefore(dragItem,placeholder);
+    placeholder.remove();placeholder=null;dragItem=null;
+  }
   list.querySelectorAll('.seq-item').forEach(function(item){
-    item.addEventListener('dragstart',function(){
-      dragSrc=item;
-      setTimeout(function(){item.style.opacity='.4';},0);
-    });
-    item.addEventListener('dragend',function(){
-      item.style.opacity='1';
-      list.querySelectorAll('.seq-item').forEach(function(i){i.classList.remove('drag-over');});
-    });
-    item.addEventListener('dragover',function(e){
-      e.preventDefault();
-      item.classList.add('drag-over');
-    });
-    item.addEventListener('dragleave',function(){
-      item.classList.remove('drag-over');
-    });
-    item.addEventListener('drop',function(e){
-      e.preventDefault();
-      item.classList.remove('drag-over');
-      if(dragSrc&&dragSrc!==item){
-        var items=[].slice.call(list.querySelectorAll('.seq-item'));
-        var si=items.indexOf(dragSrc),ti=items.indexOf(item);
-        if(si<ti)item.after(dragSrc);else item.before(dragSrc);
-      }
-    });
+    item.addEventListener('pointerdown',onDown);
   });
 }
 function checkSeq(listId,fbId){
