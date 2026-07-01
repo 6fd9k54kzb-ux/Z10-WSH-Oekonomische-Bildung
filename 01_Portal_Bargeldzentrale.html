@@ -65,7 +65,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark
 .mc-feedback.ok{background:#eafaf1;border:1px solid var(--green);color:#1e8449;}
 .mc-feedback.err{background:#fdedec;border:1px solid var(--red);color:#a93226;}
 .drag-area{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
-.drag-item{background:var(--teal);color:white;padding:8px 14px;border-radius:20px;cursor:grab;font-size:.85rem;font-weight:600;user-select:none;transition:.2s;}
+.drag-item{background:var(--teal);color:white;padding:8px 14px;border-radius:20px;cursor:grab;font-size:.85rem;font-weight:600;user-select:none;transition:.2s;touch-action:none;}
 .drag-item:hover{background:var(--teal3);}
 .drag-item.dragging{opacity:.5;}
 .drop-zone{border:2px dashed var(--border);border-radius:10px;min-height:56px;padding:10px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fafafa;transition:.2s;}
@@ -94,7 +94,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .sort-pool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;min-height:50px;padding:8px;border:2px dashed var(--border);border-radius:10px;background:#fafafa;transition:.2s;}
 .sort-pool.over{border-color:var(--teal);background:var(--teal-light);}
-.sort-chip{background:var(--teal);color:white;padding:7px 14px;border-radius:20px;cursor:grab;font-size:.84rem;font-weight:600;user-select:none;transition:.2s;}
+.sort-chip{background:var(--teal);color:white;padding:7px 14px;border-radius:20px;cursor:grab;font-size:.84rem;font-weight:600;user-select:none;transition:.2s;touch-action:none;}
 .sort-chip:hover{background:var(--teal3);transform:scale(1.04);}
 .sort-chip.dragging{opacity:.45;}
 .sort-zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;}
@@ -163,15 +163,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark
       <div class="card-header"><span class="card-icon">🎮</span><h3>Zuordnungsaufgabe: Vor- und Nachteile der Barzahlung</h3></div>
       <p style="margin-bottom:10px;font-size:.9rem;">Ziehe jede Aussage in die richtige Spalte – <strong>Vorteil</strong> oder <strong>Nachteil</strong>!</p>
       <div class="sort-pool" id="sort-pool">
-        <div class="sort-chip" draggable="true" data-cat="vorteil">Sofort und anonym</div>
-        <div class="sort-chip" draggable="true" data-cat="nachteil">Diebstahlrisiko</div>
-        <div class="sort-chip" draggable="true" data-cat="vorteil">Kein Internetzugang nötig</div>
-        <div class="sort-chip" draggable="true" data-cat="nachteil">Kein automatischer Zahlungsnachweis</div>
-        <div class="sort-chip" draggable="true" data-cat="vorteil">Kein Bankkonto erforderlich</div>
-        <div class="sort-chip" draggable="true" data-cat="nachteil">Unpraktisch bei großen Beträgen</div>
-        <div class="sort-chip" draggable="true" data-cat="vorteil">Keine Bankgebühren</div>
-        <div class="sort-chip" draggable="true" data-cat="nachteil">Kein Käuferschutz</div>
-        <div class="sort-chip" draggable="true" data-cat="vorteil">Volle Kostenkontrolle</div>
+        <div class="sort-chip" data-cat="vorteil">Sofort und anonym</div>
+        <div class="sort-chip" data-cat="nachteil">Diebstahlrisiko</div>
+        <div class="sort-chip" data-cat="vorteil">Kein Internetzugang nötig</div>
+        <div class="sort-chip" data-cat="nachteil">Kein automatischer Zahlungsnachweis</div>
+        <div class="sort-chip" data-cat="vorteil">Kein Bankkonto erforderlich</div>
+        <div class="sort-chip" data-cat="nachteil">Unpraktisch bei großen Beträgen</div>
+        <div class="sort-chip" data-cat="vorteil">Keine Bankgebühren</div>
+        <div class="sort-chip" data-cat="nachteil">Kein Käuferschutz</div>
+        <div class="sort-chip" data-cat="vorteil">Volle Kostenkontrolle</div>
       </div>
       <div class="sort-zones">
         <div class="sort-zone" id="zone-vorteil">
@@ -250,14 +250,14 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark
       <div class="card-header"><span class="card-icon">🎮</span><h3>Interaktiv: Pflichtangaben zuordnen</h3></div>
       <p style="margin-bottom:12px;font-size:.9rem;">Ziehe alle <strong>richtigen Pflichtangaben</strong> in die grüne Ablage. Lass falsche Angaben weg!</p>
       <div class="drag-area" id="drag-source">
-        <div class="drag-item" draggable="true" data-key="name">Name des Zahlenden</div>
-        <div class="drag-item" draggable="true" data-key="betrag">Betrag in Zahlen</div>
-        <div class="drag-item" draggable="true" data-key="datum">Datum</div>
-        <div class="drag-item" draggable="true" data-key="unterschrift">Unterschrift Empfänger</div>
-        <div class="drag-item" draggable="true" data-key="farbe">Lieblingsfarbe</div>
-        <div class="drag-item" draggable="true" data-key="grund">Grund der Zahlung</div>
-        <div class="drag-item" draggable="true" data-key="steuer">Steuernummer</div>
-        <div class="drag-item" draggable="true" data-key="bezeichnung">Bezeichnung „Quittung"</div>
+        <div class="drag-item" data-key="name">Name des Zahlenden</div>
+        <div class="drag-item" data-key="betrag">Betrag in Zahlen</div>
+        <div class="drag-item" data-key="datum">Datum</div>
+        <div class="drag-item" data-key="unterschrift">Unterschrift Empfänger</div>
+        <div class="drag-item" data-key="farbe">Lieblingsfarbe</div>
+        <div class="drag-item" data-key="grund">Grund der Zahlung</div>
+        <div class="drag-item" data-key="steuer">Steuernummer</div>
+        <div class="drag-item" data-key="bezeichnung">Bezeichnung „Quittung"</div>
       </div>
       <div style="font-size:.82rem;font-weight:700;color:var(--green);margin-bottom:4px;">✅ Pflichtangaben – hierhin ziehen:</div>
       <div class="drop-zone" id="drop-correct"><span class="drop-label">Ziehe Pflichtangaben hierher...</span></div>
@@ -393,17 +393,77 @@ function toggleHint(id){
   t.textContent=el.classList.contains('show')?t.textContent.replace('▼','▲'):t.textContent.replace('▲','▼');
 }
 const correctKeys=['name','betrag','datum','unterschrift','grund','bezeichnung'];
-let draggedItem=null;
-document.querySelectorAll('.drag-item').forEach(item=>{
-  item.addEventListener('dragstart',()=>{draggedItem=item;item.classList.add('dragging');});
-  item.addEventListener('dragend',()=>item.classList.remove('dragging'));
-});
-const dz=document.getElementById('drop-correct');
-if(dz){
-  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
-  dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
-  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(draggedItem){const lbl=dz.querySelector('.drop-label');if(lbl)lbl.remove();dz.appendChild(draggedItem);}});
-}
+
+// ── TOUCH-/MAUS-FÄHIGES DRAG & DROP (Pointer Events statt HTML5-DnD, damit es auch auf iPad funktioniert) ──
+(function(){
+  const DROP_SELECTOR='.drop-zone,.sort-zone-inner,.sort-pool';
+  let dragEl=null,offsetX=0,offsetY=0,startParent=null,startNext=null,currentZone=null;
+
+  function zoneOuter(zoneEl){return zoneEl.closest('.sort-zone')||zoneEl;}
+
+  function onPointerDown(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    const item=e.currentTarget;
+    dragEl=item;
+    const rect=item.getBoundingClientRect();
+    offsetX=e.clientX-rect.left;
+    offsetY=e.clientY-rect.top;
+    startParent=item.parentElement;
+    startNext=item.nextElementSibling;
+    item.style.position='fixed';
+    item.style.zIndex='1000';
+    item.style.width=rect.width+'px';
+    item.style.left=rect.left+'px';
+    item.style.top=rect.top+'px';
+    item.style.pointerEvents='none';
+    item.classList.add('dragging');
+    document.body.appendChild(item);
+    try{item.setPointerCapture(e.pointerId);}catch(err){}
+    document.addEventListener('pointermove',onPointerMove);
+    document.addEventListener('pointerup',onPointerUp);
+    document.addEventListener('pointercancel',onPointerUp);
+    e.preventDefault();
+  }
+  function onPointerMove(e){
+    if(!dragEl)return;
+    dragEl.style.left=(e.clientX-offsetX)+'px';
+    dragEl.style.top=(e.clientY-offsetY)+'px';
+    const under=document.elementFromPoint(e.clientX,e.clientY);
+    const zone=under?under.closest(DROP_SELECTOR):null;
+    if(currentZone&&currentZone!==zone)zoneOuter(currentZone).classList.remove('over');
+    if(zone)zoneOuter(zone).classList.add('over');
+    currentZone=zone;
+    e.preventDefault();
+  }
+  function onPointerUp(e){
+    if(!dragEl)return;
+    document.removeEventListener('pointermove',onPointerMove);
+    document.removeEventListener('pointerup',onPointerUp);
+    document.removeEventListener('pointercancel',onPointerUp);
+    dragEl.style.position='';
+    dragEl.style.zIndex='';
+    dragEl.style.width='';
+    dragEl.style.left='';
+    dragEl.style.top='';
+    dragEl.style.pointerEvents='';
+    dragEl.classList.remove('dragging');
+    if(currentZone){
+      zoneOuter(currentZone).classList.remove('over');
+      const lbl=currentZone.querySelector&&currentZone.querySelector('.drop-label');
+      if(lbl)lbl.remove();
+      currentZone.appendChild(dragEl);
+    }else if(startParent){
+      if(startNext)startParent.insertBefore(dragEl,startNext);else startParent.appendChild(dragEl);
+    }
+    dragEl=null;currentZone=null;
+  }
+  function makeDraggable(el){
+    el.addEventListener('pointerdown',onPointerDown);
+  }
+  document.querySelectorAll('.drag-item,.sort-chip').forEach(makeDraggable);
+  window.__makeDraggable=makeDraggable;
+})();
+
 function checkDrag(){
   const inZone=[...document.querySelectorAll('#drop-correct .drag-item')];
   const inZoneKeys=inZone.map(i=>i.dataset.key);
@@ -416,25 +476,6 @@ function checkDrag(){
 }
 // ── SORT GAME ──
 (function(){
-  let dragChip=null;
-  function initSort(){
-    document.querySelectorAll('.sort-chip').forEach(chip=>{
-      chip.addEventListener('dragstart',()=>{dragChip=chip;chip.classList.add('dragging');});
-      chip.addEventListener('dragend',()=>chip.classList.remove('dragging'));
-    });
-    const targets=[document.getElementById('sort-pool'),document.getElementById('inner-vorteil'),document.getElementById('inner-nachteil')];
-    targets.forEach(t=>{
-      if(!t)return;
-      const zone=t.closest('.sort-zone')||t;
-      t.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
-      t.addEventListener('dragleave',()=>zone.classList.remove('over'));
-      t.addEventListener('drop',e=>{
-        e.preventDefault();zone.classList.remove('over');
-        if(dragChip)t.appendChild(dragChip);
-      });
-    });
-  }
-  initSort();
   window.checkSort=function(){
     let ok=0,bad=0;
     ['vorteil','nachteil'].forEach(cat=>{
