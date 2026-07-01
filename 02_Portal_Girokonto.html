@@ -90,7 +90,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark
 .kalkrow input{width:120px;padding:7px 10px;border:2px solid var(--border);border-radius:6px;font-size:.95rem;text-align:right;}
 .kalkrow .unit{color:#666;font-size:.85rem;}
 .kalk-result{background:var(--teal);color:white;border-radius:8px;padding:12px 16px;font-weight:700;margin-top:10px;display:none;}
-.bk-chip{background:var(--teal);color:white;padding:7px 14px;border-radius:20px;cursor:grab;font-size:.84rem;font-weight:600;user-select:none;transition:.2s;}
+.bk-chip{background:var(--teal);color:white;padding:7px 14px;border-radius:20px;cursor:grab;font-size:.84rem;font-weight:600;user-select:none;transition:.2s;touch-action:none;}
 .bk-chip:active{opacity:.7;}
 .bk-chip.bk-correct{background:var(--green)!important;}
 .bk-chip.bk-wrong{background:var(--red)!important;}
@@ -313,14 +313,14 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f6f4;color:var(--dark
       <div class="card-header"><span class="card-icon">⚖️</span><h3>Was kann das Basiskonto? Was nicht?</h3></div>
       <p style="margin-bottom:10px;font-size:.9rem;color:#555;">Ziehe jeden Begriff in die richtige Kategorie!</p>
       <div id="bk-pool" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;min-height:52px;padding:8px;border:2px dashed var(--border);border-radius:10px;background:#fafafa;">
-        <div class="bk-chip" draggable="true" data-cat="moeglich">Geld einzahlen &amp; abheben</div>
-        <div class="bk-chip" draggable="true" data-cat="nicht">Überziehungskredit (Dispo)</div>
-        <div class="bk-chip" draggable="true" data-cat="moeglich">SEPA-Überweisungen</div>
-        <div class="bk-chip" draggable="true" data-cat="nicht">Schecks</div>
-        <div class="bk-chip" draggable="true" data-cat="moeglich">SEPA-Lastschriften</div>
-        <div class="bk-chip" draggable="true" data-cat="nicht">Kreditkarte</div>
-        <div class="bk-chip" draggable="true" data-cat="moeglich">Daueraufträge</div>
-        <div class="bk-chip" draggable="true" data-cat="moeglich">Debitkarte (Girocard)</div>
+        <div class="bk-chip" data-cat="moeglich">Geld einzahlen &amp; abheben</div>
+        <div class="bk-chip" data-cat="nicht">Überziehungskredit (Dispo)</div>
+        <div class="bk-chip" data-cat="moeglich">SEPA-Überweisungen</div>
+        <div class="bk-chip" data-cat="nicht">Schecks</div>
+        <div class="bk-chip" data-cat="moeglich">SEPA-Lastschriften</div>
+        <div class="bk-chip" data-cat="nicht">Kreditkarte</div>
+        <div class="bk-chip" data-cat="moeglich">Daueraufträge</div>
+        <div class="bk-chip" data-cat="moeglich">Debitkarte (Girocard)</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
         <div style="border:2px dashed var(--border);border-radius:10px;padding:10px;min-height:90px;transition:.2s;" id="bk-zone-moeglich">
@@ -516,18 +516,51 @@ function resetHabenSoll(){
 }
 // --- Basiskonto Zuordnung ---
 (function(){
-  let bkDrag=null;
+  // Touch-/maus-fähiges Drag & Drop (Pointer Events statt HTML5-DnD, damit es auch auf iPad funktioniert)
+  let bkDrag=null,bkOffX=0,bkOffY=0,bkStartParent=null,bkStartNext=null,bkZone=null;
+  const bkZoneIds=['bk-pool','bk-inner-moeglich','bk-inner-nicht'];
+  function bkPointerDown(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    const chip=e.currentTarget;
+    bkDrag=chip;
+    const rect=chip.getBoundingClientRect();
+    bkOffX=e.clientX-rect.left;bkOffY=e.clientY-rect.top;
+    bkStartParent=chip.parentElement;bkStartNext=chip.nextElementSibling;
+    chip.style.position='fixed';chip.style.zIndex='1000';chip.style.width=rect.width+'px';
+    chip.style.left=rect.left+'px';chip.style.top=rect.top+'px';chip.style.pointerEvents='none';
+    chip.style.opacity='.5';
+    document.body.appendChild(chip);
+    try{chip.setPointerCapture(e.pointerId);}catch(err){}
+    document.addEventListener('pointermove',bkPointerMove);
+    document.addEventListener('pointerup',bkPointerUp);
+    document.addEventListener('pointercancel',bkPointerUp);
+    e.preventDefault();
+  }
+  function bkPointerMove(e){
+    if(!bkDrag)return;
+    bkDrag.style.left=(e.clientX-bkOffX)+'px';bkDrag.style.top=(e.clientY-bkOffY)+'px';
+    const under=document.elementFromPoint(e.clientX,e.clientY);
+    let zone=null;
+    if(under){for(const zid of bkZoneIds){const z=document.getElementById(zid);if(z&&z.contains(under)){zone=z;break;}}}
+    if(bkZone&&bkZone!==zone)bkZone.style.background='';
+    if(zone)zone.style.background='rgba(26,107,94,.08)';
+    bkZone=zone;
+    e.preventDefault();
+  }
+  function bkPointerUp(e){
+    if(!bkDrag)return;
+    document.removeEventListener('pointermove',bkPointerMove);
+    document.removeEventListener('pointerup',bkPointerUp);
+    document.removeEventListener('pointercancel',bkPointerUp);
+    bkDrag.style.position='';bkDrag.style.zIndex='';bkDrag.style.width='';
+    bkDrag.style.left='';bkDrag.style.top='';bkDrag.style.pointerEvents='';bkDrag.style.opacity='1';
+    if(bkZone){bkZone.style.background='';bkZone.appendChild(bkDrag);}
+    else if(bkStartParent){if(bkStartNext)bkStartParent.insertBefore(bkDrag,bkStartNext);else bkStartParent.appendChild(bkDrag);}
+    bkDrag=null;bkZone=null;
+  }
   function bkInit(){
     document.querySelectorAll('.bk-chip').forEach(function(chip){
-      chip.addEventListener('dragstart',function(){bkDrag=chip;chip.style.opacity='.5';});
-      chip.addEventListener('dragend',function(){chip.style.opacity='1';});
-    });
-    ['bk-pool','bk-inner-moeglich','bk-inner-nicht'].forEach(function(zid){
-      const z=document.getElementById(zid);
-      if(!z)return;
-      z.addEventListener('dragover',function(e){e.preventDefault();z.style.background='rgba(26,107,94,.08)';});
-      z.addEventListener('dragleave',function(){z.style.background='';});
-      z.addEventListener('drop',function(e){e.preventDefault();z.style.background='';if(bkDrag)z.appendChild(bkDrag);});
+      chip.addEventListener('pointerdown',bkPointerDown);
     });
   }
   window.checkBkSort=function(){
